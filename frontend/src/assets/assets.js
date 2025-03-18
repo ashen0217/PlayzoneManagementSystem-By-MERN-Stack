@@ -21,11 +21,13 @@ import waterpark3 from './waterPark3.jpg';
 import event1 from './events1.jpg';
 import event2 from './events2.jpg';
 import boatride from './boatride.jpg';
+import proImg1 from './profile_img_1.png';
+import proImg2 from './profile_img_2.png';
+import proImg3 from './profile_img_3.png';
 
 
 
 export const assets = {
-    logo,
     logo_dark,
     cross_icon,
     menu_icon,
@@ -130,20 +132,23 @@ export const ServiceData = [
         title: "Marketing Manager",
         alt: "Portrait of Donald Jackman",
         rating: 5,
-        text: "From the very first meeting, they understood my vision and helped me find the perfect property. Their attention to detail and commitment to client satisfaction is unmatched."
+        image: proImg1,
+        text: "The booking process was super easy and quick and I love how I can check availability in real time"
     },
     {
         name: "Richard Nelson",
         title: "UI/UX Designer",
         alt: "Portrait of Richard Nelson",
         rating: 4,
-        text: "From the very first meeting, they understood my vision and helped me find the perfect property. Their attention to detail and commitment to client satisfaction is unmatched."
+        image: proImg2,
+        text: "The interface is user-friendly and easy to navigate and I like that I can manage my kid’s bookings all in one place"
     },
     {
         name: "James Washington",
         title: "Co-Founder",
         alt: "Portrait of James Washington",
         rating: 5,
-        text: "From the very first meeting, they understood my vision and helped me find the perfect property. Their attention to detail and commitment to client satisfaction is unmatched."
+        image: proImg3,
+        text: "Great feature to track my membership benefits and discounts! and It would be great if there were more filter options for available slots."
     }
 ];
