@@ -1,27 +1,28 @@
 const express = require('express');
-const dotenv = require('dotenv');
-const connectDB = require('./config/db');
-
-// Load environment variables
-dotenv.config();
-
-// Connect to the database
-connectDB();
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const router = require("./Routes/resRoute");
 
 const app = express();
 
-// Middleware
+//dbpassword-sogLfXLkzt4jbf3N
+
+
+//app middleware
 app.use(express.json());
+app.use("/Resources",router);
 
-// Routes
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/users', require('./routes/userRoutes'));
-app.use('/api/resources', require('./routes/resourceRoutes'));
-app.use('/api/financials', require('./routes/financialRoutes'));
-app.use('/api/bookings', require('./routes/bookingRoutes'));
-app.use('/api/security', require('./routes/securityRoutes'));
-app.use('/api/complaints', require('./routes/complaintRoutes'));
 
-const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const PORT = 8000;
+const DB_URL = "mongodb+srv://UserAshen:sogLfXLkzt4jbf3N@mernapp.9exup.mongodb.net/?retryWrites=true&w=majority&appName=MernApp";
+
+mongoose.connect(DB_URL).then(() => {
+    console.log('Connected to MongoDB');
+})
+.catch((error) => console.log('DB connect error',error));
+
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
+

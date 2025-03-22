@@ -152,3 +152,16 @@ export const ServiceData = [
         text: "Great feature to track my membership benefits and discounts! and It would be great if there were more filter options for available slots."
     }
 ];
+
+  export const userData = [
+    {
+      name: "James Washington",
+      email: "james@example.com",
+      password:"123456",
+      age: 21,
+      image:proImg3,
+      phone:"0775645345",
+      address:"123 Main St, New York, NY 10001",
+    },
+  ];
+
