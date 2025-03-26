@@ -1,8 +1,42 @@
 import { useState } from "react";
 
 export default function LoginForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({ email: "",password: "",});
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+   // Function to validate the email
+   const validateEmail = (email) => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      return 'Please enter a valid email address.';
+    }
+    return '';
+  };
+
+  const validateForm = () => {
+    let newErrors = {};
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; 
+
+    if (!emailRegex.test(formData.email)) {
+      alert('Please enter a valid email address');
+      return 'Please enter a valid email address.';
+    }
+    if (!formData.email.trim()) {
+        alert("Please enter the Email Address");
+        newErrors.email = "Email address is required."; 
+    }
+    if (!formData.password) {
+        alert("Please enter the Password");
+        newErrors.password = "Please enter the Passsword.";
+    }
+    else {
+        alert("Form Submitted successfully");
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -28,9 +62,10 @@ export default function LoginForm() {
             <label className="block text-gray-700">Email</label>
             <input
               type="email"
+              name="email"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={formData.email}
+              onChange={handleChange}
               required
             />
           </div>
@@ -38,9 +73,10 @@ export default function LoginForm() {
             <label className="block text-gray-700">Password</label>
             <input
               type="password"
+              name="password"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={formData.password}
+              onChange={handleChange}
               required
             />
           </div>
@@ -50,6 +86,7 @@ export default function LoginForm() {
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+            onClick={validateForm}
           >
             Login
           </button>

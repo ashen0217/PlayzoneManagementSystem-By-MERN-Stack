@@ -1,18 +1,17 @@
-import logo from './logo.svg'
-import logo_dark from './logo_dark.svg'
-import cross_icon from './cross_icon.svg'
-import menu_icon from './menu_icon.svg'
-import star_icon from './star_icon.svg'
-import left_arrow from './left_arrow.svg'
-import right_arrow from './right_arrow.svg'
-import header_img from './header_img.png'
-import brand_img from './brand_img.png'
-import rollarcoaster from './rollarcoaster.jpg' 
-import tornado from './tornado.jpg'
-import waterpark from './waterpark.jpg'
-import kart from './kartjpg.jpg'
-import huricane from './huricane.jpg'
-import snowW from './snowW.jpg'
+import logo_dark from './logo_dark.svg';
+import cross_icon from './cross_icon.svg';
+import menu_icon from './menu_icon.svg';
+import star_icon from './star_icon.svg';
+import left_arrow from './left_arrow.svg';
+import right_arrow from './right_arrow.svg';
+import header_img from './header_img.png';
+import brand_img from './brand_img.png';
+import rollarcoaster from './rollarcoaster.jpg' ;
+import tornado from './tornado.jpg';
+import waterpark from './waterpark.jpg';
+import kart from './kartjpg.jpg';
+import huricane from './huricane.jpg';
+import snowW from './snowW.jpg';
 import bg2 from'./bg2.png';
 import oip from './oip.jpg';
 import hobbit from './hobbitGarden.jpg';
@@ -24,8 +23,6 @@ import boatride from './boatride.jpg';
 import proImg1 from './profile_img_1.png';
 import proImg2 from './profile_img_2.png';
 import proImg3 from './profile_img_3.png';
-
-
 
 export const assets = {
     logo_dark,
@@ -44,7 +41,6 @@ export const assets = {
     kart,
     huricane,
     snowW
-
 }
 
 export const projectsData = [
@@ -153,7 +149,7 @@ export const ServiceData = [
     }
 ];
 
-  export const userData = [
+export const userData = [
     {
       name: "James Washington",
       email: "james@example.com",
@@ -164,4 +160,27 @@ export const ServiceData = [
       address:"123 Main St, New York, NY 10001",
     },
   ];
+
+export const packageData = [
+  {
+    name:"Supreme package",
+    description:"This package has 10 activities including waterpark and indoor activities valid for 24Hours",
+    price:"$100",
+    image:waterpark,
+  },
+  
+  {
+    name:"Package A",
+    description : "This package has 5 activities including  indoor  activities  only  valid  for   24Hours",
+    price : "$50",
+    image : rollarcoaster, 
+  },
+
+  {
+    name:"Package B",
+    description : "This package has 5 activities including indoor activities under 18 only valid for 24Hours",
+    price : "$50",
+    image : snowW,
+  },
+];
 

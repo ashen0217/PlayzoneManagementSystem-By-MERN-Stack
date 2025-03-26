@@ -10,6 +10,10 @@ import Footer from './components/Footer'
 import Login from './components/Login'
 import Signup from './components/Signup'
 import UserProfile from './components/UserProfile'
+import Payments from './components/Payments'
+import Packages from './components/Packages'
+import BookingForm from './components/BookingForm'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 
 const App = () => {
@@ -20,13 +24,15 @@ const App = () => {
       <Login />
       <Signup/>
       <UserProfile/>
+      <BookingForm />
+      <Packages />
+      <Payments/>
       <About/>
       <Services/>
       <loginSignup/>
       <Testimonials/>
       <Contact/>
       <Footer/>
-
     </div>
   )
 }
