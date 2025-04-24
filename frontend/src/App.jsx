@@ -14,7 +14,7 @@ import Footer from "./components/Footer"
 import UserProfile from "./components/UserProfile";
 import AdminDashboard from "./components/AdminDashboard";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {BrowserRouter as Router, Routes, Route } from "react-router-dom";   
 
 
 const App = () => {
