@@ -37,31 +37,44 @@ export default function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-
-   // Optional: Replace with environment variables or secure config in real apps
+  
     const adminCredentials = {
       email: "admin@example.com",
       password: "admin123"
     };
-
+  
     try {
-      await axios.post(url, formData); // Replace with GET if validating login
-      console.log("User logged in successfully");
-
-      // Check if user is admin
+      const response = await axios.get(url); // Get all users
+      const users = response.data.Users;
+  
+      // Find the matching user
+      const matchedUser = users.find(
+        (user) =>
+          user.email === formData.email &&
+          user.password === formData.password
+      );
+  
+      if (!matchedUser) {
+        alert("Invalid email or password.");
+        return;
+      }
+  
+      // Admin check
       if (
         formData.email === adminCredentials.email &&
         formData.password === adminCredentials.password
       ) {
-        navigate("/admin-dashboard"); // Redirect admin
+        navigate("/admin-dashboard");
       } else {
-        navigate("/user-profile" ,{ state: { user: formData } }); // Redirect regular user
+        // Navigate to user profile with full details
+        navigate("/user-profile", { state: { user: matchedUser } });
       }
     } catch (error) {
-      console.error("Error logging in", error);
+      console.error("Login error:", error);
+      alert("Something went wrong during login.");
     }
-
   };
+  
 
   return (
     <div
@@ -88,7 +101,7 @@ export default function LoginForm() {
             </div>
           ))}
           <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition">
-            Sign Up
+            Log in
           </button>
         </form>
 
