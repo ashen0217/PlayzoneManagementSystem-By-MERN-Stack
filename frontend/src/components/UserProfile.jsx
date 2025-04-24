@@ -1,30 +1,118 @@
-import React from 'react'
-import { assets, userData } from '../assets/assets'
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { assets } from "../assets/assets";
+
+const URL = "http://localhost:8000/Users";
 
 const UserProfile = () => {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchHandler = async () => {
+      try {
+        const response = await axios.get(URL);
+        console.log("API response:", response.data);
+        setUser(response.data.Users[0]); // Fetch first user
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchHandler();
+  }, []);
+
+  if (!user) return <p className="text-center mt-10 text-gray-500">Loading user...</p>;
+
+  const { name, email, age, gender, phone, password, image, alt } = user;
 
   return (
-    <div className='flex items-center justify-center min-h-screen bg-gray-100' id='UserProfile' style={{backgroundImage: "url('/bg6.jpg')"}}>
-        <div className="bg-white p-8 rounded-2xl shadow-lg w-150 h-180">
-          <h1 className='text-2xl sm:text-4xl font-bold mb-2 text-center'>Customer Profile</h1> <br /><br /> <br />
+    <div
+      className="flex items-center justify-center min-h-screen bg-cover bg-center"
+      style={{ backgroundImage: "url('/bg6.jpg')" }}
+    >
+      <div className="bg-white p-10 rounded-2xl shadow-2xl w-full max-w-md">
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
+          Customer Profile
+        </h1>
+        
+        <div className="flex flex-col items-center">
+          <img
+            className="w-24 h-24 rounded-full mb-6 border-4 border-blue-400"
+            src="profile_img_1.png"
+            alt={alt || "User Avatar"}
+          />
 
+          <div className="w-full space-y-4">
+            {/* Name */}
             <div>
-                    {userData.map((user, index)=>(
-                        <div key={index}>
-                            <img className='w-20 h-20 rounded-full mx-auto mb-4' src={user.image} alt={user.alt} />
-                            <h1 className='text-xl text-gray-700 font-medium'>Name </h1>  <input className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" type="text" value={user.name}/>
-                            <h1 className='text-gray-500 mb-4 text-sm'>Email       </h1>  <input className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" type="email" value={user.email}/>
-                            <h1 className='text-gray-500 mb-4 text-sm'>Address      </h1>  <input className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" type="email" value={user.address}/>
-                            <h1 className='text-gray-600'>Password                 </h1>  <input className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" type="text" value={user.password}/>
-                            <h1 className='text-gray-600'>Age                    </h1>  <input className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" type="text" value={user.age}/>
-                            <h1 className='text-gray-600'>Phone                   </h1>  <input className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" type="text" value={user.phone}/>
-                        </div>
-                    ))}
-                </div>
+              <label className="text-gray-700 font-semibold block mb-1">Name</label>
+              <input
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                type="text"
+                value={name}
+                readOnly
+              />
+            </div>
+
+            {/* Email */}
+            <div>
+              <label className="text-gray-700 font-semibold block mb-1">Email</label>
+              <input
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                type="email"
+                value={email}
+                readOnly
+              />
+            </div>
+
+            {/* Age */}
+            <div>
+              <label className="text-gray-700 font-semibold block mb-1">Age</label>
+              <input
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                type="number"
+                value={age}
+                readOnly
+              />
+            </div>
+
+            {/* Gender */}
+            <div>
+              <label className="text-gray-700 font-semibold block mb-1">Gender</label>
+              <input
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                type="text"
+                value={gender}
+                readOnly
+              />
+            </div>
+
+            {/* Phone */}
+            <div>
+              <label className="text-gray-700 font-semibold block mb-1">Phone</label>
+              <input
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                type="text"
+                value={phone}
+                readOnly
+              />
+            </div>
+
+            {/* Password */}
+            <div>
+              <label className="text-gray-700 font-semibold block mb-1">Password</label>
+              <input
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                type="password"
+                value={password}
+                readOnly
+              />
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default UserProfile
-
+export default UserProfile;

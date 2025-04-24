@@ -1,17 +1,17 @@
-const express = require('express');
-const router1 = express.Router();
+const express = require("express");
+const router = express.Router();
 
 //insert model
-const Resource = require("../Model/resModel.js");
+const Resource = require("../Model/resModel");
 
 //insert user controller
-const resController = require("../Controllers/resController.js");
+const resController = require("../Controllers/resController");
 
-router1.get("/",resController.getAllResources);
-router1.post("/",resController.addResource);
-router1.get("/:id",resController.getByID);
-router1.put("/:id",resController.updateResource);
-router1.delete("/:id",resController.deleteResource);
+router.get("/",resController.getAllResources);
+router.post("/",resController.addResource);
+router.get("/:id",resController.getByID);
+router.put("/:id",resController.updateResource);
+router.delete("/:id",resController.deleteResource);
 
 //export 
-module.exports = router1;
+module.exports = router;

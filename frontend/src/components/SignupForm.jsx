@@ -5,29 +5,52 @@ import Navbar2 from "./Navbar2";
 
 const url = "http://localhost:8000/Users";
 
-export default function LoginForm() {
-  const navigate = useNavigate();
+export default function SignupForm() {
+    const navigate = useNavigate();
   const [formData, setFormData] = useState({
+    name: "",
     email: "",
+    age: "",
+    gender: "",
+    phone: "",
     password: ""
   });
 
   const [errors, setErrors] = useState({});
 
+
   const validateForm = () => {
-    let newerrors = {};
+    let newErrors = {};
 
-    if (!formData.email.includes("@")) {
-      alert("Please enter a valid email address.");
-      newerrors.email = "Invalid email.";
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required.";
     }
-    if (!formData.password) {
-      alert("Please enter a password.");
-      newerrors.password = "Password is required.";
+    if (!formData.email.trim()) {
+      newErrors.email = "Email address is required.";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Invalid email format.";
+    }
+    if (!formData.age.trim()) {
+      newErrors.age = "Age is required.";
+    } else if (!/^\d+$/.test(formData.age)) {
+      newErrors.age = "Age must be a number.";
+    }
+    if (!formData.gender.trim()) {
+      newErrors.gender = "Gender is required.";
+    }
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Phone number is required.";
+    } else if (!/^\d{10}$/.test(formData.phone)) {
+      newErrors.phone = "Phone number must be 10 digits.";
+    }
+    if (!formData.password.trim()) {
+      newErrors.password = "Password is required.";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters.";
     }
 
-    setErrors(newerrors);
-    return Object.keys(newerrors).length === 0;
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleChange = (e) => {
@@ -41,21 +64,17 @@ export default function LoginForm() {
     try {
       await axios.post(url, formData);
       console.log("User registered successfully");
-      navigate("/dashboard"); // Redirect to login page after signup
+      navigate("/login"); // Redirect to login page after signup
     } catch (error) {
       console.error("Error registering user", error);
     }
   };
 
   return (
-    <div
-      className="flex items-center justify-center min-h-screen bg-gray-100"
-      style={{ backgroundImage: "url('/bg2.png')" }}
-    >
+    <div className="flex items-center justify-center min-h-screen bg-gray-100" style={{ backgroundImage: "url('/bg4.jpg')" }}>
       <Navbar2/>
-      <div className="bg-white p-8 rounded-2xl shadow-lg w-96">
-
-        <h2 className="text-2xl font-semibold text-center mb-6">Login</h2>
+      <div className="bg-white p-8 rounded-2xl shadow-lg w-96 py-10">
+        <h2 className="text-2xl font-semibold text-center mb-6">Sign Up</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           {Object.keys(formData).map((key) => (
             <div key={key}>
@@ -75,16 +94,6 @@ export default function LoginForm() {
             Sign Up
           </button>
         </form>
-
-        {/* Social Logins */}
-        <div className="mt-4 space-y-2">
-          <button className="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600">
-            Login with Google
-          </button>
-          <button className="w-full bg-blue-700 text-white py-2 rounded-lg hover:bg-blue-800">
-            Login with Facebook
-          </button>
-        </div>
       </div>
     </div>
   );

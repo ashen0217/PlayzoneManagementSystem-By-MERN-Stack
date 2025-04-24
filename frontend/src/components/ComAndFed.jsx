@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Navbar2 from "./Navbar2";
 
 export default function ComplainFeedbackForm() {
   const [formData, setFormData] = useState({ name: "", email: "", age: "", password: "",});
@@ -39,6 +40,7 @@ export default function ComplainFeedbackForm() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100" style={{backgroundImage: "url('/bg8.jpg')"}} id="Signup">
+       <Navbar2/>
       <div className="bg-white p-8 rounded-2xl shadow-lg w-96">
         <h2 className="text-2xl font-semibold text-center mb-6">Make a Complain or Provide Feedback</h2>
         <form onSubmit={handleSubmit} className="space-y-4">

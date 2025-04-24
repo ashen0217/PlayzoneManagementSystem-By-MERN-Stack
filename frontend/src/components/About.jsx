@@ -1,9 +1,12 @@
 import React from 'react'
 import { assets } from '../assets/assets'
+import Navbar2 from './Navbar2'
 
 const About = () => {
   return (
     <div className='flex flex-col items-center justify-center container mx-auto p-14 md:px-20 lg:px-32 w-full overflow-hidden' id='About'>
+        <Navbar2/>
+        <br/><br/>
         <h1 className='text-2xl sm:text-4xl font-bold mb-2 '>About us <span className='underline underline-offset-4 decoration-1 under font-light'>our Brand</span></h1>
         <p className='text-gray-500  text-center mb-8'>Welcome to PlayZone Pro. We are dedicated to creating a seamless 
             and efficient experience for managing 

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Navbar from "./Navbar";
 
 export default function UploadForm() {
   const [formData, setFormData] = useState({ bank: "", branch: "", category: "" });
@@ -57,17 +58,17 @@ export default function UploadForm() {
     data.append("branch", formData.branch);
     data.append("category", formData.category);
     if (image) data.append("image", image);
-
     console.log("Form submitted", formData, image);
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100" style={{ backgroundImage: "url('/bg7.jpg')" }} id="Payment">
+      <Navbar/>
       <div className="max-w-lg mx-auto mt-10 p-6 bg-white rounded-xl shadow-md">
         <h2 className="text-xl font-semibold mb-4">Upload Payment Details</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Bank</label>
+            <label className="block text-sm font-medium text-gray-700 text-left">Bank</label>
             <input
               type="text"
               name="bank"
@@ -76,7 +77,7 @@ export default function UploadForm() {
               className="mt-1 p-2 w-full border rounded-md"
               required
             />
-            {errors.bank && <p className="text-red-500 text-sm">{errors.bank}</p>}
+            {errors.bank && <p className="text-red-700 text-sm">{errors.bank}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Branch</label>

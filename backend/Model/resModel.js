@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const resSchema = new Schema({
-    resID:{
-        type:Number,
-        required:true
+    resource:{
+        type: String, 
+        required: true
     },
     resType:{
         type:String,

@@ -16,15 +16,15 @@ const getAllResources = async (req, res, next) => {
     }
 
     //display the resources
-    return res.status(200).json({message:"Resource display successful", Resources});
+    return res.status(200).json({ message:"Resources display successful",Resources});
 };
 
 //data Insert
 const addResource = async (req, res, next) => {
-    const {resID,resType,Purpose,PurchaseDate,DistributeDate} = req.body;
+    const {resource,resType,Purpose,PurchaseDate,DistributeDate} = req.body;
     let Resources;
     try{
-        Resources = new Resource({resID,resType,Purpose,PurchaseDate,DistributeDate});
+        Resources = new Resource({resource,resType,Purpose,PurchaseDate,DistributeDate});
         await Resources.save();
     }catch(err){
         console.log(err);
@@ -56,20 +56,20 @@ const getByID = async (req, res,next) => {
     }
 
     //display the resources
-    return res.status(200).json({message:"Resource display successful", Resources});
+    return res.status(200).json({Resources});
 };
 
 //Update resources
 const updateResource = async (req, res, next) => {
     const id=req.params.id;
-    const {resID,resType,Purpose,PurchaseDate,DistributeDate} = req.body;
+    const {resource,resType,Purpose,PurchaseDate,DistributeDate} = req.body;
 
     let Resources;
 
     try{
         Resources = await Resource.findByIdAndUpdate(id ,
-            {resID:resID, resType:resType, Purpose:Purpose, PurchaseDate:PurchaseDate, DistributeDate:DistributeDate});
-            Resources = await Resources.save();
+        {resource:resource, resType:resType, Purpose:Purpose, PurchaseDate:PurchaseDate, DistributeDate:DistributeDate});
+        Resources = await Resources.save();
     }catch(err){
         console.log(err);
     }
@@ -90,9 +90,9 @@ const deleteResource = async (req, res, next) => {
     let Resources;
 
     try{
-        Resources = await Resource.findByIdAndRemove(id);
+        Resources = await Resource.findByIdAndDelete(id);
     }catch(err){
-        console.log(err);
+        console.log(err);cl
     }
 
     //not found
