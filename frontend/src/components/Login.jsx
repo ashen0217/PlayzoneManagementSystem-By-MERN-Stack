@@ -9,7 +9,7 @@ export default function LoginForm() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
-    password: ""
+    password: ""    
   });
 
   const [errors, setErrors] = useState({});
