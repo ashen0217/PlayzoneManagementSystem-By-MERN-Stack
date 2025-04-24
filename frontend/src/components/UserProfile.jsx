@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { assets } from "../assets/assets";
 import Navbar from "./Navbar";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
+
 
 
 const URL = "http://localhost:8000/Users";
@@ -10,6 +12,7 @@ const URL = "http://localhost:8000/Users";
 const UserProfile = () => {
   const location = useLocation();
   const [user, setUser] = useState(location.state?.user || null);
+  const { id } = useParams(); // from `/user-profile/:id`
 
   useEffect(() => {
     // Only fetch from server if user not passed from SignupForm
@@ -29,7 +32,7 @@ const UserProfile = () => {
 
   if (!user) return <p className="text-center mt-10 text-gray-500">Loading user...</p>;
 
-  const { name, email, age, gender, phone, password, image, alt } = user;
+  const { _id, name, email, age, gender, phone, password, image, alt } = user;
 
   return (
     <div
@@ -115,6 +118,11 @@ const UserProfile = () => {
                 value={password}
                 readOnly
               />
+            </div>
+            <div>
+                <Link to={`/user-profile/${_id}`} className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition">
+                  Update
+                </Link>
             </div>
           </div>
         </div>

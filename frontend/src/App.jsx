@@ -15,6 +15,7 @@ import UserProfile from "./components/UserProfile";
 import AdminDashboard from "./components/AdminDashboard";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, Routes, Route } from "react-router-dom";   
+import UpdateUser from "./components/UpdateUser";
 
 
 const App = () => {
@@ -31,10 +32,10 @@ const App = () => {
             <Route path="/contact" element={<Contact />} />
             <Route path="/testimonials" element={<Testimonials />} />
             <Route path="/user-profile" element={<UserProfile />} />
-            <Route path="/UserProfile" element={<UserProfile/>}/>
             <Route path="/addbook"/>
             <Route path="/payments" element={<Payments/>} />
             <Route path="/admin-dashboard" element={<AdminDashboard/>}/>
+            <Route path="/user-profile/:id" element={<UpdateUser/>}/>
             <Route path="*" element={<NotFound />} />
           </Routes>
           <Footer/>
