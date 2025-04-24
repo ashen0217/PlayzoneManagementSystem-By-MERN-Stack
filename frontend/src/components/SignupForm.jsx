@@ -6,7 +6,7 @@ import Navbar2 from "./Navbar2";
 const url = "http://localhost:8000/Users";
 
 export default function SignupForm() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",

@@ -8,7 +8,7 @@ import About from "./components/About";
 import Testimonials from "./components/Testimonials";
 import Contact from "./components/Contact";
 import NotFound from "./components/NotFound"; // New 404 Page Component
-import Signup from "./components/SignupForm";
+import SignupForm from "./components/SignupForm";
 import Login from "./components/Login";
 import Footer from "./components/Footer"
 import UserProfile from "./components/UserProfile";
@@ -26,7 +26,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
-            <Route path="/signup" element={<Signup />} />
+            <Route path="/signup" element={<SignupForm />} />
             <Route path="/login" element={<Login />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/testimonials" element={<Testimonials />} />

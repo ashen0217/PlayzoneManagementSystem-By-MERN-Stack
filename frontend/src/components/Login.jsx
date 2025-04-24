@@ -9,7 +9,7 @@ export default function LoginForm() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
-    password: ""    
+    password: ""
   });
 
   const [errors, setErrors] = useState({});
@@ -55,7 +55,7 @@ export default function LoginForm() {
       ) {
         navigate("/admin-dashboard"); // Redirect admin
       } else {
-        navigate("/user-profile"); // Redirect regular user
+        navigate("/user-profile" ,{ state: { user: formData } }); // Redirect regular user
       }
     } catch (error) {
       console.error("Error logging in", error);
