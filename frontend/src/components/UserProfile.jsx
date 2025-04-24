@@ -1,25 +1,31 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { assets } from "../assets/assets";
+import Navbar from "./Navbar";
+import { useLocation } from "react-router-dom";
+
 
 const URL = "http://localhost:8000/Users";
 
 const UserProfile = () => {
-  const [user, setUser] = useState(null);
+  const location = useLocation();
+  const [user, setUser] = useState(location.state?.user || null);
 
   useEffect(() => {
-    const fetchHandler = async () => {
-      try {
-        const response = await axios.get(URL);
-        console.log("API response:", response.data);
-        setUser(response.data.Users[0]); // Fetch first user
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-
-    fetchHandler();
-  }, []);
+    // Only fetch from server if user not passed from SignupForm
+    if (!user) {
+      const fetchHandler = async () => {
+        try {
+          const response = await axios.get(URL);
+          console.log("API response:", response.data);
+          setUser(response.data.Users[0]); // Fallback: first user from DB
+        } catch (error) {
+          console.error("Error fetching users:", error);
+        }
+      };
+      fetchHandler();
+    }
+  }, [user]);
 
   if (!user) return <p className="text-center mt-10 text-gray-500">Loading user...</p>;
 
@@ -30,6 +36,8 @@ const UserProfile = () => {
       className="flex items-center justify-center min-h-screen bg-cover bg-center"
       style={{ backgroundImage: "url('/bg6.jpg')" }}
     >
+      <Navbar/>
+      <br /><br /><br /><br /><br />
       <div className="bg-white p-10 rounded-2xl shadow-2xl w-full max-w-md">
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
           Customer Profile

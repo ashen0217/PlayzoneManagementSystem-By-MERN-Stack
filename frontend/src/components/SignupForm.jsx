@@ -60,15 +60,16 @@ export default function SignupForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-
+  
     try {
       await axios.post(url, formData);
       console.log("User registered successfully");
-      navigate("/login"); // Redirect to login page after signup
+      navigate("/user-profile", { state: { user: formData } }); // Pass user data
     } catch (error) {
       console.error("Error registering user", error);
     }
   };
+  
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100" style={{ backgroundImage: "url('/bg4.jpg')" }}>
@@ -90,7 +91,7 @@ export default function SignupForm() {
               {errors[key] && <p className="text-red-500 text-sm">{errors[key]}</p>}
             </div>
           ))}
-          <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition">
+          <button onClick={validateForm} type="submit" className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition">
             Sign Up
           </button>
         </form>

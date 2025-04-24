@@ -38,13 +38,29 @@ export default function LoginForm() {
     e.preventDefault();
     if (!validateForm()) return;
 
+   // Optional: Replace with environment variables or secure config in real apps
+    const adminCredentials = {
+      email: "admin@example.com",
+      password: "admin123"
+    };
+
     try {
-      await axios.post(url, formData);
-      console.log("User registered successfully");
-      navigate("/dashboard"); // Redirect to login page after signup
+      await axios.post(url, formData); // Replace with GET if validating login
+      console.log("User logged in successfully");
+
+      // Check if user is admin
+      if (
+        formData.email === adminCredentials.email &&
+        formData.password === adminCredentials.password
+      ) {
+        navigate("/admin-dashboard"); // Redirect admin
+      } else {
+        navigate("/user-profile"); // Redirect regular user
+      }
     } catch (error) {
-      console.error("Error registering user", error);
+      console.error("Error logging in", error);
     }
+
   };
 
   return (
