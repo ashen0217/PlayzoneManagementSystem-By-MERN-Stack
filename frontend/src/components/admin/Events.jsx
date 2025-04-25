@@ -51,10 +51,20 @@ const Events = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    if (name === 'Date') {
+      // Ensure the date is in YYYY-MM-DD format
+      const date = new Date(value);
+      const formattedDate = date.toISOString().split('T')[0];
+      setFormData(prev => ({
+        ...prev,
+        [name]: formattedDate
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const validateForm = () => {
@@ -70,6 +80,7 @@ const Events = () => {
     const selectedDate = new Date(eventDate);
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Reset time part for date comparison
+    selectedDate.setHours(0, 0, 0, 0); // Reset time part for date comparison
     
     if (selectedDate < today) {
       showNotification('Event date cannot be in the past', 'error');
@@ -81,6 +92,19 @@ const Events = () => {
     if (!timeRegex.test(Time)) {
       showNotification('Please enter a valid time in HH:MM format', 'error');
       return false;
+    }
+    
+    // If the selected date is today, validate that the time is in the future
+    if (selectedDate.getTime() === today.getTime()) {
+      const [hours, minutes] = Time.split(':').map(Number);
+      const currentTime = new Date();
+      const selectedTime = new Date();
+      selectedTime.setHours(hours, minutes, 0, 0);
+      
+      if (selectedTime.getTime() <= currentTime.getTime()) {
+        showNotification('Event time cannot be in the past for today\'s date', 'error');
+        return false;
+      }
     }
     
     // Validate participants is a positive number
@@ -284,9 +308,32 @@ const Events = () => {
                 name="Date"
                 value={formData.Date}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                min={new Date().toISOString().split('T')[0]}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                 required
+                placeholder="DD/MM/YYYY"
+                data-date-format="DD/MM/YYYY"
+                style={{
+                  position: 'relative',
+                  colorScheme: 'light'
+                }}
               />
+              <style>
+                {`
+                  input[type="date"]::-webkit-datetime-edit-text,
+                  input[type="date"]::-webkit-datetime-edit-month-field,
+                  input[type="date"]::-webkit-datetime-edit-day-field,
+                  input[type="date"]::-webkit-datetime-edit-year-field {
+                    color: #374151;
+                  }
+                  input[type="date"]:invalid::-webkit-datetime-edit {
+                    color: #6B7280;
+                  }
+                  input[type="date"]:focus::-webkit-datetime-edit {
+                    color: #374151;
+                  }
+                `}
+              </style>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Time</label>
