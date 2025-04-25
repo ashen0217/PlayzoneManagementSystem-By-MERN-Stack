@@ -58,16 +58,16 @@ const Events = () => {
   };
 
   const validateForm = () => {
-    const { Date, Venue, Time, Participants, description } = formData;
+    const { Date: eventDate, Venue, Time, Participants, description } = formData;
     
     // Check if all required fields are filled
-    if (!Date || !Venue || !Time || !Participants || !description) {
+    if (!eventDate || !Venue || !Time || !Participants || !description) {
       showNotification('Please fill all required fields', 'error');
       return false;
     }
     
     // Validate date - ensure it's not in the past
-    const selectedDate = new Date(Date);
+    const selectedDate = new Date(eventDate);
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Reset time part for date comparison
     
@@ -94,22 +94,50 @@ const Events = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    console.log("Form submitted, validating...");
+    
+    if (!validateForm()) {
+      console.log("Form validation failed");
+      return;
+    }
+    
+    console.log("Form validation passed, preparing to submit");
 
     const method = editingId ? 'put' : 'post';
     const url = editingId
       ? `http://localhost:8000/Events/${editingId}`
       : 'http://localhost:8000/Events';
 
-    // Remove eventID from payload as it's not used in the backend controller
-    const { eventID, ...payloadData } = formData;
-    const payload = editingId 
-      ? { ...payloadData, eventID: formData.eventID } 
-      : payloadData;
+    // Format the date properly for the backend
+    const formattedDate = new Date(formData.Date).toISOString().split('T')[0];
+    
+    // Create payload with properly formatted date
+    const { eventID, Date: eventDate, ...payloadData } = formData;
+    const payload = {
+      Date: formattedDate,
+      Venue: formData.Venue,
+      Time: formData.Time,
+      Participants: Number(formData.Participants),
+      description: formData.description
+    };
 
+    console.log(`Submitting event data to ${url} using ${method.toUpperCase()}:`, payload);
+    
     try {
-      const response = await axios[method](url, payload);
-      if (response.status === 200) {
+      // Add proper headers to handle CORS and content type
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      };
+      
+      const response = await axios[method](url, payload, config);
+      console.log('Response from server:', response);
+      
+      // Check for both 200 and 201 status codes
+      if (response.status === 200 || response.status === 201) {
+        console.log("Event saved successfully");
         showNotification(editingId ? 'Event updated successfully!' : 'Event added successfully!', 'success');
         setFormData({
           eventID: '',
@@ -123,8 +151,41 @@ const Events = () => {
         fetchEvents();
       }
     } catch (err) {
-      console.error('Submit error:', err);
-      showNotification(err.response?.data?.message || 'Failed to save event', 'error');
+      console.error('Submit error details:', {
+        message: err.message,
+        response: err.response ? {
+          status: err.response.status,
+          data: err.response.data,
+          headers: err.response.headers
+        } : 'No response data',
+        request: err.request ? 'Request was made but no response received' : 'Request setup failed'
+      });
+      
+      // Handle 400 Bad Request errors with more specific messages
+      if (err.response && err.response.status === 400) {
+        const errorData = err.response.data;
+        let errorMessage = 'Invalid data submitted: ';
+        
+        if (errorData.missingFields) {
+          const missingFields = Object.entries(errorData.missingFields)
+            .filter(([_, missing]) => missing)
+            .map(([field]) => field)
+            .join(', ');
+          errorMessage += `Missing fields: ${missingFields}`;
+        } else if (errorData.message) {
+          errorMessage += errorData.message;
+        } else {
+          errorMessage += 'Please check your input and try again';
+        }
+        
+        showNotification(errorMessage, 'error');
+      } else {
+        showNotification(
+          err.response?.data?.message || 
+          (err.response ? `Server error: ${err.response.status}` : 'Network error - please check your connection'), 
+          'error'
+        );
+      }
     }
   };
 

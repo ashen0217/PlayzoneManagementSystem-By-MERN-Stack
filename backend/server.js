@@ -10,7 +10,12 @@ const cors = require('cors');
 
 //middleware 
 app.use(express.json());
-app.use(cors()); //cors middleware
+// Configure CORS to allow requests from the frontend
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://localhost:5173'], // Allow both origins
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Accept']
+}));
 //app.use(morgan('dev')); // Log HTTP request
 app.use("/Users",require("./Routes/userRoute"));
 app.use("/Resources",require("./Routes/resRoute"));

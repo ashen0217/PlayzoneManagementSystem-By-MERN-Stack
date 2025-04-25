@@ -16,22 +16,105 @@ const getAllEvents = async (req, res) => {
 
 // POST create new event
 const addEvent = async (req, res) => {
-  const { eventID, Date, Venue, Time, Participants, description } = req.body;
+  console.log("=== ADD EVENT CONTROLLER CALLED ===");
+  console.log("Request body:", req.body);
+  console.log("Request headers:", req.headers);
+  
+  // Check if request body is empty
+  if (!req.body || Object.keys(req.body).length === 0) {
+    console.log("Empty request body");
+    return res.status(400).json({ 
+      message: "Request body is empty" 
+    });
+  }
+  
+  const { Date, Venue, Time, Participants, description } = req.body;
+  
+  // Log each field for debugging
+  console.log("Extracted fields:", { 
+    Date: Date, 
+    Venue: Venue, 
+    Time: Time, 
+    Participants: Participants, 
+    description: description 
+  });
+  
+  // Validate required fields
+  if (!Date || !Venue || !Time || !Participants || !description) {
+    console.log("Missing required fields:", { Date, Venue, Time, Participants, description });
+    return res.status(400).json({ 
+      message: "Missing required fields", 
+      missingFields: {
+        Date: !Date,
+        Venue: !Venue,
+        Time: !Time,
+        Participants: !Participants,
+        description: !description
+      }
+    });
+  }
 
   try {
+    console.log("Creating new event with data:", { Date, Venue, Time, Participants, description });
+    
+    // Explicitly parse the date
+    let parsedDate;
+    try {
+      parsedDate = new Date(Date);
+      if (isNaN(parsedDate.getTime())) {
+        throw new Error("Invalid date format");
+      }
+    } catch (dateError) {
+      console.error("Date parsing error:", dateError);
+      return res.status(400).json({ 
+        message: "Invalid date format", 
+        error: dateError.message,
+        receivedDate: Date
+      });
+    }
+    
+    // Parse Participants as a number
+    const participantsNumber = Number(Participants);
+    if (isNaN(participantsNumber)) {
+      return res.status(400).json({ 
+        message: "Participants must be a number", 
+        receivedParticipants: Participants
+      });
+    }
+    
+    // Create a new event with the provided data
     const newEvent = new Event({
-      Date,
+      Date: parsedDate,
       Venue,
       Time,
-      Participants,
+      Participants: participantsNumber,
       description,
     });
 
-    await newEvent.save();
-    return res.status(201).json({ message: "Event added", newEvent });
+    console.log("Event object created:", newEvent);
+    
+    // Save the event to the database
+    const savedEvent = await newEvent.save();
+    console.log("Event saved successfully:", savedEvent);
+    
+    return res.status(201).json({ message: "Event added", newEvent: savedEvent });
   } catch (err) {
     console.error("Error adding event:", err);
-    return res.status(500).json({ message: "Failed to add event", error: err.message });
+    console.error("Error stack:", err.stack);
+    
+    // Check for specific error types
+    if (err.name === 'ValidationError') {
+      return res.status(400).json({ 
+        message: "Validation error", 
+        errors: Object.values(err.errors).map(e => e.message)
+      });
+    }
+    
+    return res.status(500).json({ 
+      message: "Failed to add event", 
+      error: err.message,
+      errorType: err.name
+    });
   }
 };
 
