@@ -63,7 +63,7 @@ export default function SignupForm() {
     try {
       const res = await axios.post(url, formData);
       console.log("User registered successful");
-      navigate("/user-profile", { state: { user: res.data } });
+      navigate("/login", { state: { user: res.data } });
     } catch (error) {
       console.error("Error registering user", error);
     }

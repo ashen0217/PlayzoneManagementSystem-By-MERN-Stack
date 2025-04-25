@@ -12,7 +12,7 @@ import SignupForm from "./components/SignupForm";
 import Login from "./components/Login";
 import Footer from "./components/Footer"
 import UserProfile from "./components/UserProfile";
-import AdminDashboard from "./components/AdminDashboard";
+import AdminDashboard from "./components/admin/AdminDashboard";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, Routes, Route } from "react-router-dom";   
 import UpdateUser from "./components/UpdateUser";
