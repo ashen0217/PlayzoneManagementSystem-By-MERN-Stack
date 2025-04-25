@@ -28,11 +28,11 @@ const addEvent = async (req, res) => {
     });
   }
   
-  const { Date, Venue, Time, Participants, description } = req.body;
+  const { Date: eventDate, Venue, Time, Participants, description } = req.body;
   
   // Log each field for debugging
   console.log("Extracted fields:", { 
-    Date: Date, 
+    eventDate: eventDate, 
     Venue: Venue, 
     Time: Time, 
     Participants: Participants, 
@@ -40,12 +40,12 @@ const addEvent = async (req, res) => {
   });
   
   // Validate required fields
-  if (!Date || !Venue || !Time || !Participants || !description) {
-    console.log("Missing required fields:", { Date, Venue, Time, Participants, description });
+  if (!eventDate || !Venue || !Time || !Participants || !description) {
+    console.log("Missing required fields:", { eventDate, Venue, Time, Participants, description });
     return res.status(400).json({ 
       message: "Missing required fields", 
       missingFields: {
-        Date: !Date,
+        Date: !eventDate,
         Venue: !Venue,
         Time: !Time,
         Participants: !Participants,
@@ -55,23 +55,7 @@ const addEvent = async (req, res) => {
   }
 
   try {
-    console.log("Creating new event with data:", { Date, Venue, Time, Participants, description });
-    
-    // Explicitly parse the date
-    let parsedDate;
-    try {
-      parsedDate = new Date(Date);
-      if (isNaN(parsedDate.getTime())) {
-        throw new Error("Invalid date format");
-      }
-    } catch (dateError) {
-      console.error("Date parsing error:", dateError);
-      return res.status(400).json({ 
-        message: "Invalid date format", 
-        error: dateError.message,
-        receivedDate: Date
-      });
-    }
+    console.log("Creating new event with data:", { eventDate, Venue, Time, Participants, description });
     
     // Parse Participants as a number
     const participantsNumber = Number(Participants);
@@ -84,7 +68,7 @@ const addEvent = async (req, res) => {
     
     // Create a new event with the provided data
     const newEvent = new Event({
-      Date: parsedDate,
+      Date: eventDate, // Use the date string directly, Mongoose will handle the conversion
       Venue,
       Time,
       Participants: participantsNumber,
