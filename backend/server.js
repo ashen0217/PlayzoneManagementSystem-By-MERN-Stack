@@ -14,6 +14,7 @@ app.use(cors()); //cors middleware
 //app.use(morgan('dev')); // Log HTTP request
 app.use("/Users",require("./Routes/userRoute"));
 app.use("/Resources",require("./Routes/resRoute"));
+app.use("/Events",require("./Routes/eventRoute"));
 //app.use("/Payments",require("./Routes/payRoute"));
 
 
