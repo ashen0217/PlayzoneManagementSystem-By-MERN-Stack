@@ -7,6 +7,7 @@ const Events = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingId, setEditingId] = useState(null);
+  const [notification, setNotification] = useState({ show: false, message: '', type: '' });
   const [formData, setFormData] = useState({
     eventID: '',
     Date: '',
@@ -20,6 +21,20 @@ const Events = () => {
   useEffect(() => {
     fetchEvents();
   }, []);
+
+  // Auto-hide notification after 5 seconds
+  useEffect(() => {
+    if (notification.show) {
+      const timer = setTimeout(() => {
+        setNotification({ ...notification, show: false });
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [notification]);
+
+  const showNotification = (message, type = 'error') => {
+    setNotification({ show: true, message, type });
+  };
 
   const fetchEvents = async () => {
     try {
@@ -47,7 +62,7 @@ const Events = () => {
     
     // Check if all required fields are filled
     if (!Date || !Venue || !Time || !Participants || !description) {
-      alert('Please fill all fields');
+      showNotification('Please fill all required fields', 'error');
       return false;
     }
     
@@ -57,20 +72,20 @@ const Events = () => {
     today.setHours(0, 0, 0, 0); // Reset time part for date comparison
     
     if (selectedDate < today) {
-      alert('Event date cannot be in the past');
+      showNotification('Event date cannot be in the past', 'error');
       return false;
     }
     
     // Validate time format (HH:MM)
     const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
     if (!timeRegex.test(Time)) {
-      alert('Please enter a valid time in HH:MM format');
+      showNotification('Please enter a valid time in HH:MM format', 'error');
       return false;
     }
     
     // Validate participants is a positive number
     if (isNaN(Participants) || Participants <= 0) {
-      alert('Participants must be a positive number');
+      showNotification('Participants must be a positive number', 'error');
       return false;
     }
     
@@ -86,6 +101,7 @@ const Events = () => {
       ? `http://localhost:8000/Events/${editingId}`
       : 'http://localhost:8000/Events';
 
+    // Remove eventID from payload as it's not used in the backend controller
     const { eventID, ...payloadData } = formData;
     const payload = editingId 
       ? { ...payloadData, eventID: formData.eventID } 
@@ -94,7 +110,7 @@ const Events = () => {
     try {
       const response = await axios[method](url, payload);
       if (response.status === 200) {
-        alert(editingId ? 'Event updated!' : 'Event added!');
+        showNotification(editingId ? 'Event updated successfully!' : 'Event added successfully!', 'success');
         setFormData({
           eventID: '',
           Date: '',
@@ -108,7 +124,7 @@ const Events = () => {
       }
     } catch (err) {
       console.error('Submit error:', err);
-      alert('Error: ' + (err.response?.data?.message || 'Failed to save event'));
+      showNotification(err.response?.data?.message || 'Failed to save event', 'error');
     }
   };
 
@@ -121,12 +137,12 @@ const Events = () => {
     try {
       const response = await axios.delete(`http://localhost:8000/Events/${id}`);
       if (response.status === 200) {
-        alert('Event deleted');
+        showNotification('Event deleted successfully', 'success');
         fetchEvents();
       }
     } catch (err) {
       console.error('Delete error:', err);
-      alert('Delete failed: ' + (err.response?.data?.message || 'Failed to delete event'));
+      showNotification(err.response?.data?.message || 'Failed to delete event', 'error');
     }
   };
 
@@ -153,6 +169,28 @@ const Events = () => {
 
   return (
     <div className="p-6">
+      {/* Notification Component */}
+      {notification.show && (
+        <div className={`mb-4 p-4 rounded-md ${
+          notification.type === 'error' 
+            ? 'bg-red-100 border border-red-400 text-red-700' 
+            : 'bg-green-100 border border-green-400 text-green-700'
+        }`}>
+          <div className="flex items-center">
+            {notification.type === 'error' ? (
+              <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+            ) : (
+              <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+            )}
+            <span>{notification.message}</span>
+          </div>
+        </div>
+      )}
+
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Event Management</h2>
         <button 
