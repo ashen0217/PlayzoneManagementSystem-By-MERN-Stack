@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
+import Navbar from "./Navbar";
 
 const UpdateUser = () => {
   const [inputs, setInputs] = useState({
@@ -12,6 +13,7 @@ const UpdateUser = () => {
     password: "",
   });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -19,8 +21,6 @@ const UpdateUser = () => {
     const fetchHandler = async () => {
       try {
         const res = await axios.get(`http://localhost:8000/Users/${id}`);
-        console.log("Fetched user data:", res.data);
-
         if (res.data && res.data.Users) {
           setInputs({
             _id: res.data.Users._id || "",
@@ -35,6 +35,7 @@ const UpdateUser = () => {
         setLoading(false);
       } catch (error) {
         console.error("Error fetching user data:", error);
+        setError("Failed to fetch user data");
         setLoading(false);
       }
     };
@@ -51,28 +52,46 @@ const UpdateUser = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
+    
     try {
-      await axios.put(`http://localhost:8000/Users/${id}`, {
+      const response = await axios.put(`http://localhost:8000/Users/${id}`, {
         ...inputs,
-        _id: id, // include this if your backend uses it to identify the user
+        _id: id,
       });
-      navigate("/user-profile");
+      
+      if (response.data && response.data.Users) {
+        // Navigate back to profile with updated user data
+        navigate(`/user-profile/${id}`, { 
+          state: { user: response.data.Users },
+          replace: true 
+        });
+      } else {
+        setError("Failed to update user");
+      }
     } catch (err) {
       console.error("Error updating user:", err);
+      setError("Failed to update user");
+    } finally {
+      setLoading(false);
     }
   };
 
   if (loading) return <p className="text-center">Loading...</p>;
+  if (error) return <p className="text-center text-red-500">{error}</p>;
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">Update User</h2>
+    <div className="p-4 max-w-md mx-auto">
+      <Navbar/>
+      <br /><br /><br /><br />
+      <h2 className="text-2xl font-bold mb-6 text-center">Update User Profile</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         {Object.keys(inputs).map(
           (key) =>
             key !== "_id" && (
               <div key={key}>
-                <label className="block text-gray-700">
+                <label className="block text-gray-700 font-semibold mb-1">
                   {key.charAt(0).toUpperCase() + key.slice(1)}
                 </label>
                 <input
@@ -82,6 +101,7 @@ const UpdateUser = () => {
                   onChange={handleChange}
                   className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                   placeholder={`Enter your ${key}`}
+                  required
                 />
               </div>
             )
@@ -89,9 +109,10 @@ const UpdateUser = () => {
 
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+          className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition mt-6"
+          disabled={loading}
         >
-          Update
+          {loading ? "Updating..." : "Update Profile"}
         </button>
       </form>
     </div>

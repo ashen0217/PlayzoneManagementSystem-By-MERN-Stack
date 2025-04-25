@@ -63,9 +63,7 @@ export default function SignupForm() {
     try {
       const res = await axios.post(url, formData);
       console.log("User registered successful");
-      navigate("/user-profile", { state: { user: res.data } }); // Assuming res.data is the created user
-
-      navigate("/user-profile", { state: { user: formData } }); // Pass user data
+      navigate("/user-profile", { state: { user: res.data } });
     } catch (error) {
       console.error("Error registering user", error);
     }
@@ -85,14 +83,36 @@ export default function SignupForm() {
               <label className="block text-gray-700">
                 {key.charAt(0).toUpperCase() + key.slice(1)}
               </label>
-              <input
-                type={key === "password" ? "password" : "text"}
-                name={key}
-                value={formData[key]}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                placeholder={`Enter your ${key}`}
-              />
+              {key === "gender" ? (
+                <select
+                  name={key}
+                  value={formData[key]}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                >
+                  <option value="">Select gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              ) : (
+                <input
+                  type={
+                    key === "password"
+                      ? "password"
+                      : key === "age"
+                      ? "number"
+                      : key === "phone"
+                      ? "tel"
+                      : "text"
+                  }
+                  name={key}
+                  value={formData[key]}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  placeholder={`Enter your ${key}`}
+                />
+              )}
               {errors[key] && (
                 <p className="text-red-500 text-sm">{errors[key]}</p>
               )}
