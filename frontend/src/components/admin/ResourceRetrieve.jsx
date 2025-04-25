@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const ResourceRetrieve = () => {
     const [resources, setResources] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchResources = async () => {
@@ -22,6 +24,22 @@ const ResourceRetrieve = () => {
 
         fetchResources();
     }, []);
+
+    const handleEdit = (id) => {
+        navigate(`/admin/resources/edit/${id}`);
+    };
+
+    const handleDelete = async (id) => {
+        if (window.confirm('Are you sure you want to delete this resource?')) {
+            try {
+                await axios.delete(`http://localhost:8000/Resources/${id}`);
+                setResources(resources.filter(resource => resource._id !== id));
+            } catch (err) {
+                setError('Failed to delete resource');
+                console.error('Error deleting resource:', err);
+            }
+        }
+    };
 
     if (loading) {
         return (
@@ -105,8 +123,18 @@ const ResourceRetrieve = () => {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <button className="text-indigo-600 hover:text-indigo-900 mr-3">Edit</button>
-                                        <button className="text-red-600 hover:text-red-900">Delete</button>
+                                        <button 
+                                            onClick={() => handleEdit(resource._id)}
+                                            className="text-indigo-600 hover:text-indigo-900 mr-3"
+                                        >
+                                            Edit
+                                        </button>
+                                        <button 
+                                            onClick={() => handleDelete(resource._id)}
+                                            className="text-red-600 hover:text-red-900"
+                                        >
+                                            Delete
+                                        </button>
                                     </td>
                                 </tr>
                             ))}

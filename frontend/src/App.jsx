@@ -18,6 +18,7 @@ import {BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import UpdateUser from "./components/UpdateUser";
 import Bookings from "./components/admin/Bookings";
 import ResourceRetrieve from "./components/admin/ResourceRetrieve";
+import UpdateResource from "./components/admin/updateResource";
 
 
 const App = () => {
@@ -35,7 +36,8 @@ const App = () => {
             <Route path="/testimonials" element={<Testimonials />} />
             <Route path="/user-profile" element={<UserProfile />} />
             <Route path="/addbook" element={<Bookings/>}/>
-            <Route path="resource-retrieve" element={<ResourceRetrieve/>}/>
+            <Route path="/admin/resources" element={<ResourceRetrieve/>}/>
+            <Route path="/admin/resources/edit/:id" element={<UpdateResource/>}/>
             <Route path="/payments" element={<Payments/>} />
             <Route path="/admin-dashboard" element={<AdminDashboard/>}/>
             <Route path="/user-profile/:id" element={<UpdateUser/>}/>
