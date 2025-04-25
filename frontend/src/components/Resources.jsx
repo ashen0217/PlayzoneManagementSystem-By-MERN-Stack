@@ -3,7 +3,8 @@ import Navbar from './Navbar';
 
 const Resources = () => {
     const [formData, setFormData] = useState({ 
-        type: "", 
+        resource:"",
+        restype: "", 
         purpose: "", 
         purchaseDate: "", 
         distributeDate: ""
@@ -32,11 +33,21 @@ const Resources = () => {
                 <h3 className="text-xl font-semibold mb-6">Add New Resource</h3>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
+                        <label className="block text-gray-700 text-sm font-bold mb-2">Resource </label>
+                        <input
+                            type="text"
+                            name="type"
+                            value={formData.resource}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            placeholder="Enter resource type"
+                            required
+                        />
                         <label className="block text-gray-700 text-sm font-bold mb-2">Resource Type</label>
                         <input
                             type="text"
                             name="type"
-                            value={formData.type}
+                            value={formData.restype}
                             onChange={handleChange}
                             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                             placeholder="Enter resource type"
