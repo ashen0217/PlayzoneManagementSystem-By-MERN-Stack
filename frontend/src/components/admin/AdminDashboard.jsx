@@ -7,6 +7,7 @@ import Complaints from './Complaints';
 import Users from './Users';
 import Resources from './Resources';
 import ResourceRetrieve from './ResourceRetrieve';
+import Events from './Events';
 
 const AdminDashboard = () => {
   const [activeSection, setActiveSection] = useState('dashboard');
@@ -25,6 +26,8 @@ const AdminDashboard = () => {
         return <Resources />;
       case 'resourceRetrieve':
         return <ResourceRetrieve />;
+      case 'events':
+        return <Events />;
       default:
         return (
           <div className="p-6">

@@ -9,6 +9,7 @@ const Sidebar = ({ activeSection, setActiveSection }) => {
     { id: 'users', label: 'Users', icon: '👥' },
     { id: 'resources', label: 'Resources', icon: '📦' },
     { id: 'resourceRetrieve', label: 'Resource List', icon: '📋' },
+    { id: 'events', label: 'Events', icon: '🎉' },
   ];
 
   return (
