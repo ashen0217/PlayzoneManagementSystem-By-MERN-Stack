@@ -16,6 +16,8 @@ import AdminDashboard from "./components/admin/AdminDashboard";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, Routes, Route } from "react-router-dom";   
 import UpdateUser from "./components/UpdateUser";
+import Bookings from "./components/admin/Bookings";
+import ResourceRetrieve from "./components/admin/ResourceRetrieve";
 
 
 const App = () => {
@@ -32,7 +34,8 @@ const App = () => {
             <Route path="/contact" element={<Contact />} />
             <Route path="/testimonials" element={<Testimonials />} />
             <Route path="/user-profile" element={<UserProfile />} />
-            <Route path="/addbook"/>
+            <Route path="/addbook" element={<Bookings/>}/>
+            <Route path="resource-retrieve" element={<ResourceRetrieve/>}/>
             <Route path="/payments" element={<Payments/>} />
             <Route path="/admin-dashboard" element={<AdminDashboard/>}/>
             <Route path="/user-profile/:id" element={<UpdateUser/>}/>

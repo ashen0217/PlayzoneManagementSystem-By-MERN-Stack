@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Navbar from './Navbar';
 
 const ResourceRetrieve = () => {
     const [resources, setResources] = useState([]);
@@ -27,7 +26,6 @@ const ResourceRetrieve = () => {
     if (loading) {
         return (
             <div className="p-6">
-
                 <div className="flex justify-center items-center h-64">
                     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
                 </div>
@@ -38,7 +36,6 @@ const ResourceRetrieve = () => {
     if (error) {
         return (
             <div className="p-6">
-
                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
                     <strong className="font-bold">Error!</strong>
                     <span className="block sm:inline"> {error}</span>
@@ -49,7 +46,6 @@ const ResourceRetrieve = () => {
 
     return (
         <div className="p-6">
-
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">Resource List</h2>
                 <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">

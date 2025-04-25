@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Navbar from './Navbar';
+import Navbar from '../Navbar';
 
 const Resources = () => {
     const navigate = useNavigate();
@@ -44,7 +44,7 @@ const Resources = () => {
                 <h3 className="text-xl font-semibold mb-6">Add New Resource</h3>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
-                        <label className="block text-gray-700 text-sm font-bold mb-2">Resource Name</label>
+                        <label className="block text-gray-700 text-sm font-bold mb-2">Resource </label>
                         <input
                             type="text"
                             name="resource"

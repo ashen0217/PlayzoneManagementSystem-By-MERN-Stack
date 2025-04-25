@@ -5,8 +5,8 @@ import Payments from './Payments';
 import Bookings from './Bookings';
 import Complaints from './Complaints';
 import Users from './Users';
-import Resources from '../Resources';
-import ResourceRetrieve from '../ResourceRetrieve';
+import Resources from './Resources';
+import ResourceRetrieve from './ResourceRetrieve';
 
 const AdminDashboard = () => {
   const [activeSection, setActiveSection] = useState('dashboard');
