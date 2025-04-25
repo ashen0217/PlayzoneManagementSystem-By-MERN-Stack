@@ -5,20 +5,6 @@ import { Link } from "react-router-dom";
 const URL = "http://localhost:8000/Users";
 
 const Users = () => {
-  // Sample data - replace with actual data from your backend
-  const Users = [
-    {
-      id: 1,
-      name: 'John Doe',
-      email: 'john@example.com',
-      phone: '+1234567890',
-      joinDate: '2024-01-15',
-      status: 'Active',
-      lastLogin: '2024-03-25'
-    },
-    // Add more sample data as needed
-  ];
-
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -34,6 +20,32 @@ const Users = () => {
   
     fetchHandler();
   }, []);
+
+  const handleDelete = async (userId) => {
+    if (window.confirm('Are you sure you want to delete this user?')) {
+      try {
+        console.log('Attempting to delete user with ID:', userId);
+        const response = await axios.delete(`${URL}/${userId}`);
+        console.log('Delete response:', response);
+        
+        if (response.status === 200 || response.status === 204) {
+          // Update the users list by filtering out the deleted user
+          setUsers(users.filter(user => user.id !== userId));
+          alert('User deleted successfully');
+        } else {
+          throw new Error(`Unexpected response status: ${response.status}`);
+        }
+      } catch (error) {
+        console.error("Error deleting user:", error);
+        console.error("Error details:", {
+          message: error.message,
+          response: error.response?.data,
+          status: error.response?.status
+        });
+        alert(`Failed to delete user: ${error.response?.data?.message || error.message}`);
+      }
+    }
+  };
 
   return (
     <div className="p-6">
@@ -86,7 +98,7 @@ const Users = () => {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {users.map((user) => (
-              <tr key={user.id}>
+              <tr key={user._id || user.id}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="h-10 w-10 flex-shrink-0">
@@ -121,8 +133,12 @@ const Users = () => {
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <Link to className="text-blue-600 hover:text-blue-900 mr-3">Edit</Link>
-                  <button className="text-red-600 hover:text-red-900">Delete</button>
+                  <button 
+                    onClick={() => handleDelete(user._id || user.id)}
+                    className="text-red-600 hover:text-red-900"
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}
