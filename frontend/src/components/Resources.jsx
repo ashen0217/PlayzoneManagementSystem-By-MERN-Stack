@@ -1,23 +1,34 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import Navbar from './Navbar';
 
 const Resources = () => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({ 
-        resource:"",
-        restype: "", 
-        purpose: "", 
-        purchaseDate: "", 
-        distributeDate: ""
+        resource: "",
+        resType: "", 
+        Purpose: "", 
+        PurchaseDate: "", 
+        DistributeDate: ""
     });
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // TODO: Add API call to save resource
-        console.log("Form submitted:", formData);
+        try {
+            const response = await axios.post('http://localhost:8000/Resources', formData);
+            if (response.status === 201) {
+                alert('Resource added successfully!');
+                navigate('/resource-retrieve');
+            }
+        } catch (error) {
+            console.error('Error adding resource:', error);
+            alert('Failed to add resource. Please try again.');
+        }
     };
 
     return (
@@ -33,21 +44,23 @@ const Resources = () => {
                 <h3 className="text-xl font-semibold mb-6">Add New Resource</h3>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
-                        <label className="block text-gray-700 text-sm font-bold mb-2">Resource </label>
+                        <label className="block text-gray-700 text-sm font-bold mb-2">Resource Name</label>
                         <input
                             type="text"
-                            name="type"
+                            name="resource"
                             value={formData.resource}
                             onChange={handleChange}
                             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            placeholder="Enter resource type"
+                            placeholder="Enter resource name"
                             required
                         />
+                    </div>
+                    <div>
                         <label className="block text-gray-700 text-sm font-bold mb-2">Resource Type</label>
                         <input
                             type="text"
-                            name="type"
-                            value={formData.restype}
+                            name="resType"
+                            value={formData.resType}
                             onChange={handleChange}
                             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                             placeholder="Enter resource type"
@@ -58,8 +71,8 @@ const Resources = () => {
                         <label className="block text-gray-700 text-sm font-bold mb-2">Purpose</label>
                         <input
                             type="text"
-                            name="purpose"
-                            value={formData.purpose}
+                            name="Purpose"
+                            value={formData.Purpose}
                             onChange={handleChange}
                             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                             placeholder="Enter purpose"
@@ -70,8 +83,8 @@ const Resources = () => {
                         <label className="block text-gray-700 text-sm font-bold mb-2">Purchase Date</label>
                         <input
                             type="date"
-                            name="purchaseDate"
-                            value={formData.purchaseDate}
+                            name="PurchaseDate"
+                            value={formData.PurchaseDate}
                             onChange={handleChange}
                             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                             required
@@ -81,8 +94,8 @@ const Resources = () => {
                         <label className="block text-gray-700 text-sm font-bold mb-2">Distribution Date</label>
                         <input
                             type="date"
-                            name="distributeDate"
-                            value={formData.distributeDate}
+                            name="DistributeDate"
+                            value={formData.DistributeDate}
                             onChange={handleChange}
                             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                             required
