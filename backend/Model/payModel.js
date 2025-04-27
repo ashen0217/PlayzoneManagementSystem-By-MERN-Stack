@@ -28,7 +28,7 @@ const paySchema = new Schema({
     },
     cnfStatus:{
         type:String,
-        required:true
+        required:trues
     }
 
 })
