@@ -2,17 +2,8 @@ import React from 'react';
 
 const Payments = () => {
   // Sample data - replace with actual data from your backend
-  const payments = [
-    {
-      id: 1,
-      user: 'John Doe',
-      amount: 150.00,
-      date: '2024-03-25',
-      status: 'Completed',
-      method: 'Credit Card'
-    },
-    // Add more sample data as needed
-  ];
+
+  
 
   return (
     <div className="p-6">
