@@ -2,7 +2,14 @@ import { useState } from "react";
 import Navbar from "./Navbar";
 
 export default function UploadForm() {
-  const [formData, setFormData] = useState({ bank: "", branch: "", category: "" });
+  const [formData, setFormData] = useState({ 
+    userName: "", 
+    bank: "", 
+    branch: "", 
+    package: "", 
+    amount: "",
+    cnfStatus: "pending" 
+  });
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [errors, setErrors] = useState({});
@@ -26,39 +33,67 @@ export default function UploadForm() {
 
   const validateForm = () => {
     let newErrors = {};
+    if (!formData.userName.trim()) {
+      newErrors.userName = "User name is required.";
+    }
     if (!formData.bank.trim()) {
-        alert("Please enter the Bank Name");
-        newErrors.bank = "Bank name is required.";
+      newErrors.bank = "Bank name is required.";
     }
     if (!formData.branch.trim()) {
-        alert("Please enter the Bank Branch");
-        newErrors.branch = "Branch name is required.";
+      newErrors.branch = "Branch name is required.";
     }
-    if (!formData.category) {
-        alert("Please select the Package");
-        newErrors.category = "Please select a package.";
+    if (!formData.package) {
+      newErrors.package = "Please select a package.";
+    }
+    if (!formData.amount || isNaN(formData.amount)) {
+      newErrors.amount = "Please enter a valid amount.";
     }
     if (!image) {
-        alert("Please upload the Bank slip image");
-        newErrors.image = "Bank slip is required.";
-    }
-    else {
-        alert("Form Submitted successfully");
+      newErrors.image = "Bank slip is required.";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
 
     const data = new FormData();
+    data.append("userName", formData.userName);
     data.append("bank", formData.bank);
     data.append("branch", formData.branch);
-    data.append("category", formData.category);
-    if (image) data.append("image", image);
-    console.log("Form submitted", formData, image);
+    data.append("package", formData.package);
+    data.append("amount", formData.amount);
+    data.append("cnfStatus", formData.cnfStatus);
+    if (image) data.append("slip", image);
+
+    try {
+      const response = await fetch('/api/payment', {
+        method: 'POST',
+        body: data
+      });
+
+      if (response.ok) {
+        alert("Payment details submitted successfully");
+        // Reset form
+        setFormData({
+          userName: "",
+          bank: "",
+          branch: "",
+          package: "",
+          amount: "",
+          cnfStatus: "pending"
+        });
+        setImage(null);
+        setPreview(null);
+      } else {
+        alert("Failed to submit payment details");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("Error submitting payment details");
+    }
   };
 
   return (
@@ -67,6 +102,18 @@ export default function UploadForm() {
       <div className="max-w-lg mx-auto mt-10 p-6 bg-white rounded-xl shadow-md">
         <h2 className="text-xl font-semibold mb-4">Upload Payment Details</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 text-left">User Name</label>
+            <input
+              type="text"
+              name="userName"
+              value={formData.userName}
+              onChange={handleChange}
+              className="mt-1 p-2 w-full border rounded-md"
+              required
+            />
+            {errors.userName && <p className="text-red-700 text-sm">{errors.userName}</p>}
+          </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 text-left">Bank</label>
             <input
@@ -94,8 +141,8 @@ export default function UploadForm() {
           <div>
             <label className="block text-sm font-medium text-gray-700">Package</label>
             <select
-              name="category"
-              value={formData.category}
+              name="package"
+              value={formData.package}
               onChange={handleChange}
               className="mt-1 p-2 w-full border rounded-md"
               required
@@ -106,7 +153,19 @@ export default function UploadForm() {
               <option value="SuperCombo pkg with 10 activities">SuperCombo pkg with 10 activities</option>
               <option value="Children packages under 18">Children packages under 18</option>
             </select>
-            {errors.category && <p className="text-red-500 text-sm">{errors.category}</p>}
+            {errors.package && <p className="text-red-500 text-sm">{errors.package}</p>}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Amount</label>
+            <input
+              type="number"
+              name="amount"
+              value={formData.amount}
+              onChange={handleChange}
+              className="mt-1 p-2 w-full border rounded-md"
+              required
+            />
+            {errors.amount && <p className="text-red-500 text-sm">{errors.amount}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Upload Bank Slip</label>
@@ -128,7 +187,6 @@ export default function UploadForm() {
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
-            onClick={validateForm}
           >
             Submit
           </button>

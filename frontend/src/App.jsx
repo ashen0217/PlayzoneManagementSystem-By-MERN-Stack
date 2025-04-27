@@ -2,7 +2,7 @@ import React from "react";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Payments from "./components/Payments";
+import Payments from "./components/PayForm";
 import Home from "./components/Home";
 import About from "./components/About";
 import Testimonials from "./components/Testimonials";
