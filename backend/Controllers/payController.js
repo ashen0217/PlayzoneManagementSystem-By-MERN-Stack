@@ -22,10 +22,10 @@ const getAllPayments = async (req, res, next) => {
 
 //data Insert
 const addPayment = async (req, res, next) => {
-    const {userName,accountNo,bank,branch,package,amount,slip,cnfStatus} = req.body;
+    const {userName,accountNo,bank,branch,package,amount,cnfStatus,slip} = req.body;
     let Payments;
     try{
-        Payments = new Payment({userName,accountNo,bank,branch,package,amount,slip,cnfStatus});
+        Payments = new Payment({userName,accountNo,bank,branch,package,amount,cnfStatus,slip});
         await Payments.save();
     }catch(err){
         console.log(err);
@@ -63,13 +63,13 @@ const getByID = async (req, res,next) => {
 //Update 
 const updatePayment = async (req, res, next) => {
     const id=req.params.id;
-    const {userName,accountNo,bank,branch,package,amount,slip,cnfStatus} = req.body;
+    const {userName,accountNo,bank,branch,package,amount,cnfStatus,slip} = req.body;
 
     let Payments;
 
     try{
         Payments = await Payment.findByIdAndUpdate(id ,
-        {userName:userName, accountNo:accountNo,bank:bank, branch:branch, package:package, amount:amount, slip:slip, cnfStatus:cnfStatus});
+        {userName:userName, accountNo:accountNo,bank:bank, branch:branch, package:package, amount:amount,cnfStatus:cnfStatus,slip:slip});
         Payments = await Payments.save();
     }catch(err){
         console.log(err);

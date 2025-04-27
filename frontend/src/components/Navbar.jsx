@@ -3,8 +3,8 @@ import {Link} from 'react-router-dom'
 
 const Navbar = () => {
   return (
-    <div className='absolute top-0 left-0 w-full z-10'>
-      <div className='container mx-auto flex justify-between items-center py-4 px-6 md:px-20 lg:px-32 bg-transparent'>
+    <div className="absolute top-0 left-0 w-full z-10">
+      <div>
         <ul className='hidden md:flex gap-7 bg-gray-800 text-white p-4 shadow-md'>
             <Link to="/activities" className='cursor-pointer hover:text-gray-400'>Activities</Link>
             <Link to="/addbook" className='cursor-pointer hover:text-gray-400'>ADD  Booking</Link>

@@ -11,7 +11,7 @@ const paySchema = new Schema({
         required:true
     },
     bank:{
-        type:Number,
+        type:String,
         required:true
     },
     branch:{
@@ -26,15 +26,14 @@ const paySchema = new Schema({
         type:Number,
         required:true
     },
-    slip:{
-        data:Buffer,  //binary data
-        contentType:String
-    },
     cnfStatus:{
         type:String,
         required:true
+    },
+    slip:{
+        data:Buffer,  //binary data
+        contentType:String
     }
-
 })
 
 module.exports = mongoose.model("payModel", paySchema);

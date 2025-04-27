@@ -9,7 +9,8 @@ export default function PayForm() {
     branch: "", 
     package: "", 
     amount: "",
-    cnfStatus: "pending" 
+    cnfStatus: "pending",
+    image: ""
   });
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -119,11 +120,11 @@ export default function PayForm() {
 
     const data = new FormData();
     data.append("userName", formData.userName);
-    data.append("bankAccNumber", formData.accountNo);
+    data.append("accountNo", Number(formData.accountNo));
     data.append("bank", formData.bankName);
     data.append("branch", formData.branch);
     data.append("package", formData.package);
-    data.append("amount", formData.amount);
+    data.append("amount", Number(formData.amount));
     data.append("cnfStatus", formData.cnfStatus);
     if (image) data.append("slip", image);
 
@@ -143,19 +144,27 @@ export default function PayForm() {
         // Reset form
         setFormData({
           userName: "",
+          accountNo: "",
           bankName: "",
           branch: "",
           package: "",
           amount: "",
-          cnfStatus: "pending"
+          cnfStatus: "pending",
+          image: ""
         });
         setImage(null);
         setPreview(null);
       } else {
-        const errorData = await response.json();
+        let errorMessage = 'Failed to submit payment details. Please try again.';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (e) {
+          // If response is not JSON, keep the default error message
+        }
         setAlertMessage({ 
           type: 'error', 
-          message: errorData.message || 'Failed to submit payment details. Please try again.' 
+          message: errorMessage
         });
       }
     } catch (error) {
@@ -169,7 +178,16 @@ export default function PayForm() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100" style={{ backgroundImage: "url('/bg7.jpg')" }} id="Payment">
+
       <Navbar/>
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+
       <div className="max-w-lg mx-auto mt-10 p-6 bg-white rounded-xl shadow-md">
         <h2 className="text-xl font-semibold mb-4">Upload Payment Details</h2>
         
@@ -191,7 +209,7 @@ export default function PayForm() {
             <input
               type="text"
               name="userName"
-              value={formData.userName}
+              value={formData.userName || ""}
               onChange={handleChange}
               className={`mt-1 p-2 w-full border rounded-md ${
                 errors.userName ? 'border-red-500' : 'border-gray-300'
@@ -207,7 +225,7 @@ export default function PayForm() {
             <input
               type="text"
               name="accountNo"
-              value={formData.accountNo}
+              value={formData.accountNo || 0}
               onChange={handleChange}
               className={`mt-1 p-2 w-full border rounded-md ${
                 errors.accountNo ? 'border-red-500' : 'border-gray-300'
@@ -218,19 +236,23 @@ export default function PayForm() {
             {errors.accountNo && <p className="text-red-700 text-sm mt-1">{errors.accountNo}</p>}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 text-left">Bank Name</label>
-            <input
-              type="text"
+            <label className="block text-sm font-medium text-gray-700">Bank</label>
+            <select
               name="bankName"
-              value={formData.bankName}
+              value={formData.bankName || ""}
               onChange={handleChange}
               className={`mt-1 p-2 w-full border rounded-md ${
                 errors.bankName ? 'border-red-500' : 'border-gray-300'
               }`}
-              placeholder="Enter your bank name"
               required
-            />
-            {errors.bankName && <p className="text-red-700 text-sm mt-1">{errors.bankName}</p>}
+            >
+              <option value="">Select a Bank</option>
+              <option value="Commercial">Commercial</option>
+              <option value="Sampath">Sampath</option>
+              <option value="HNB">HNB</option>
+              <option value="BOC">BOC</option>
+            </select>
+            {errors.bankName && <p className="text-red-500 text-sm mt-1">{errors.bankName}</p>}
           </div>
 
           <div>
@@ -238,7 +260,7 @@ export default function PayForm() {
             <input
               type="text"
               name="branch"
-              value={formData.branch}
+              value={formData.branch || ""}
               onChange={handleChange}
               className={`mt-1 p-2 w-full border rounded-md ${
                 errors.branch ? 'border-red-500' : 'border-gray-300'
@@ -253,7 +275,7 @@ export default function PayForm() {
             <label className="block text-sm font-medium text-gray-700">Package</label>
             <select
               name="package"
-              value={formData.package}
+              value={formData.package || ""}
               onChange={handleChange}
               className={`mt-1 p-2 w-full border rounded-md ${
                 errors.package ? 'border-red-500' : 'border-gray-300'
@@ -274,7 +296,7 @@ export default function PayForm() {
             <input
               type="number"
               name="amount"
-              value={formData.amount}
+              value={formData.amount || 0}
               onChange={handleChange}
               className={`mt-1 p-2 w-full border rounded-md ${
                 errors.amount ? 'border-red-500' : 'border-gray-300'
@@ -285,6 +307,31 @@ export default function PayForm() {
               required
             />
             {errors.amount && <p className="text-red-500 text-sm mt-1">{errors.amount}</p>}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Confirmation Status</label>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                <input
+                  type="radio"
+                  value="yes"
+                  name="cnfStatus"
+                  checked={formData.cnfStatus === 'yes'}
+                  onChange={handleChange}
+                />
+                Yes
+              </label>
+              <label className="block text-sm font-medium text-gray-700">
+                <input
+                  type="radio"
+                  value="no"
+                  name="cnfStatus"
+                  checked={formData.cnfStatus === 'no'}
+                  onChange={handleChange}
+                />
+                No
+              </label>
+            </div>
           </div>
 
           <div>
