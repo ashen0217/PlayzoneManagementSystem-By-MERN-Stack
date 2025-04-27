@@ -43,19 +43,21 @@ const addPayment = async (req, res, next) => {
 //get  by ID
 const getByID = async (req, res,next) => {
     const id=req.params.id;
-    let Resources;
+    let Payments;
 
     try{
-        Resources = await Resource.findById(id);
+        Payments = await Payment.findById(id);
     }catch(err){
         console.log(err);
     }
 
     //not found
-    if(!Resources){
-        return res.status(404).json({message:"Resource not found"});
+    if(!Payments){
+        return res.status(404).json({message:"Payment not found"});
     }
 
     //display the resources
-    return res.status(200).json({Resources});
+    return res.status(200).json({Payments});
 };
+
+
