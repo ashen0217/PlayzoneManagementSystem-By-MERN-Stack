@@ -19,3 +19,23 @@ const getAllResources = async (req, res, next) => {
     //display the resources
     return res.status(200).json({ message:"Payments display successful",Payments});
 };
+
+//data Insert
+const addPayment = async (req, res, next) => {
+    const {userName,bank,branch,package,amount,slip,cnfStatus} = req.body;
+    let Payments;
+    try{
+        Payments = new Payment({userName,bank,branch,package,amount,slip,cnfStatus});
+        await Payments.save();
+    }catch(err){
+        console.log(err);
+    }
+
+    //not insert data
+    if(!Payments){
+        return res.status(404).send({message:"Failed to add payment"});
+    }
+
+    //data insert successfully
+    return res.status(201).json({message:"Payment added successfully", Payments});
+};
