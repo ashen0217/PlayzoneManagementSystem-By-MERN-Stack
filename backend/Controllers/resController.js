@@ -59,7 +59,7 @@ const getByID = async (req, res,next) => {
     return res.status(200).json({Resources});
 };
 
-//Update resources
+//Update 
 const updateResource = async (req, res, next) => {
     const id=req.params.id;
     const {resource,resType,Purpose,PurchaseDate,DistributeDate} = req.body;

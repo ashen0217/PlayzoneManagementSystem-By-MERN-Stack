@@ -60,4 +60,48 @@ const getByID = async (req, res,next) => {
     return res.status(200).json({Payments});
 };
 
+//Update 
+const updateResource = async (req, res, next) => {
+    const id=req.params.id;
+    const {resource,resType,Purpose,PurchaseDate,DistributeDate} = req.body;
+
+    let Resources;
+
+    try{
+        Resources = await Resource.findByIdAndUpdate(id ,
+        {resource:resource, resType:resType, Purpose:Purpose, PurchaseDate:PurchaseDate, DistributeDate:DistributeDate});
+        Resources = await Resources.save();
+    }catch(err){
+        console.log(err);
+    }
+
+    //not found
+    if(!Resources){
+        return res.status(404).json({message:"Unable to update resource"});
+    }
+
+    //display the resources
+    return res.status(200).json({message:"Resource updated successfully", Resources});
+
+};
+
+//Delete resources
+const deleteResource = async (req, res, next) => {
+    const id=req.params.id;
+    let Resources;
+
+    try{
+        Resources = await Resource.findByIdAndDelete(id);
+    }catch(err){
+        console.log(err);cl
+    }
+
+    //not found
+    if(!Resources){
+        return res.status(404).json({message:"Unable to delete resource"});
+    }
+    //display the resources
+    return res.status(200).json({message:"Resource deleted successfully", Resources});
+ 
+};
 
