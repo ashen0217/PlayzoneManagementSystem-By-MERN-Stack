@@ -61,47 +61,53 @@ const getByID = async (req, res,next) => {
 };
 
 //Update 
-const updateResource = async (req, res, next) => {
+const updatePayment = async (req, res, next) => {
     const id=req.params.id;
-    const {resource,resType,Purpose,PurchaseDate,DistributeDate} = req.body;
+    const {userName,bank,branch,package,amount,slip,cnfStatus} = req.body;
 
-    let Resources;
+    let Payments;
 
     try{
-        Resources = await Resource.findByIdAndUpdate(id ,
-        {resource:resource, resType:resType, Purpose:Purpose, PurchaseDate:PurchaseDate, DistributeDate:DistributeDate});
-        Resources = await Resources.save();
+        Payments = await Payment.findByIdAndUpdate(id ,
+        {userName:userName, bank:bank, branch:branch, package:package, amount:amount, slip:slip, cnfStatus:cnfStatus});
+        Payments = await Payments.save();
     }catch(err){
         console.log(err);
     }
 
     //not found
-    if(!Resources){
-        return res.status(404).json({message:"Unable to update resource"});
+    if(!Payments){
+        return res.status(404).json({message:"Unable to update payment"});
     }
 
     //display the resources
-    return res.status(200).json({message:"Resource updated successfully", Resources});
+    return res.status(200).json({message:"Payment updated successfully", Payments});
 
 };
 
 //Delete resources
-const deleteResource = async (req, res, next) => {
+const deletePayment = async (req, res, next) => {
     const id=req.params.id;
-    let Resources;
+    let Payments;
 
     try{
-        Resources = await Resource.findByIdAndDelete(id);
+        Payments = await Payment.findByIdAndDelete(id);
     }catch(err){
         console.log(err);cl
     }
 
     //not found
-    if(!Resources){
-        return res.status(404).json({message:"Unable to delete resource"});
+    if(!Payments){
+        return res.status(404).json({message:"Unable to delete payment"});
     }
     //display the resources
-    return res.status(200).json({message:"Resource deleted successfully", Resources});
+    return res.status(200).json({message:"Payment deleted successfully", Payments});
  
 };
+
+exports.getAllPayments = getAllPayments;
+exports.addPayment = addPayment;
+exports.getByID = getByID;
+exports.updatePayment = updatePayment;
+exports.deletePayment = deletePayment;
 
