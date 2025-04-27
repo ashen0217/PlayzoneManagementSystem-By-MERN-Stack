@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const Payments = () => {
@@ -7,6 +8,7 @@ const Payments = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchPayments();
@@ -37,13 +39,20 @@ const Payments = () => {
   };
 
   const handleView = (id) => {
-    // Implement view functionality
-    console.log('Viewing payment:', id);
+    navigate(`/admin/payments/update/${id}`);
   };
 
-  const handleRefund = (id) => {
-    // Implement refund functionality
-    console.log('Refunding payment:', id);
+  const handleRefund = async (id) => {
+    if (window.confirm('Are you sure you want to delete this payment?')) {
+      try {
+        await axios.delete(`/api/payments/${id}`);
+        alert('Payment deleted successfully!');
+        fetchPayments(); // Refresh the list
+      } catch (err) {
+        setError('Failed to delete payment');
+        console.error(err);
+      }
+    }
   };
 
   return (
