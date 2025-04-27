@@ -39,3 +39,23 @@ const addPayment = async (req, res, next) => {
     //data insert successfully
     return res.status(201).json({message:"Payment added successfully", Payments});
 };
+
+//get  by ID
+const getByID = async (req, res,next) => {
+    const id=req.params.id;
+    let Resources;
+
+    try{
+        Resources = await Resource.findById(id);
+    }catch(err){
+        console.log(err);
+    }
+
+    //not found
+    if(!Resources){
+        return res.status(404).json({message:"Resource not found"});
+    }
+
+    //display the resources
+    return res.status(200).json({Resources});
+};
