@@ -16,7 +16,7 @@ const Payments = () => {
     try {
       setLoading(true);
       const response = await axios.get('/api/payments');
-      setPayments(response.data.Payments);
+      setPayments(response.data.Payments || []);
       setLoading(false);
     } catch (err) {
       setError('Failed to fetch payments data');
@@ -50,12 +50,20 @@ const Payments = () => {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Payment Management</h2>
-        <button 
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          onClick={handleExport}
-        >
-          Export Payments
-        </button>
+        <div className="flex space-x-4">
+          <button 
+            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            onClick={fetchPayments}
+          >
+            Refresh
+          </button>
+          <button 
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            onClick={handleExport}
+          >
+            Export Payments
+          </button>
+        </div>
       </div>
 
       {error && (
@@ -71,12 +79,12 @@ const Payments = () => {
               type="text"
               placeholder="Search payments..."
               className="px-4 py-2 border rounded-lg flex-1"
-              value={searchTerm}
+              value={searchTerm || ''}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <select 
               className="px-4 py-2 border rounded-lg"
-              value={statusFilter}
+              value={statusFilter || ''}
               onChange={(e) => setStatusFilter(e.target.value)}
             >
               <option value="">All Status</option>
@@ -126,7 +134,7 @@ const Payments = () => {
                       <div className="text-sm font-medium text-gray-900">{payment.userName}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{payment.bank}</div>
+                      <div className="text-sm text-gray-900">Bank #{payment.bank}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">{payment.branch}</div>

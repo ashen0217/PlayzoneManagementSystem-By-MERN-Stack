@@ -6,6 +6,10 @@ const paySchema = new Schema({
         type:String,
         required:true
     },
+    accountNo:{
+        type:Number,
+        required:true
+    },
     bank:{
         type:Number,
         required:true
