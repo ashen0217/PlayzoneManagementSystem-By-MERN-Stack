@@ -2,7 +2,7 @@ const Payment = require("../Model/payModel.js");
 
 
 //data display
-const getAllResources = async (req, res, next) => {
+const getAllPayments = async (req, res, next) => {
     let Payments;
 
     try{
