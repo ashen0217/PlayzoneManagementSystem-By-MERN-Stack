@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 
 const Events = () => {
   const [events, setEvents] = useState([]);
@@ -255,7 +255,7 @@ const Events = () => {
     ]);
     
     // Add the table to the PDF
-    doc.autoTable({
+    autoTable(doc, {
       head: [['Venue', 'Date', 'Time', 'Participants', 'Description']],
       body: tableData,
       startY: 30,
