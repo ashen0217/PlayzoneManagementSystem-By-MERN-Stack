@@ -9,6 +9,7 @@ const Events = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingId, setEditingId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const [notification, setNotification] = useState({ show: false, message: '', type: '' });
   const [formData, setFormData] = useState({
     eventID: '',
@@ -269,6 +270,22 @@ const Events = () => {
     doc.save('events-report.pdf');
   };
 
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  // Filter events based on search term
+  const filteredEvents = events.filter(event => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      event.Venue.toLowerCase().includes(searchLower) ||
+      event.description.toLowerCase().includes(searchLower) ||
+      event.Time.toLowerCase().includes(searchLower) ||
+      event.Participants.toString().includes(searchLower) ||
+      new Date(event.Date).toLocaleDateString().includes(searchLower)
+    );
+  });
+
   if (loading) {
     return (
       <div className="p-6">
@@ -445,6 +462,8 @@ const Events = () => {
               type="text"
               placeholder="Search events..."
               className="px-4 py-2 border rounded-lg flex-1"
+              value={searchTerm}
+              onChange={handleSearch}
             />
             <select className="px-4 py-2 border rounded-lg">
               <option value="">All Venues</option>
@@ -479,7 +498,7 @@ const Events = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {events.map((event) => (
+            {filteredEvents.map((event) => (
               <tr key={event._id}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900">{event.Venue}</div>
