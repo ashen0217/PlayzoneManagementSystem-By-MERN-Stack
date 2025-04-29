@@ -28,11 +28,31 @@ const getAllBookings = async (req, res) => {
 
 // POST create new booking
 const addBooking = async (req, res) => {
+  console.log("=== ADD BOOKING CONTROLLER CALLED ===");
+  console.log("Request body:", req.body);
+  
   try {
     const { username, email, packageType, date, timeSlot, message } = req.body;
     
+    console.log("Extracted booking data:", {
+      username,
+      email,
+      packageType,
+      date,
+      timeSlot,
+      message
+    });
+    
     // Validate required fields
     if (!username || !email || !packageType || !date || !timeSlot) {
+      console.log("Missing required fields:", {
+        username: !username,
+        email: !email,
+        packageType: !packageType,
+        date: !date,
+        timeSlot: !timeSlot
+      });
+      
       return res.status(400).json({ 
         success: false,
         message: "Missing required fields", 
@@ -56,8 +76,11 @@ const addBooking = async (req, res) => {
       message: message || 'Pending' // Default to 'Pending' if not provided
     });
     
+    console.log("Created booking object:", newBooking);
+    
     // Save the booking to the database
     const savedBooking = await newBooking.save();
+    console.log("Saved booking:", savedBooking);
     
     return res.status(201).json({ 
       success: true,
@@ -66,6 +89,7 @@ const addBooking = async (req, res) => {
     });
   } catch (err) {
     console.error("Error adding booking:", err);
+    console.error("Error stack:", err.stack);
     
     // Check for specific error types
     if (err.name === 'ValidationError') {
@@ -101,20 +125,51 @@ const getByID = async (req, res) => {
 // PUT update booking by ID
 const updateBooking = async (req, res) => {
   const id = req.params.id;
-  const {username, email, packageType, date, timeSlot, message } = req.body;
+  const { username, email, packageType, date, timeSlot, message } = req.body;
 
   try {
+    // Validate required fields
+    if (!username || !email || !packageType || !date || !timeSlot) {
+      return res.status(400).json({ 
+        success: false,
+        message: "Missing required fields"
+      });
+    }
+
+    // Validate message enum
+    if (message && !['Pending', 'Confirmed', 'Cancelled'].includes(message)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid status value. Must be 'Pending', 'Confirmed', or 'Cancelled'"
+      });
+    }
+
+    // Find and update the booking
     const updatedBooking = await Booking.findByIdAndUpdate(
       id,
-      {username, email, packageType, date, timeSlot, message },
-      { new: true }
+      { username, email, packageType, date, timeSlot, message },
+      { new: true, runValidators: true }
     );
 
-    if (!updatedBooking) return res.status(404).json({ message: "Booking not found" });
-    return res.status(200).json({ message: "Booking updated", updatedBooking });
+    if (!updatedBooking) {
+      return res.status(404).json({ 
+        success: false,
+        message: "Booking not found" 
+      });
+    }
+
+    return res.status(200).json({ 
+      success: true,
+      message: "Booking updated successfully", 
+      booking: updatedBooking 
+    });
   } catch (err) {
     console.error("Error updating booking:", err);
-    return res.status(500).json({ message: "Failed to update booking", error: err.message });
+    return res.status(500).json({ 
+      success: false,
+      message: "Failed to update booking", 
+      error: err.message 
+    });
   }
 };
 

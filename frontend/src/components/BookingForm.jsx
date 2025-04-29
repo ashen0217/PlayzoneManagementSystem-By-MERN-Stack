@@ -10,7 +10,7 @@ const BookingForm = () => {
   const [packageType, setPackageType] = useState("Basic");
   const [date, setDate] = useState(null);
   const [timeSlot, setTimeSlot] = useState("");
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState("Pending");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
@@ -40,11 +40,15 @@ const BookingForm = () => {
         packageType,
         date: formattedDate,
         timeSlot,
-        message: message || "Pending" // Default to "Pending" if not provided
+        message
       };
+      
+      console.log("Submitting booking data:", bookingData);
       
       // Send booking data to backend API
       const response = await axios.post("/api/bookings", bookingData);
+      
+      console.log("Booking submission response:", response.data);
       
       // Show success message
       setSuccess(true);
@@ -55,7 +59,7 @@ const BookingForm = () => {
       setPackageType("Basic");
       setDate(null);
       setTimeSlot("");
-      setMessage("");
+      setMessage("Pending");
       
       // Hide success message after 5 seconds
       setTimeout(() => {
@@ -64,6 +68,14 @@ const BookingForm = () => {
       
     } catch (err) {
       console.error("Error submitting booking:", err);
+      console.error("Error details:", {
+        message: err.message,
+        response: err.response ? {
+          status: err.response.status,
+          data: err.response.data
+        } : "No response data",
+        request: err.request ? "Request was made but no response received" : "No request was made"
+      });
       
       // Handle different types of errors
       if (err.response) {
@@ -164,13 +176,16 @@ const BookingForm = () => {
           ))}
         </select>
 
-        <label className="block mb-2 text-gray-700 font-medium">Additional Message (Optional)</label>
-        <textarea
+        <label className="block mb-2 text-gray-700 font-medium">Booking Status</label>
+        <select
           className="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          placeholder="Any additional information..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-        />
+        >
+          <option value="Pending">Pending</option>
+          <option value="Confirmed">Confirmed</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
 
         <button
           type="submit"

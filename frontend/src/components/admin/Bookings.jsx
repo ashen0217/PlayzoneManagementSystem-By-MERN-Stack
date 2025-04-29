@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Bookings = () => {
   // State to store bookings data
@@ -8,6 +9,7 @@ const Bookings = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const navigate = useNavigate();
 
   // Fetch bookings data when component mounts
   useEffect(() => {
@@ -74,6 +76,11 @@ const Bookings = () => {
         alert('Failed to delete booking. Please try again.');
       }
     }
+  };
+
+  // Handle booking update
+  const handleUpdateBooking = (id) => {
+    navigate(`/admin/bookings/update/${id}`);
   };
 
   return (
@@ -183,17 +190,26 @@ const Bookings = () => {
                         >
                           Confirm
                         </button>
+                        <br />
                         <button 
                           className="text-yellow-600 hover:text-yellow-900"
                           onClick={() => handleStatusUpdate(booking._id, 'Pending')}
                         >
                           Pending
                         </button>
+                        <br />
                         <button 
                           className="text-red-600 hover:text-red-900"
                           onClick={() => handleStatusUpdate(booking._id, 'Cancelled')}
                         >
                           Cancel
+                        </button>
+                        <br />
+                        <button 
+                          className="text-blue-600 hover:text-blue-900"
+                          onClick={() => handleUpdateBooking(booking._id)}
+                        >
+                          Update
                         </button>
                         <button 
                           className="text-red-600 hover:text-red-900"

@@ -27,6 +27,9 @@ app.use("/Events",require("./Routes/eventRoute"));
 app.use("/Payments",require("./Routes/payRoute"));
 app.use("/Bookings",require("./Routes/booking"));
 
+// Add API routes with lowercase for frontend compatibility
+app.use("/api/bookings", require("./Routes/booking"));
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);

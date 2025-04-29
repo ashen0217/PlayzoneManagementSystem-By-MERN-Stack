@@ -23,8 +23,10 @@ import Events from "./components/admin/Events";
 import EventUpdate from "./components/admin/EventUpdate";
 import Services from "./components/Services";
 import PayUpdate from "./components/admin/PayUpdate";
-import Packaages from "./components/Packages"
 import Packages from "./components/Packages";
+import BookingUpdate from './components/admin/BookingUpdate';
+import Bookings from "./components/admin/Bookings";
+import MngBookings from "./components/MngBookings";
 
 
 const App = () => {
@@ -52,6 +54,8 @@ const App = () => {
             <Route path="/admin/payments/update/:id" element={<PayUpdate/>}/>
             <Route path="/packages"  element={<Packages/>}/>
             <Route path="/activities" element={<Services/>}/>
+            <Route path="/admin/bookings/update/:id" element={<BookingUpdate />} />
+            <Route path="admin/bookings" element={<Bookings/>}/>
 
             <Route path="*" element={<NotFound />} />
           </Routes>
