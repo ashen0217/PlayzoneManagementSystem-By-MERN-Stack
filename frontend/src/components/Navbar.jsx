@@ -11,6 +11,7 @@ const Navbar = () => {
             <Link to="/user-profile" className='cursor-pointer hover:text-gray-400'>Your Profile</Link>
             <Link to="/complains" className='cursor-pointer hover:text-gray-400'>Complains</Link>
             <Link to="/contact" className='cursor-pointer hover:text-gray-400'>Contact Me via</Link>
+            <Link to="/manage-bookings/:id" className='cursor-pointer hover:text-gray-400'>Booking Details</Link>
         </ul>
         <br /><br/>
       </div>

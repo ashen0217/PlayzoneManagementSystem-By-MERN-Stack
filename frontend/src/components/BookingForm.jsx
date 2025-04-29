@@ -3,8 +3,10 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Navbar from "./Navbar";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const BookingForm = () => {
+  const navigate = useNavigate();
   const [username, setName] = useState("");
   const [email, setEmail] = useState("");
   const [packageType, setPackageType] = useState("Basic");
@@ -53,18 +55,10 @@ const BookingForm = () => {
       // Show success message
       setSuccess(true);
       
-      // Reset form
-      setName("");
-      setEmail("");
-      setPackageType("Basic");
-      setDate(null);
-      setTimeSlot("");
-      setMessage("Pending");
-      
-      // Hide success message after 5 seconds
-      setTimeout(() => {
-        setSuccess(false);
-      }, 5000);
+      // Navigate to the booking management page with the new booking ID
+      if (response.data && response.data.booking && response.data.booking._id) {
+        navigate(`/manage-bookings/${response.data.booking._id}`);
+      }
       
     } catch (err) {
       console.error("Error submitting booking:", err);
@@ -100,6 +94,7 @@ const BookingForm = () => {
       style={{ backgroundImage: "url('/bg8.jpg')", backgroundSize: "cover", backgroundPosition: "center" }}
     >
       <Navbar />
+
       <form
         onSubmit={handleSubmit}
         className="bg-white/90 backdrop-blur-sm p-8 rounded-lg shadow-xl w-full max-w-md mx-4"

@@ -26,7 +26,7 @@ import PayUpdate from "./components/admin/PayUpdate";
 import Packages from "./components/Packages";
 import BookingUpdate from './components/admin/BookingUpdate';
 import Bookings from "./components/admin/Bookings";
-import MngBookings from "./components/MngBookings";
+import MngBookings from "./components/MngBooking";
 
 
 const App = () => {
@@ -56,6 +56,8 @@ const App = () => {
             <Route path="/activities" element={<Services/>}/>
             <Route path="/admin/bookings/update/:id" element={<BookingUpdate />} />
             <Route path="admin/bookings" element={<Bookings/>}/>
+            <Route path="/manage-bookings" element={<MngBookings/>}/>
+            <Route path="/manage-bookings/:id" element={<MngBookings/>}/>
 
             <Route path="*" element={<NotFound />} />
           </Routes>
