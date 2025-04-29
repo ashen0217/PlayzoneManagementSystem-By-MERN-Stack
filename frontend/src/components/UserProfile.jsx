@@ -68,6 +68,7 @@ const UserProfile = () => {
      
       <div className="bg-white p-10 rounded-2xl shadow-2xl w-full max-w-md">
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
+          <br />
           Customer Profile
         </h1>
 

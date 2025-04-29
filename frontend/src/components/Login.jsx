@@ -64,8 +64,11 @@ export default function LoginForm() {
         formData.email === adminCredentials.email &&
         formData.password === adminCredentials.password
       ) {
+        alert("Login successful! Welcome, Admin.");
         navigate("/admin-dashboard");
       } else {
+        // Show success message for regular users
+        alert("Login successful! Welcome, " + matchedUser.name);
         // Navigate to user profile with full details
         navigate("/user-profile", { state: { user: matchedUser } });
       }

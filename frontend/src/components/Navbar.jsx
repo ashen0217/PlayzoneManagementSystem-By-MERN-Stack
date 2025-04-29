@@ -8,12 +8,11 @@ const Navbar = () => {
         <ul className='hidden md:flex gap-7 bg-gray-800 text-white p-4 shadow-md'>
             <Link to="/activities" className='cursor-pointer hover:text-gray-400'>Activities</Link>
             <Link to="/addbook" className='cursor-pointer hover:text-gray-400'>ADD  Booking</Link>
-            <Link to="/complains" className='cursor-pointer hover:text-gray-400'>Complains</Link>
             <Link to="/payments" className='cursor-pointer hover:text-gray-400'>Payment</Link>
             <Link to="/user-profile" className='cursor-pointer hover:text-gray-400'>Your Profile</Link>
             <Link to="/testimonials" className='cursor-pointer hover:text-gray-400'>Customer Feedbacks</Link>
             <Link to="/complains" className='cursor-pointer hover:text-gray-400'>Complains</Link>
-            <Link to="/contact" className='cursor-pointer hover:text-gray-400'>What's On your Mind</Link>
+            <Link to="/contact" className='cursor-pointer hover:text-gray-400'>Contact Me via</Link>
         </ul>
         <br /><br/>
       </div>

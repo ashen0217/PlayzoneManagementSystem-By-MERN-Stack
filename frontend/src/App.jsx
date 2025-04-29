@@ -21,6 +21,7 @@ import ResourceRetrieve from "./components/admin/ResourceRetrieve";
 import UpdateResource from "./components/admin/updateResource";
 import Events from "./components/admin/Events";
 import EventUpdate from "./components/admin/EventUpdate";
+import Services from "./components/Services";
 import PayUpdate from "./components/admin/PayUpdate";
 
 
@@ -47,6 +48,8 @@ const App = () => {
             <Route path="/admin/events" element={<Events/>}/>
             <Route path="/admin/events/edit/:id" element={<EventUpdate/>}/>
             <Route path="/admin/payments/update/:id" element={<PayUpdate/>}/>
+            <Route path="/activities" element={<Services/>}/>
+
             <Route path="*" element={<NotFound />} />
           </Routes>
           <Footer/>
