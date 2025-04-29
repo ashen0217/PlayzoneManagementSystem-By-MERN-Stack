@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Navbar from "./Navbar";
+import axios from "axios";
 
 const BookingForm = () => {
   const [username, setName] = useState("");
@@ -10,24 +11,74 @@ const BookingForm = () => {
   const [date, setDate] = useState(null);
   const [timeSlot, setTimeSlot] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(null);
 
   const timeSlots = ["10:00 AM", "12:00 PM", "2:00 PM", "4:00 PM"];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate required fields
     if (!username || !email || !date || !timeSlot) {
-      alert("Please fill in all required fields.");
+      setError("Please fill in all required fields.");
       return;
     }
-    alert(
-      `Booking Confirmed!\nName: ${username}\nEmail: ${email}\nPackage: ${packageType}\nDate: ${date.toDateString()}\nTime: ${timeSlot}`
-    );
-    setName("");
-    setEmail("");
-    setPackageType("Basic");
-    setDate(null);
-    setTimeSlot("");
-    setMessage("");
+    
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // Format date to ISO string for API
+      const formattedDate = date.toISOString();
+      
+      // Prepare booking data
+      const bookingData = {
+        username,
+        email,
+        packageType,
+        date: formattedDate,
+        timeSlot,
+        message: message || "Pending" // Default to "Pending" if not provided
+      };
+      
+      // Send booking data to backend API
+      const response = await axios.post("/api/bookings", bookingData);
+      
+      // Show success message
+      setSuccess(true);
+      
+      // Reset form
+      setName("");
+      setEmail("");
+      setPackageType("Basic");
+      setDate(null);
+      setTimeSlot("");
+      setMessage("");
+      
+      // Hide success message after 5 seconds
+      setTimeout(() => {
+        setSuccess(false);
+      }, 5000);
+      
+    } catch (err) {
+      console.error("Error submitting booking:", err);
+      
+      // Handle different types of errors
+      if (err.response) {
+        // Server responded with an error
+        setError(err.response.data.message || "Failed to submit booking. Please try again.");
+      } else if (err.request) {
+        // Request was made but no response received
+        setError("No response from server. Please check your connection and try again.");
+      } else {
+        // Something else happened
+        setError("An unexpected error occurred. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -43,6 +94,18 @@ const BookingForm = () => {
       >
         <br /><br />
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Book a Package</h2>
+
+        {success && (
+          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+            Booking submitted successfully!
+          </div>
+        )}
+
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {error}
+          </div>
+        )}
 
         <label className="block mb-2 text-gray-700 font-medium">Full Name:</label>
         <input
@@ -101,10 +164,10 @@ const BookingForm = () => {
           ))}
         </select>
 
-        <label className="block mb-2 text-gray-700 font-medium">Please type confirm</label>
+        <label className="block mb-2 text-gray-700 font-medium">Additional Message (Optional)</label>
         <textarea
           className="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          placeholder="Optional message..."
+          placeholder="Any additional information..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
@@ -112,8 +175,9 @@ const BookingForm = () => {
         <button
           type="submit"
           className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors duration-200 font-medium"
+          disabled={loading}
         >
-          Confirm Booking
+          {loading ? "Submitting..." : "Confirm Booking"}
         </button>
       </form>
     </div>

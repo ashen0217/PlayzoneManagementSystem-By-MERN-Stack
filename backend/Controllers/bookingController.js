@@ -28,58 +28,24 @@ const getAllBookings = async (req, res) => {
 
 // POST create new booking
 const addBooking = async (req, res) => {
-  console.log("=== ADD BOOKING CONTROLLER CALLED ===");
-  console.log("Request body:", req.body);
-  console.log("Request headers:", req.headers);
-  
-  // Check if request body is empty
-  if (!req.body || Object.keys(req.body).length === 0) {
-    console.log("Empty request body");
-    return res.status(400).json({ 
-      message: "Request body is empty" 
-    });
-  }
-  
-  const { username, email, packageType, date, timeSlot, message } = req.body;
-  
-  // Log each field for debugging
-  console.log("Extracted fields:", { 
-    username: username, 
-    email: email, 
-    packageType: packageType, 
-    date: date, 
-    timeSlot: timeSlot, 
-    message: message 
-  });
-  
-  // Validate required fields
-  if (!username || !email || !packageType || !date || !timeSlot || !message) {
-    console.log("Missing required fields:", { username, email, packageType, date, timeSlot, message });
-    return res.status(400).json({ 
-      message: "Missing required fields", 
-      missingFields: {
-        username: !username,
-        email: !email,
-        packageType: !packageType,
-        date: !date,
-        timeSlot: !timeSlot,
-        message: !message
-      }
-    });
-  }
-
   try {
-    console.log("Creating new booking with data:", { username, email, packageType, date, timeSlot, message });
+    const { username, email, packageType, date, timeSlot, message } = req.body;
     
-    // Parse Participants as a number
-    const participantsNumber = Number(Participants);
-    if (isNaN(participantsNumber)) {
+    // Validate required fields
+    if (!username || !email || !packageType || !date || !timeSlot) {
       return res.status(400).json({ 
-        message: "Participants must be a number", 
-        receivedParticipants: Participants
+        success: false,
+        message: "Missing required fields", 
+        missingFields: {
+          username: !username,
+          email: !email,
+          packageType: !packageType,
+          date: !date,
+          timeSlot: !timeSlot
+        }
       });
     }
-    
+
     // Create a new booking with the provided data
     const newBooking = new Booking({
       username,
@@ -87,32 +53,33 @@ const addBooking = async (req, res) => {
       packageType,
       date,
       timeSlot,
-      message,
+      message: message || 'Pending' // Default to 'Pending' if not provided
     });
-
-    console.log("Booking object created:", newBooking);
     
     // Save the booking to the database
     const savedBooking = await newBooking.save();
-    console.log("Booking saved successfully:", savedBooking);
     
-    return res.status(201).json({ message: "Booking added", newBooking: savedBooking });
+    return res.status(201).json({ 
+      success: true,
+      message: "Booking added successfully", 
+      booking: savedBooking 
+    });
   } catch (err) {
     console.error("Error adding booking:", err);
-    console.error("Error stack:", err.stack);
     
     // Check for specific error types
     if (err.name === 'ValidationError') {
       return res.status(400).json({ 
+        success: false,
         message: "Validation error", 
         errors: Object.values(err.errors).map(e => e.message)
       });
     }
     
     return res.status(500).json({ 
+      success: false,
       message: "Failed to add booking", 
-      error: err.message,
-      errorType: err.name
+      error: err.message
     });
   }
 };
