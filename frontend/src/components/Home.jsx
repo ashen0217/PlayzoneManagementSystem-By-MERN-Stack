@@ -11,8 +11,8 @@ const Home = () => {
       <Navbar2/>
       
 
-      <div className="container text-center mx-auto py-10 px-8 md:px-20 lg:px-32 text-black bg-amber-400 bg-auto">
-        <h2 className="text-center sm:text-6xl md:text-[82px] inline-block max-w-3xl font-semibold pt-20">
+      <div className="container text-center mx-auto py-25 px-10 md:px-25 lg:px-40 text-black bg-amber-400 bg-auto">
+        <h2 className="text-center sm:text-20xl md:text-[100px] inline-block max-w-8xl font-semibold pt-20">
           Let's make your day filled with lots of pleasure
         </h2>
         <div className="space-x-6 mt-16">
