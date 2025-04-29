@@ -2,18 +2,7 @@ import React from 'react';
 
 const Bookings = () => {
   // Sample data - replace with actual data from your backend
-  const bookings = [
-    {
-      id: 1,
-      user: 'John Doe',
-      date: '2024-03-25',
-      time: '14:00',
-      duration: '2 hours',
-      status: 'Confirmed',
-      amount: 150.00
-    },
-    // Add more sample data as needed
-  ];
+  
 
   return (
     <div className="p-6">

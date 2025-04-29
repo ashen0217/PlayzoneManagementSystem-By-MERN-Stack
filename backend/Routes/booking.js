@@ -6,7 +6,9 @@ const {
   updateBooking,
   deleteBooking,
   generateReport,
-} = require('../controllers/bookingController');
+} = require('../Controllers/bookingController');
+
+const bookingModel = require("../Model/Booking");
 
 router.post('/', createBooking);
 router.get('/', getBookings);

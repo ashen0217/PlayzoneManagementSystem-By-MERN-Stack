@@ -25,6 +25,7 @@ app.use("/Users",require("./Routes/userRoute"));
 app.use("/Resources",require("./Routes/resRoute"));
 app.use("/Events",require("./Routes/eventRoute"));
 app.use("/Payments",require("./Routes/payRoute"));
+app.use("/Bookings",require("./Routes/booking"));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
