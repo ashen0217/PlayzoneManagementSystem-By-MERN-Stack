@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const Events = () => {
   const [events, setEvents] = useState([]);
@@ -231,6 +233,42 @@ const Events = () => {
     }
   };
 
+  const exportEvents = () => {
+    // Create a new PDF document
+    const doc = new jsPDF();
+    
+    // Add title to the PDF
+    doc.setFontSize(18);
+    doc.text('Events Report', 14, 15);
+    
+    // Add date of export
+    doc.setFontSize(10);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 22);
+    
+    // Prepare data for the table
+    const tableData = events.map(event => [
+      event.Venue,
+      new Date(event.Date).toLocaleDateString(),
+      event.Time,
+      event.Participants,
+      event.description
+    ]);
+    
+    // Add the table to the PDF
+    doc.autoTable({
+      head: [['Venue', 'Date', 'Time', 'Participants', 'Description']],
+      body: tableData,
+      startY: 30,
+      styles: { fontSize: 8, cellPadding: 2 },
+      headStyles: { fillColor: [41, 128, 185], textColor: 255, fontSize: 9, fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [245, 245, 245] },
+      margin: { top: 30 }
+    });
+    
+    // Save the PDF
+    doc.save('events-report.pdf');
+  };
+
   if (loading) {
     return (
       <div className="p-6">
@@ -278,22 +316,30 @@ const Events = () => {
 
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Event Management</h2>
-        <button 
-          onClick={() => {
-            setEditingId(null);
-            setFormData({
-              eventID: '',
-              Date: '',
-              Venue: '',
-              Time: '',
-              Participants: '',
-              description: '',
-            });
-          }}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          New Event
-        </button>
+        <div className="flex space-x-2">
+          <button 
+            onClick={exportEvents}
+            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+          >
+            Export Events
+          </button>
+          <button 
+            onClick={() => {
+              setEditingId(null);
+              setFormData({
+                eventID: '',
+                Date: '',
+                Venue: '',
+                Time: '',
+                Participants: '',
+                description: '',
+              });
+            }}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            New Event
+          </button>
+        </div>
       </div>
 
       {/* Event Form */}
