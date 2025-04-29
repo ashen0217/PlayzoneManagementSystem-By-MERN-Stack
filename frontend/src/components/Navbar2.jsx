@@ -23,7 +23,7 @@ const Navbar2 = () => {
             </li>
             <li>
             <Link to="/packages" className="cursor-pointer hover:text-gray-400 text-white">
-                Our Services
+                Packages
             </Link>
             </li>
             <li>
