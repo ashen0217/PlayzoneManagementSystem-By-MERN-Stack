@@ -3,14 +3,26 @@ const Booking = require('../Model/Booking');
 // GET all bookings
 const getAllBookings = async (req, res) => {
   try {
-    const bookings = await Booking.find();
+    // Retrieve all bookings and sort by date (newest first)
+    const bookings = await Booking.find().sort({ date: -1 });
+    
     if (!bookings.length) {
       return res.status(404).json({ message: "No bookings found" });
     }
-    return res.status(200).json({ message: "Bookings fetched", bookings });
+    
+    return res.status(200).json({ 
+      success: true,
+      count: bookings.length,
+      message: "Bookings fetched successfully", 
+      bookings 
+    });
   } catch (err) {
     console.error("Error fetching bookings:", err);
-    return res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ 
+      success: false,
+      message: "Server error while fetching bookings", 
+      error: err.message 
+    });
   }
 };
 
@@ -157,10 +169,13 @@ const deleteBooking = async (req, res) => {
   }
 };
 
+
+
 module.exports = {
   getAllBookings,
   addBooking,
   getByID,
   updateBooking,
   deleteBooking,
+
 };

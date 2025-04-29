@@ -1,19 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const {
-  createBooking,
-  getBookings,
+  addBooking,
+  getAllBookings,
   updateBooking,
   deleteBooking,
-  generateReport,
+  getByID
 } = require('../Controllers/bookingController');
 
 const bookingModel = require("../Model/Booking");
 
-router.post('/', createBooking);
-router.get('/', getBookings);
+router.post('/', addBooking);
+router.get('/', getAllBookings);
+router.get('/:id', getByID);
 router.put('/:id', updateBooking);
 router.delete('/:id', deleteBooking);
-router.get('/report', generateReport);
+
 
 module.exports = router;
