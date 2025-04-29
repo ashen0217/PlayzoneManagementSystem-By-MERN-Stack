@@ -24,12 +24,28 @@ const Footer = () => {
     setIsSubmitting(true);
     
     try {
-      // Here you would typically send the email to your backend
-      // For now, we'll simulate a successful subscription
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast.success('Thank you for subscribing to our newsletter!');
-      setEmail('');
+      // Create form data with the email and access key
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("access_key", "ee2a13d2-c198-4c6f-95b6-826790c23996");
+      formData.append("subject", "Newsletter Subscription");
+      formData.append("message", "New newsletter subscription request");
+
+      // Send the data to web3forms API
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast.success('Thank you for subscribing to our newsletter!');
+        setEmail('');
+      } else {
+        toast.error('Failed to subscribe. Please try again later.');
+        console.error('Subscription error:', data);
+      }
     } catch (error) {
       toast.error('Failed to subscribe. Please try again later.');
       console.error('Subscription error:', error);
