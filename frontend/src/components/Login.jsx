@@ -55,7 +55,7 @@ export default function LoginForm() {
       );
   
       if (!matchedUser) {
-        alert("Invalid email or password.");
+        alert("Login Error: Invalid email or password. Please try again.");
         return;
       }
   
@@ -74,7 +74,17 @@ export default function LoginForm() {
       }
     } catch (error) {
       console.error("Login error:", error);
-      alert("Something went wrong during login.");
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        alert("Login Error: Server error. Status: " + error.response.status);
+      } else if (error.request) {
+        // The request was made but no response was received
+        alert("Login Error: No response from server. Please check your connection.");
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        alert("Login Error: " + error.message);
+      }
     }
   };
   
