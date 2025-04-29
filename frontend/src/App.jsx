@@ -16,7 +16,7 @@ import AdminDashboard from "./components/admin/AdminDashboard";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {BrowserRouter as Router, Routes, Route } from "react-router-dom";   
 import UpdateUser from "./components/UpdateUser";
-import Bookings from "./components/admin/Bookings";
+import BookingForm from "./components/BookingForm";
 import ResourceRetrieve from "./components/admin/ResourceRetrieve";
 import UpdateResource from "./components/admin/updateResource";
 import Events from "./components/admin/Events";
@@ -41,7 +41,7 @@ const App = () => {
             <Route path="/contact" element={<Contact />} />
             <Route path="/testimonials" element={<Testimonials />} />
             <Route path="/user-profile" element={<UserProfile />} />
-            <Route path="/addbook" element={<Bookings/>}/>
+            <Route path="/addbook" element={<BookingForm/>}/>
             <Route path="/admin/resources" element={<ResourceRetrieve/>}/>
             <Route path="/admin/resources/edit/:id" element={<UpdateResource/>}/>
             <Route path="/payments" element={<Payments/>} />

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import Navbar2 from "./Navbar2";
+import Navbar from "./Navbar";
 
 const BookingForm = () => {
   const [name, setName] = useState("");
@@ -26,7 +26,7 @@ const BookingForm = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100" id="Booking" style={{ backgroundImage: "url('/bg8.jpg')" }}>
-       <Navbar2/>
+       <Navbar/>
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Book a Package</h2>
         
