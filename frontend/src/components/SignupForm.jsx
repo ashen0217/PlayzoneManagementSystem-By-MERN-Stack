@@ -75,8 +75,11 @@ export default function SignupForm() {
       style={{ backgroundImage: "url('/bg4.jpg')" }}
     >
       <Navbar2 />
+
       <div className="bg-white p-8 rounded-2xl shadow-lg w-96 py-10">
+        <br /><br /><br />
         <h2 className="text-2xl font-semibold text-center mb-6">Sign Up</h2>
+        <br /><br />
         <form onSubmit={handleSubmit} className="space-y-4">
           {Object.keys(formData).map((key) => (
             <div key={key}>

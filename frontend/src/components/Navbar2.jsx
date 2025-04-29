@@ -22,16 +22,16 @@ const Navbar2 = () => {
             </Link>
             </li>
             <li>
-            <Link to="/services" className="cursor-pointer hover:text-gray-400 text-white">
+            <Link to="/packages" className="cursor-pointer hover:text-gray-400 text-white">
                 Our Services
             </Link>
             </li>
             <li>
             <Link 
-                to="/UserProfile" 
+                to="/activities" 
                 className='cursor-pointer hover:text-gray-400 text-white'
             >
-                UserRetrieve
+                Activities
             </Link>
             </li>
             <li>
