@@ -1,48 +1,158 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Navbar from "./Navbar";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const BookingForm = () => {
   const navigate = useNavigate();
-  const [username, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [packageType, setPackageType] = useState("Basic");
-  const [date, setDate] = useState(null);
-  const [timeSlot, setTimeSlot] = useState("");
-  const [message, setMessage] = useState("Pending");
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    packageType: "Basic",
+    date: null,
+    timeSlot: "",
+    message: "Pending"
+  });
+  
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [error, setError] = useState(null);
 
   const timeSlots = ["10:00 AM", "12:00 PM", "2:00 PM", "4:00 PM"];
+
+  // Validate form on input change
+  const validateField = (name, value) => {
+    let error = "";
+    
+    switch (name) {
+      case "username":
+        if (!value.trim()) {
+          error = "Name is required";
+        } else if (value.trim().length < 3) {
+          error = "Name must be at least 3 characters";
+        } else if (!/^[a-zA-Z\s]*$/.test(value.trim())) {
+          error = "Name can only contain letters and spaces";
+        }
+        break;
+        
+      case "email":
+        if (!value.trim()) {
+          error = "Email is required";
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          error = "Please enter a valid email address";
+        }
+        break;
+        
+      case "packageType":
+        if (!value) {
+          error = "Package type is required";
+        }
+        break;
+        
+      case "date":
+        if (!value) {
+          error = "Date is required";
+        } else {
+          const selectedDate = new Date(value);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          
+          if (selectedDate < today) {
+            error = "Date cannot be in the past";
+          }
+        }
+        break;
+        
+      case "timeSlot":
+        if (!value) {
+          error = "Time slot is required";
+        }
+        break;
+        
+      default:
+        break;
+    }
+    
+    return error;
+  };
+
+  // Handle input change
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+    
+    // Validate the field
+    const error = validateField(name, value);
+    setErrors({
+      ...errors,
+      [name]: error
+    });
+  };
+
+  // Handle date change
+  const handleDateChange = (date) => {
+    setFormData({
+      ...formData,
+      date: date
+    });
+    
+    // Validate the date
+    const error = validateField("date", date);
+    setErrors({
+      ...errors,
+      date: error
+    });
+  };
+
+  // Validate entire form
+  const validateForm = () => {
+    const newErrors = {};
+    let isValid = true;
+    
+    // Validate all fields
+    Object.keys(formData).forEach(key => {
+      const error = validateField(key, formData[key]);
+      if (error) {
+        newErrors[key] = error;
+        isValid = false;
+      }
+    });
+    
+    setErrors(newErrors);
+    return isValid;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate required fields
-    if (!username || !email || !date || !timeSlot) {
-      setError("Please fill in all required fields.");
+    // Validate the form
+    if (!validateForm()) {
+      toast.error("Please fix the errors in the form");
       return;
     }
     
     try {
       setLoading(true);
-      setError(null);
       
       // Format date to ISO string for API
-      const formattedDate = date.toISOString();
+      const formattedDate = formData.date.toISOString();
       
       // Prepare booking data
       const bookingData = {
-        username,
-        email,
-        packageType,
+        username: formData.username,
+        email: formData.email,
+        packageType: formData.packageType,
         date: formattedDate,
-        timeSlot,
-        message
+        timeSlot: formData.timeSlot,
+        message: formData.message
       };
       
       console.log("Submitting booking data:", bookingData);
@@ -54,33 +164,28 @@ const BookingForm = () => {
       
       // Show success message
       setSuccess(true);
+      toast.success("Booking submitted successfully!");
       
       // Navigate to the booking management page with the new booking ID
       if (response.data && response.data.booking && response.data.booking._id) {
-        navigate(`/manage-bookings/${response.data.booking._id}`);
+        setTimeout(() => {
+          navigate(`/manage-bookings/${response.data.booking._id}`);
+        }, 1500);
       }
       
     } catch (err) {
       console.error("Error submitting booking:", err);
-      console.error("Error details:", {
-        message: err.message,
-        response: err.response ? {
-          status: err.response.status,
-          data: err.response.data
-        } : "No response data",
-        request: err.request ? "Request was made but no response received" : "No request was made"
-      });
       
       // Handle different types of errors
       if (err.response) {
         // Server responded with an error
-        setError(err.response.data.message || "Failed to submit booking. Please try again.");
+        toast.error(err.response.data.message || "Failed to submit booking. Please try again.");
       } else if (err.request) {
         // Request was made but no response received
-        setError("No response from server. Please check your connection and try again.");
+        toast.error("No response from server. Please check your connection and try again.");
       } else {
         // Something else happened
-        setError("An unexpected error occurred. Please try again.");
+        toast.error("An unexpected error occurred. Please try again.");
       }
     } finally {
       setLoading(false);
@@ -104,83 +209,108 @@ const BookingForm = () => {
 
         {success && (
           <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-            Booking submitted successfully!
+            Booking submitted successfully! Redirecting to booking details...
           </div>
         )}
 
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
-          </div>
-        )}
+        <div className="mb-4">
+          <label className="block mb-2 text-gray-700 font-medium">Full Name:</label>
+          <input
+            type="text"
+            name="username"
+            className={`w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+              errors.username ? "border-red-500" : ""
+            }`}
+            placeholder="Enter your name"
+            value={formData.username}
+            onChange={handleChange}
+            required
+          />
+          {errors.username && <p className="text-red-500 text-sm mt-1">{errors.username}</p>}
+        </div>
 
-        <label className="block mb-2 text-gray-700 font-medium">Full Name:</label>
-        <input
-          type="text"
-          className="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          placeholder="Enter your name"
-          value={username}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
+        <div className="mb-4">
+          <label className="block mb-2 text-gray-700 font-medium">Email Address:</label>
+          <input
+            type="email"
+            name="email"
+            className={`w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+              errors.email ? "border-red-500" : ""
+            }`}
+            placeholder="Enter your email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+          {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+        </div>
 
-        <label className="block mb-2 text-gray-700 font-medium">Email Address:</label>
-        <input
-          type="email"
-          className="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+        <div className="mb-4">
+          <label className="block mb-2 text-gray-700 font-medium">Select Package:</label>
+          <select
+            name="packageType"
+            className={`w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+              errors.packageType ? "border-red-500" : ""
+            }`}
+            value={formData.packageType}
+            onChange={handleChange}
+          >
+            <option value="Basic">Basic</option>
+            <option value="Standard">Standard</option>
+            <option value="Premium">Premium</option>
+          </select>
+          {errors.packageType && <p className="text-red-500 text-sm mt-1">{errors.packageType}</p>}
+        </div>
 
-        <label className="block mb-2 text-gray-700 font-medium">Select Package:</label>
-        <select
-          className="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          value={packageType}
-          onChange={(e) => setPackageType(e.target.value)}
-        >
-          <option value="Basic">Basic</option>
-          <option value="Standard">Standard</option>
-          <option value="Premium">Premium</option>
-        </select>
+        <div className="mb-4">
+          <label className="block mb-2 text-gray-700 font-medium">Select Date:</label>
+          <DatePicker
+            selected={formData.date}
+            onChange={handleDateChange}
+            minDate={new Date()}
+            className={`w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+              errors.date ? "border-red-500" : ""
+            }`}
+            placeholderText="Select a date"
+            required
+          />
+          {errors.date && <p className="text-red-500 text-sm mt-1">{errors.date}</p>}
+        </div>
 
-        <label className="block mb-2 text-gray-700 font-medium">Select Date:</label>
-        <DatePicker
-          selected={date}
-          onChange={(date) => setDate(date)}
-          minDate={new Date()}
-          className="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          placeholderText="Select a date"
-          required
-        />
-        <br />
+        <div className="mb-4">
+          <label className="block mb-2 text-gray-700 font-medium">Time Slot</label>
+          <select
+            name="timeSlot"
+            className={`w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+              errors.timeSlot ? "border-red-500" : ""
+            }`}
+            value={formData.timeSlot}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select Time Slot</option>
+            {timeSlots.map((slot) => (
+              <option key={slot} value={slot}>
+                {slot}
+              </option>
+            ))}
+          </select>
+          {errors.timeSlot && <p className="text-red-500 text-sm mt-1">{errors.timeSlot}</p>}
+        </div>
 
-        <label className="block mb-2 text-gray-700 font-medium">Time Slot</label>
-        <select
-          className="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          value={timeSlot}
-          onChange={(e) => setTimeSlot(e.target.value)}
-          required
-        >
-          <option value="">Select Time Slot</option>
-          {timeSlots.map((slot) => (
-            <option key={slot} value={slot}>
-              {slot}
-            </option>
-          ))}
-        </select>
-
-        <label className="block mb-2 text-gray-700 font-medium">Booking Status</label>
-        <select
-          className="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-        >
-          <option value="Pending">Pending</option>
-          <option value="Confirmed">Confirmed</option>
-          <option value="Cancelled">Cancelled</option>
-        </select>
+        <div className="mb-4">
+          <label className="block mb-2 text-gray-700 font-medium">Booking Status</label>
+          <select
+            name="message"
+            className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            value={formData.message}
+            onChange={handleChange}
+          >
+            <option value="Pending">Pending</option>
+            <option value="Confirmed">Confirmed</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+        </div>
 
         <button
           type="submit"
