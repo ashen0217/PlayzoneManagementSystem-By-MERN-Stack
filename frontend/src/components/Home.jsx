@@ -114,10 +114,10 @@ const Home = () => {
               className="absolute inset-0 z-0"
               animate={{
                 background: [
-                  "linear-gradient(45deg,rgb(5, 183, 233) 60%,rgb(69, 161, 54) 30%, #4ECDC4 10%)",
-                  "linear-gradient(135deg,rgb(5, 183, 233) 60%, rgb(69, 161, 54), #4ECDC4 10%)",
-                  "linear-gradient(225deg,rgb(5, 183, 233), rgb(69, 161, 54), #4ECDC4 10%)",
-                  "linear-gradient(315deg, rgb(5, 183, 233), rgb(69, 161, 54), #4ECDC4 10%)",
+                  "linear-gradient(45deg,rgb(5, 183, 233) 60%,rgb(255, 255, 255) 30%, #4ECDC4 10%)",
+                  "linear-gradient(135deg,rgb(5, 183, 233) 60%, rgb(255, 255, 255), #4ECDC4 10%)",
+                  "linear-gradient(225deg,rgb(5, 183, 233), rgb(255, 255, 255), #4ECDC4 10%)",
+                  "linear-gradient(315deg, rgb(5, 183, 233), rgb(255, 255, 255), #4ECDC4 10%)",
                 ],
               }}
               transition={{
