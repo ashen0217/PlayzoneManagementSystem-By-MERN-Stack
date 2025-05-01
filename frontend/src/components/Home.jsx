@@ -158,7 +158,7 @@ const Home = () => {
                   repeat: Infinity,
                   ease: "easeInOut"
                 }}
-                className="w-16 h-16 bg-amber-400 rounded-full shadow-lg"
+                className="w-16 h-16 bg-amber-100 rounded-full shadow-lg"
               />
               <motion.div
                 animate={{ 
@@ -170,7 +170,7 @@ const Home = () => {
                   repeat: Infinity,
                   ease: "easeInOut"
                 }}
-                className="w-16 h-16 bg-white rounded-full shadow-lg"
+                className="w-16 h-16 bg-amber-100 rounded-full shadow-lg"
               />
               <motion.div
                 animate={{ 
@@ -182,7 +182,31 @@ const Home = () => {
                   repeat: Infinity,
                   ease: "easeInOut"
                 }}
-                className="w-16 h-16 bg-amber-400 rounded-full shadow-lg"
+                className="w-16 h-16 bg-amber-100 rounded-full shadow-lg"
+              />
+              <motion.div
+                animate={{ 
+                  y: [0, -20, 0],
+                  scale: [1, 1.1, 1]
+                }}
+                transition={{ 
+                  duration: 3, 
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+                className="w-16 h-16 bg-amber-100 rounded-full shadow-lg"
+              />
+              <motion.div
+                animate={{ 
+                  y: [0, -20, 0],
+                  scale: [1, 1.1, 1]
+                }}
+                transition={{ 
+                  duration: 3, 
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+                className="w-16 h-16 bg-amber-100 rounded-full shadow-lg"
               />
             </div>
           </motion.div>
