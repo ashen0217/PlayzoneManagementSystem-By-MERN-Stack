@@ -85,12 +85,14 @@ const Home = () => {
           <Link
             to="/contact"
             className="bg-amber-400 hover:bg-amber-500 text-white px-8 py-3 rounded-lg transition-all duration-300 transform hover:scale-105"
+            style={{ textDecoration: 'none' }}
           >
             Contact-us
           </Link>
           <Link 
             to="/about" 
             className="bg-white hover:bg-gray-100 text-amber-600 px-8 py-3 rounded-lg transition-all duration-300 transform hover:scale-105"
+            style={{ textDecoration: 'none' }}
           >
             About-us
           </Link>

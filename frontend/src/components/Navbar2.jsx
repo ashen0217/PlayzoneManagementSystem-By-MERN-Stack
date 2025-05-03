@@ -7,22 +7,22 @@ const Navbar2 = () => {
       <div >
         <ul className='hidden md:flex gap-7 bg-gray-800 text-white p-4 shadow-md'>
             <li>
-            <Link to="/" className="cursor-pointer hover:text-gray-400 text-white">
+            <Link to="/" className="cursor-pointer hover:text-gray-400 text-white" style={{ textDecoration: 'none' }}>
                 Home
             </Link>
             </li>
             <li>
-            <Link to="/about" className="cursor-pointer hover:text-gray-400 text-white">
+            <Link to="/about" className="cursor-pointer hover:text-gray-400 text-white" style={{ textDecoration: 'none' }}>
                 About
             </Link>
             </li>
             <li>
-            <Link to="/testimonials" className="cursor-pointer hover:text-gray-400 text-white">
+            <Link to="/testimonials" className="cursor-pointer hover:text-gray-400 text-white" style={{ textDecoration: 'none' }}>
                 Customer Feedbacks
             </Link>
             </li>
             <li>
-            <Link to="/packages" className="cursor-pointer hover:text-gray-400 text-white">
+            <Link to="/packages" className="cursor-pointer hover:text-gray-400 text-white" style={{ textDecoration: 'none' }}>
                 Packages
             </Link>
             </li>
@@ -30,6 +30,7 @@ const Navbar2 = () => {
             <Link 
                 to="/activities" 
                 className='cursor-pointer hover:text-gray-400 text-white'
+                style={{ textDecoration: 'none' }}
             >
                 Activities
             </Link>
@@ -38,6 +39,7 @@ const Navbar2 = () => {
             <Link
                 to="/login"
                 className="hidden md:block bg-white px-8 py-2 rounded-full cursor-pointer text-gray-950"
+                style={{ textDecoration: 'none' }}
             >
                 Login
             </Link>
@@ -47,6 +49,7 @@ const Navbar2 = () => {
             <Link
                 to="/signup"
                 className="hidden md:block bg-white px-8 py-2 rounded-full cursor-pointer  text-gray-950"
+                style={{ textDecoration: 'none' }}
             >
                 Signup
             </Link>
