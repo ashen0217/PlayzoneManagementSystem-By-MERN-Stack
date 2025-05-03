@@ -40,7 +40,7 @@ const addUser = async (req, res, next) => {
     return res.status(201).json({message:"User added successfully", Users});
 };
 
-//get  by ID
+//get by ID
 const getByID = async (req, res,next) => {
     const id=req.params.id;
     let Users;
@@ -58,6 +58,27 @@ const getByID = async (req, res,next) => {
 
     //display the user
     return res.status(200).json({message:"User found" , Users});
+};
+
+//get by email
+const getByEmail = async (req, res, next) => {
+    const email = req.params.email;
+    let Users;
+
+    try {
+        Users = await User.findOne({ email: email });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Server error" });
+    }
+
+    //not found
+    if (!Users) {
+        return res.status(404).json({ message: "User not found" });
+    }
+
+    //display the user
+    return res.status(200).json({ message: "User found", Users });
 };
 
 //Update resources
@@ -105,11 +126,10 @@ const deleteUser = async (req, res, next) => {
  
 };
 
-
-
 exports.getAllUsers = getAllUsers;
 exports.addUser = addUser;
 exports.getByID = getByID;
+exports.getByEmail = getByEmail;
 exports.updateUser = updateUser;
 exports.deleteUser = deleteUser;
 

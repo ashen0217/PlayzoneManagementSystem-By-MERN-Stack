@@ -27,6 +27,7 @@ import Packages from "./components/Packages";
 import BookingUpdate from './components/admin/BookingUpdate';
 import Bookings from "./components/admin/Bookings";
 import MngBookings from "./components/MngBooking";
+import ForgotPassword from "./components/ForgotPassword";
 
 
 const App = () => {
@@ -40,6 +41,7 @@ const App = () => {
             <Route path="/about" element={<About />} />
             <Route path="/signup" element={<SignupForm />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/testimonials" element={<Testimonials />} />
             <Route path="/user-profile" element={<UserProfile />} />

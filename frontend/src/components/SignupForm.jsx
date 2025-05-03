@@ -30,9 +30,7 @@ export default function SignupForm() {
       newErrors.email = "Invalid email format.";
     }
     if (!formData.age.trim()) {
-      newErrors.age = "Age is required.";
-    } else if (!/^\d+$/.test(formData.age)) {
-      newErrors.age = "Age must be a number.";
+      newErrors.age = "Age range is required.";
     }
     if (!formData.gender.trim()) {
       newErrors.gender = "Gender is required.";
@@ -98,13 +96,25 @@ export default function SignupForm() {
                   <option value="female">Female</option>
                   <option value="other">Other</option>
                 </select>
+              ) : key === "age" ? (
+                <select
+                  name={key}
+                  value={formData[key]}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                >
+                  <option value="">Select age range</option>
+                  <option value="1-12">Child (1-12 years)</option>
+                  <option value="13-19">Teenager (13-19 years)</option>
+                  <option value="20-29">Young Adult (20-29 years)</option>
+                  <option value="30-49">Adult (30-49 years)</option>
+                  <option value="50+">Senior (50+ years)</option>
+                </select>
               ) : (
                 <input
                   type={
                     key === "password"
                       ? "password"
-                      : key === "age"
-                      ? "number"
                       : key === "phone"
                       ? "tel"
                       : "text"

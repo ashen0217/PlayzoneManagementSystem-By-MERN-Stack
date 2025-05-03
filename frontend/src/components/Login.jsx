@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Navbar2 from "./Navbar2";
 
 const url = "http://localhost:8000/Users";
@@ -113,6 +113,15 @@ export default function LoginForm() {
               {errors[key] && <p className="text-red-500 text-sm">{errors[key]}</p>}
             </div>
           ))}
+          <div className="text-right">
+            <Link 
+              to="/forgot-password" 
+              className="text-blue-500 hover:text-blue-700 text-sm"
+              style={{ textDecoration: 'none' }}
+            >
+              Forgot Password?
+            </Link>
+          </div>
           <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition">
             Log in
           </button>
