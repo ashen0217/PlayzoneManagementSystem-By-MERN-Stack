@@ -13,12 +13,14 @@ export default function ForgotPassword() {
   const [showResetForm, setShowResetForm] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [userId, setUserId] = useState(null);
 
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.get(`${url}/email/${email}`);
       if (response.data) {
+        setUserId(response.data._id); // Store the user ID
         setSuccess("Email verified. Please set your new password.");
         setShowResetForm(true);
         setError("");
@@ -36,13 +38,15 @@ export default function ForgotPassword() {
       return;
     }
 
+    if (!userId) {
+      setError("User ID not found. Please try the process again.");
+      return;
+    }
+
     try {
-      const response = await axios.get(`${url}/email/${email}`);
-      const user = response.data;
-      
       // Update the password
-      const updatedUser = { ...user, password: newPassword };
-      await axios.put(`${url}/${user._id}`, updatedUser);
+      const updatedUser = { password: newPassword };
+      await axios.put(`${url}/${userId}`, updatedUser);
       
       setSuccess("Password updated successfully!");
       setTimeout(() => {
@@ -50,6 +54,7 @@ export default function ForgotPassword() {
       }, 2000);
     } catch (error) {
       setError("Error updating password. Please try again.");
+      console.error("Password reset error:", error);
     }
   };
 

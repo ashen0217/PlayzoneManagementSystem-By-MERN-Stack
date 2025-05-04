@@ -33,29 +33,30 @@ const FAQ = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-        
+    <div className="min-h-screen bg-orange-50 py-12 px-4 sm:px-6 lg:px-8">
+        <br /><br />
+
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h1>
-          <p className="text-lg text-gray-600">Find answers to common questions about our services and facilities</p>
+          <h1 className="text-4xl font-bold text-orange-900 mb-4">Frequently Asked Questions</h1>
+          <p className="text-lg text-orange-800">Find answers to common questions about our services and facilities</p>
         </div>
         
         <div className="space-y-4">
           {faqs.map((faq, index) => (
-            <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
+            <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
               <div className="p-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{faq.question}</h3>
-                <p className="text-gray-600">{faq.answer}</p>
+                <h3 className="text-xl font-semibold text-orange-900 mb-2">{faq.question}</h3>
+                <p className="text-orange-800">{faq.answer}</p>
               </div>
             </div>
           ))}
         </div>
 
         <div className="mt-12 text-center">
-          <p className="text-gray-600">
+          <p className="text-orange-800">
             Can't find what you're looking for?{' '}
-            <a href="/contact" className="text-blue-600 hover:text-blue-800 font-medium">
+            <a href="/contact" className="text-orange-600 hover:text-orange-700 font-medium">
               Contact us
             </a>
           </p>
