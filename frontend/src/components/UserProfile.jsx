@@ -14,6 +14,8 @@ const UserProfile = () => {
   const { id } = useParams();
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedUser, setEditedUser] = useState(null);
 
   useEffect(() => {
     const fetchHandler = async () => {
@@ -22,12 +24,14 @@ const UserProfile = () => {
           const response = await axios.get(`${URL}/${id}`);
           if (response.data && response.data.Users) {
             setUser(response.data.Users);
+            setEditedUser(response.data.Users);
             setPreviewImage(response.data.Users.image || "profile_img_1.png");
           }
         } else if (!user) {
           const response = await axios.get(URL);
           if (response.data && response.data.Users && response.data.Users.length > 0) {
             setUser(response.data.Users[0]);
+            setEditedUser(response.data.Users[0]);
             setPreviewImage(response.data.Users[0].image || "profile_img_1.png");
           }
         }
@@ -89,6 +93,39 @@ const UserProfile = () => {
       console.error("Error uploading image:", error);
       alert("Error updating profile picture. Please try again.");
     }
+  };
+
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setEditedUser(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleUpdate = async () => {
+    if (window.confirm("Are you sure you want to update your profile?")) {
+      try {
+        const response = await axios.put(`${URL}/${user._id}`, editedUser);
+        if (response.data && response.data.Users) {
+          setUser(response.data.Users);
+          setIsEditing(false);
+          alert("Profile updated successfully!");
+        }
+      } catch (error) {
+        console.error("Error updating user:", error);
+        alert("Error updating profile. Please try again.");
+      }
+    }
+  };
+
+  const handleCancel = () => {
+    setEditedUser(user);
+    setIsEditing(false);
   };
 
   if (!user)
@@ -177,89 +214,118 @@ const UserProfile = () => {
               <div className="space-y-6">
                 {/* Name */}
                 <div className="group">
-                  <label className="block text-white/90 font-medium mb-2 group-hover:text-white transition-colors duration-300">
+                  <label className="block text-black font-medium mb-2 group-hover:text-black transition-colors duration-300">
                     Name
                   </label>
                   <input
-                    className="w-full px-6 py-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    className="w-full px-6 py-3 bg-white/20 border border-white/30 rounded-xl text-black placeholder-black/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                     type="text"
-                    value={name}
-                    readOnly
+                    name="name"
+                    value={isEditing ? editedUser?.name : name}
+                    onChange={handleChange}
+                    disabled={!isEditing}
                   />
                 </div>
 
                 {/* Email */}
                 <div className="group">
-                  <label className="block text-white/90 font-medium mb-2 group-hover:text-white transition-colors duration-300">
+                  <label className="block text-black font-medium mb-2 group-hover:text-black transition-colors duration-300">
                     Email
                   </label>
                   <input
-                    className="w-full px-6 py-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    className="w-full px-6 py-3 bg-white/20 border border-white/30 rounded-xl text-black placeholder-black/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                     type="email"
-                    value={email}
-                    readOnly
+                    name="email"
+                    value={isEditing ? editedUser?.email : email}
+                    onChange={handleChange}
+                    disabled={!isEditing}
                   />
                 </div>
 
                 {/* Age */}
                 <div className="group">
-                  <label className="block text-white/90 font-medium mb-2 group-hover:text-white transition-colors duration-300">
+                  <label className="block text-black font-medium mb-2 group-hover:text-black transition-colors duration-300">
                     Age
                   </label>
                   <input
-                    className="w-full px-6 py-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    className="w-full px-6 py-3 bg-white/20 border border-white/30 rounded-xl text-black placeholder-black/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                     type="number"
-                    value={age}
-                    readOnly
+                    name="age"
+                    value={isEditing ? editedUser?.age : age}
+                    onChange={handleChange}
+                    disabled={!isEditing}
                   />
                 </div>
 
                 {/* Gender */}
                 <div className="group">
-                  <label className="block text-white/90 font-medium mb-2 group-hover:text-white transition-colors duration-300">
+                  <label className="block text-black font-medium mb-2 group-hover:text-black transition-colors duration-300">
                     Gender
                   </label>
                   <input
-                    className="w-full px-6 py-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    className="w-full px-6 py-3 bg-white/20 border border-white/30 rounded-xl text-black placeholder-black/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                     type="text"
-                    value={gender}
-                    readOnly
+                    name="gender"
+                    value={isEditing ? editedUser?.gender : gender}
+                    onChange={handleChange}
+                    disabled={!isEditing}
                   />
                 </div>
 
                 {/* Phone */}
                 <div className="group">
-                  <label className="block text-white/90 font-medium mb-2 group-hover:text-white transition-colors duration-300">
+                  <label className="block text-black font-medium mb-2 group-hover:text-black transition-colors duration-300">
                     Phone
                   </label>
                   <input
-                    className="w-full px-6 py-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    className="w-full px-6 py-3 bg-white/20 border border-white/30 rounded-xl text-black placeholder-black/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                     type="text"
-                    value={phone}
-                    readOnly
+                    name="phone"
+                    value={isEditing ? editedUser?.phone : phone}
+                    onChange={handleChange}
+                    disabled={!isEditing}
                   />
                 </div>
 
                 {/* Password */}
                 <div className="group">
-                  <label className="block text-white/90 font-medium mb-2 group-hover:text-white transition-colors duration-300">
+                  <label className="block text-black font-medium mb-2 group-hover:text-black transition-colors duration-300">
                     Password
                   </label>
                   <input
-                    className="w-full px-6 py-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    className="w-full px-6 py-3 bg-white/20 border border-white/30 rounded-xl text-black placeholder-black/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                     type="password"
-                    value={password}
-                    readOnly
+                    name="password"
+                    value={isEditing ? editedUser?.password : password}
+                    onChange={handleChange}
+                    disabled={!isEditing}
                   />
                 </div>
 
                 <div className="flex gap-6 pt-4">
-                  <Link
-                    to={`/user-profile/${_id}`}
-                    className="flex-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 rounded-xl hover:from-blue-600 hover:to-purple-600 transform hover:scale-105 transition-all duration-300 font-semibold shadow-lg text-center"
-                  >
-                    Update
-                  </Link>
+                  {!isEditing ? (
+                    <button
+                      onClick={handleEdit}
+                      className="flex-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 rounded-xl hover:from-blue-600 hover:to-purple-600 transform hover:scale-105 transition-all duration-300 font-semibold shadow-lg text-center"
+                    >
+                      Edit Profile
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        onClick={handleUpdate}
+                        className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 rounded-xl hover:from-green-600 hover:to-emerald-600 transform hover:scale-105 transition-all duration-300 font-semibold shadow-lg"
+                      >
+                        Save Changes
+                      </button>
+                      <button
+                        onClick={handleCancel}
+                        className="flex-1 bg-gradient-to-r from-red-500 to-pink-500 text-white py-3 rounded-xl hover:from-red-600 hover:to-pink-600 transform hover:scale-105 transition-all duration-300 font-semibold shadow-lg"
+                      >
+                        Cancel
+                      </button>
+                    </>
+                  )}
                   <button
                     onClick={handleDelete}
                     className="flex-1 bg-gradient-to-r from-red-500 to-pink-500 text-white py-3 rounded-xl hover:from-red-600 hover:to-pink-600 transform hover:scale-105 transition-all duration-300 font-semibold shadow-lg"
