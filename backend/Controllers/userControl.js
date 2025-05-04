@@ -83,27 +83,33 @@ const getByEmail = async (req, res, next) => {
 
 //Update resources
 const updateUser = async (req, res, next) => {
-    const id=req.params.id;
-    const {name,email,age,gender,phone,password} = req.body;
+    const id = req.params.id;
+    const { name, email, age, gender, phone, password } = req.body;
 
-    let Users;
+    try {
+        // Find the user first
+        let user = await User.findById(id);
+        
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
 
-    try{
-        Users = await User.findByIdAndUpdate(id ,
-        {name:name, email:email,age:age,gender:gender, phone:phone,password:password});
-        Users = await User.save();
-    }catch(err){
-        console.log(err);
+        // Update only the provided fields
+        if (name) user.name = name;
+        if (email) user.email = email;
+        if (age) user.age = age;
+        if (gender) user.gender = gender;
+        if (phone) user.phone = phone;
+        if (password) user.password = password;
+
+        // Save the updated user
+        await user.save();
+
+        return res.status(200).json({ message: "User updated successfully", user });
+    } catch (err) {
+        console.error("Update error:", err);
+        return res.status(500).json({ message: "Error updating user", error: err.message });
     }
-
-    //not found
-    if(!Users){
-        return res.status(404).json({message:"Unable to update User"});
-    }
-
-    //display the resources
-    return res.status(200).json({message:"User updated successfully", Users});
-
 };
 
 //Delete resources

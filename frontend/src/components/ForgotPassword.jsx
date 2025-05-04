@@ -13,19 +13,24 @@ export default function ForgotPassword() {
   const [showResetForm, setShowResetForm] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [userId, setUserId] = useState(null);
+  const [userData, setUserData] = useState(null);
 
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setSuccess("");
+    
     try {
       const response = await axios.get(`${url}/email/${email}`);
-      if (response.data) {
-        setUserId(response.data._id); // Store the user ID
+      if (response.data && response.data.Users) {
+        setUserData(response.data.Users);
         setSuccess("Email verified. Please set your new password.");
         setShowResetForm(true);
-        setError("");
+      } else {
+        setError("Email not found. Please check your email address.");
       }
     } catch (error) {
+      console.error("Email verification error:", error);
       setError("Email not found. Please check your email address.");
       setSuccess("");
     }
@@ -33,28 +38,34 @@ export default function ForgotPassword() {
 
   const handlePasswordReset = async (e) => {
     e.preventDefault();
+    setError("");
+    
     if (newPassword !== confirmPassword) {
       setError("Passwords do not match");
       return;
     }
 
-    if (!userId) {
-      setError("User ID not found. Please try the process again.");
+    if (!userData || !userData._id) {
+      setError("User information not found. Please try the process again.");
       return;
     }
 
     try {
-      // Update the password
-      const updatedUser = { password: newPassword };
-      await axios.put(`${url}/${userId}`, updatedUser);
+      const response = await axios.put(`${url}/${userData._id}`, {
+        password: newPassword
+      });
       
-      setSuccess("Password updated successfully!");
-      setTimeout(() => {
-        navigate("/login");
-      }, 2000);
+      if (response.status === 200) {
+        setSuccess("Password updated successfully!");
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
+      } else {
+        setError("Failed to update password. Please try again.");
+      }
     } catch (error) {
-      setError("Error updating password. Please try again.");
       console.error("Password reset error:", error);
+      setError(error.response?.data?.message || "Error updating password. Please try again.");
     }
   };
 
@@ -81,6 +92,7 @@ export default function ForgotPassword() {
               />
             </div>
             {error && <p className="text-red-500 text-sm">{error}</p>}
+            {success && <p className="text-green-500 text-sm">{success}</p>}
             <button
               type="submit"
               className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
@@ -99,6 +111,7 @@ export default function ForgotPassword() {
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 placeholder="Enter new password"
                 required
+                minLength="6"
               />
             </div>
             <div>
@@ -110,6 +123,7 @@ export default function ForgotPassword() {
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 placeholder="Confirm new password"
                 required
+                minLength="6"
               />
             </div>
             {error && <p className="text-red-500 text-sm">{error}</p>}
