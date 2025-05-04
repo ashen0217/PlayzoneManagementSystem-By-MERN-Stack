@@ -6,13 +6,15 @@ const URL = "http://localhost:8000/Users";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
 
   useEffect(() => {
     const fetchHandler = async () => {
       try {
         const response = await axios.get(URL);
         console.log("API response:", response.data);
-        setUsers(response.data.Users);  // ✅ corrected key
+        setUsers(response.data.Users);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -29,7 +31,6 @@ const Users = () => {
         console.log('Delete response:', response);
         
         if (response.status === 200 || response.status === 204) {
-          // Update the users list by filtering out the deleted user
           setUsers(users.filter(user => user.id !== userId));
           alert('User deleted successfully');
         } else {
@@ -47,13 +48,77 @@ const Users = () => {
     }
   };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const exportToCSV = () => {
+    // Prepare CSV content
+    const headers = ['Name', 'Email', 'Phone', 'Age', 'Gender', 'Join Date', 'Last Login', 'Status'];
+    const csvContent = [
+      headers.join(','),
+      ...filteredUsers.map(user => [
+        `"${user.name}"`,
+        `"${user.email}"`,
+        `"${user.phone}"`,
+        `"${user.age}"`,
+        `"${user.gender}"`,
+        `"${formatDate(user.joinDate)}"`,
+        `"${formatDate(user.lastLogin)}"`,
+        `"${user.status}"`
+      ].join(','))
+    ].join('\n');
+
+    // Create and download the file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `users_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const filteredUsers = users.filter(user => {
+    const matchesSearch = 
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = 
+      !statusFilter || 
+      user.status.toLowerCase() === statusFilter.toLowerCase();
+
+    return matchesSearch && matchesStatus;
+  });
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">User Management</h2>
-        <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-          Add New User
-        </button>
+        <div className="flex space-x-4">
+          <button 
+            onClick={exportToCSV}
+            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center"
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Export CSV
+          </button>
+          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            Add New User
+          </button>
+        </div>
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -61,14 +126,20 @@ const Users = () => {
           <div className="flex space-x-4">
             <input
               type="text"
-              placeholder="Search users..."
+              placeholder="Search by name or email..."
               className="px-4 py-2 border rounded-lg flex-1"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <select className="px-4 py-2 border rounded-lg">
+            <select 
+              className="px-4 py-2 border rounded-lg"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
               <option value="">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-              <option value="suspended">Suspended</option>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+              <option value="Suspended">Suspended</option>
             </select>
           </div>
         </div>
@@ -97,7 +168,7 @@ const Users = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {users.map((user) => (
+            {filteredUsers.map((user) => (
               <tr key={user._id || user.id}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
@@ -118,10 +189,10 @@ const Users = () => {
                   <div className="text-sm text-gray-500">{user.phone}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">{user.joinDate}</div>
+                  <div className="text-sm text-gray-900">{formatDate(user.joinDate)}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">{user.lastLogin}</div>
+                  <div className="text-sm text-gray-900">{formatDate(user.lastLogin)}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${

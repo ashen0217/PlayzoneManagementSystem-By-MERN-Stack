@@ -39,19 +39,23 @@ const Navbar2 = () => {
                         <Link to="/contact" className='cursor-pointer hover:text-gray-400 text-white' style={{ textDecoration: 'none' }}>Contact Me via</Link>
                     </li>
                     <li>
+                        <Link to="/faq" className='cursor-pointer hover:text-gray-400 text-white' style={{ textDecoration: 'none' }}>
+                            FAQ
+                        </Link>
+                    </li>
+                    <li>
                         <Link
                             to="/login"
-                            className="hidden md:block bg-white px-8 py-2 rounded-full cursor-pointer text-gray-950"
+                            className="bg-white px-8 py-2 rounded-full cursor-pointer text-gray-950 hover:bg-gray-200 transition-colors"
                             style={{ textDecoration: 'none' }}
                         >
                             Login
                         </Link>
-
                     </li>
                     <li>
                         <Link
                             to="/signup"
-                            className="hidden md:block bg-white px-8 py-2 rounded-full cursor-pointer  text-gray-950"
+                            className="bg-white px-8 py-2 rounded-full cursor-pointer text-gray-950 hover:bg-gray-200 transition-colors"
                             style={{ textDecoration: 'none' }}
                         >
                             Signup

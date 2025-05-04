@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Navbar2 from "./Navbar2";
 import { motion } from "framer-motion";
 
 const Home = () => {
@@ -12,8 +11,6 @@ const Home = () => {
       className="relative h-screen w-full overflow-hidden"
       style={{ backgroundImage: "url('/bg2.png')", backgroundSize: "cover", backgroundPosition: "center" }}
     >
-      <Navbar2 />
-      
       <div className="absolute inset-0 bg-black/30" />
 
       <motion.div 

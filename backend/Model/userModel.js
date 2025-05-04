@@ -25,7 +25,20 @@ const userSchema = new Schema({
     password: {
       type:String,
       required:true
-    }// Received as a string
+    },// Received as a string
+    joinDate: {
+      type: Date,
+      default: Date.now
+    },
+    lastLogin: {
+      type: Date,
+      default: Date.now
+    },
+    status: {
+      type: String,
+      enum: ['Active', 'Inactive', 'Suspended'],
+      default: 'Active'
+    }
   }
   );
 
