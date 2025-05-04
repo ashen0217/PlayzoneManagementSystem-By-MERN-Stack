@@ -40,7 +40,7 @@ const Navbar2 = () => {
                     </li>
                     <li>
                         <Link to="/faq" className='cursor-pointer hover:text-gray-400 text-white' style={{ textDecoration: 'none' }}>
-                            FAQ
+                            FAQ's
                         </Link>
                     </li>
                     <li>

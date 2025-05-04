@@ -30,6 +30,7 @@ import MngBookings from "./components/MngBooking";
 import ForgotPassword from "./components/ForgotPassword";
 import Navbar2 from "./components/Navbar2";
 import FAQ from "./components/FAQ";
+import Complaints from "./components/admin/Complaints";
 
 const App = () => {
   return (
@@ -62,6 +63,7 @@ const App = () => {
           <Route path="/manage-bookings" element={<MngBookings/>}/>
           <Route path="/manage-bookings/:id" element={<MngBookings/>}/>
           <Route path="/faq" element={<FAQ />} />
+          <Route path="/admin/complaints" element={<Complaints />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
