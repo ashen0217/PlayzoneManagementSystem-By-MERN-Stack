@@ -11,7 +11,7 @@ const cors = require('cors');
 //middleware 
 app.use(express.json());
 app.use(cors({
-  origin: 'http://localhost:8000', // Your frontend URL updated to port 8000
+  origin: 'http://localhost:5173', // Your frontend URL
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));

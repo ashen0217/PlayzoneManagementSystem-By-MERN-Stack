@@ -12,15 +12,15 @@ const complaintSchema = new mongoose.Schema(
     },
     complain: {
       type: String,
-      required: [true, "Message is required"],
+      required: [false, "Message is not required"],
     },
     feedback: {
       type: String,
-      required: [true, "Feedback is required"],
+      required: [false, "Feedback is not required"],
     },
     ratings: {
       type: Number,
-      required: [true, "Ratings are required"],
+      required: [false, "Ratings are not required"],
     },
   },
   {
