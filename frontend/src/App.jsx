@@ -30,6 +30,7 @@ import ForgotPassword from "./components/ForgotPassword";
 import FAQ from "./components/FAQ";
 import Complaints from "./components/admin/Complaints";
 import ComplaintForm from "./components/ComplaintForm";
+import ViewComplaint from "./components/admin/ViewComplaint";
 
 const App = () => {
   return (
@@ -64,6 +65,7 @@ const App = () => {
           <Route path="/faq" element={<FAQ />} />
           <Route path="/admin/complaints" element={<Complaints />} />
           <Route path="/submit-complaint" element={<ComplaintForm />} />
+          <Route path="/complaints/:id" element={<ViewComplaint/>}/>
 
           <Route path="*" element={<NotFound />} />
         </Routes>

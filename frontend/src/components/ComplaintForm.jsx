@@ -56,7 +56,7 @@ const ComplaintForm = () => {
       return;
     }
     try {
-      const response = await axios.post('http://localhost:5000/Complaints/complaints/create', formData);
+      const response = await axios.post('http://localhost:8000/Complaints/complaints/create', formData);
       console.log('Complaint submitted successfully:', response.data);
       // Reset form
       setFormData({

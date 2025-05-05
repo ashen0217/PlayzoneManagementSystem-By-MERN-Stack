@@ -1,3 +1,4 @@
+// ComplaintFed.js
 const mongoose = require("mongoose");
 
 const complaintSchema = new mongoose.Schema(
@@ -22,9 +23,19 @@ const complaintSchema = new mongoose.Schema(
       type: Number,
       required: [false, "Ratings are not required"],
     },
+    status: {
+      type: String,
+      enum: ['Pending', 'In Progress', 'Resolved'],
+      default: 'Pending'
+    },
+    priority: {
+      type: String,
+      enum: ['Low', 'Medium', 'High'],
+      default: 'Medium'
+    }
   },
   {
-    timestamps: true, // adds createdAt and updatedAt
+    timestamps: true,
   }
 );
 
