@@ -26,6 +26,7 @@ app.use("/Resources",require("./Routes/resRoute"));
 app.use("/Events",require("./Routes/eventRoute"));
 app.use("/Payments",require("./Routes/payRoute"));
 app.use("/Bookings",require("./Routes/booking"));
+app.use("/Complaints",require("./Routes/complaintFedRoutes"));
 
 // Add API routes with lowercase for frontend compatibility
 app.use("/api/bookings", require("./Routes/booking"));

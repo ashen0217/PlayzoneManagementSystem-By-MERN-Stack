@@ -1,11 +1,11 @@
-import express from "express";
-import {
+const express = require("express");
+const {
   createComplaint,
   getAllComplaints,
   getComplaintById,
   updateComplaint,
-  deleteComplaint,
-} from "../controllers/complaintController.js";
+  deleteComplaint
+} = require("../Controllers/complaintFedController");
 
 const router = express.Router();
 
@@ -15,4 +15,4 @@ router.get("/complaints/:id", getComplaintById);     // Read one
 router.put("/complaints/:id", updateComplaint);      // Update
 router.delete("/complaints/:id", deleteComplaint);   // Delete
 
-export default router;
+module.exports = router;

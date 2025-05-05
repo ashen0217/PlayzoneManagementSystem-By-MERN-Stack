@@ -1,7 +1,7 @@
-import Complaint from "../models/Complaint.js";
+const Complaint = require("../Model/ComplaintFed");
 
 // Create a new complaint
-export const createComplaint = async (req, res) => {
+const createComplaint = async (req, res) => {
   try {
     const { name, email, message } = req.body;
 
@@ -19,7 +19,7 @@ export const createComplaint = async (req, res) => {
 };
 
 // Get all complaints
-export const getAllComplaints = async (req, res) => {
+const getAllComplaints = async (req, res) => {
   try {
     const complaints = await Complaint.find().sort({ createdAt: -1 });
     res.status(200).json(complaints);
@@ -29,7 +29,7 @@ export const getAllComplaints = async (req, res) => {
 };
 
 // Get a single complaint by ID
-export const getComplaintById = async (req, res) => {
+const getComplaintById = async (req, res) => {
   try {
     const complaint = await Complaint.findById(req.params.id);
     if (!complaint) {
@@ -42,7 +42,7 @@ export const getComplaintById = async (req, res) => {
 };
 
 // Update a complaint by ID
-export const updateComplaint = async (req, res) => {
+const updateComplaint = async (req, res) => {
   try {
     const { name, email, message } = req.body;
     const complaint = await Complaint.findByIdAndUpdate(
@@ -62,7 +62,7 @@ export const updateComplaint = async (req, res) => {
 };
 
 // Delete a complaint by ID
-export const deleteComplaint = async (req, res) => {
+const deleteComplaint = async (req, res) => {
   try {
     const complaint = await Complaint.findByIdAndDelete(req.params.id);
 
@@ -74,5 +74,13 @@ export const deleteComplaint = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: "Server error" });
   }
+};
+
+module.exports = {
+  createComplaint,
+  getAllComplaints,
+  getComplaintById,
+  updateComplaint,
+  deleteComplaint
 };
 
