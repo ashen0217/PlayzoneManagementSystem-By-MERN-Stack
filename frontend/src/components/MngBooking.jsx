@@ -30,17 +30,30 @@ const MngBooking = () => {
         }
 
         // Fetch bookings for the specific user
-        const response = await axios.get(`http://localhost:8000/bookings/user/${userId}`)
+        const response = await axios.get(`http://localhost:8000/api/bookings/user/${userId}`)
         console.log('User Bookings API response:', response.data)
         
         if (response.data && Array.isArray(response.data.bookings)) {
           setBookings(response.data.bookings)
+        } else if (response.data && response.data.bookings) {
+          // Handle case where bookings is not an array
+          setBookings([response.data.bookings])
         } else {
           setError('No bookings found for this user')
         }
       } catch (err) {
         console.error('Error fetching user bookings:', err)
-        setError(err.response?.data?.message || 'Failed to fetch booking details')
+        if (err.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          setError(`Error: ${err.response.data?.message || 'Failed to fetch bookings'}`)
+        } else if (err.request) {
+          // The request was made but no response was received
+          setError('No response from server. Please check if the backend is running.')
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          setError(`Error: ${err.message}`)
+        }
       } finally {
         setLoading(false)
       }
