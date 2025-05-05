@@ -27,37 +27,27 @@ const Navbar2 = () => {
                         </Link>
                     </li>
                     <li>
-                        <Link
-                            to="/activities"
-                            className='cursor-pointer hover:text-gray-400 text-white'
-                            style={{ textDecoration: 'none' }}
-                        >
+                        <Link to="/activities" className="cursor-pointer hover:text-gray-400 text-white" style={{ textDecoration: 'none' }}>
                             Activities
                         </Link>
                     </li>
                     <li>
-                        <Link to="/contact" className='cursor-pointer hover:text-gray-400 text-white' style={{ textDecoration: 'none' }}>Contact Me via</Link>
+                        <Link to="/contact" className="cursor-pointer hover:text-gray-400 text-white" style={{ textDecoration: 'none' }}>
+                            Contact
+                        </Link>
                     </li>
                     <li>
-                        <Link to="/faq" className='cursor-pointer hover:text-gray-400 text-white' style={{ textDecoration: 'none' }}>
+                        <Link to="/faq" className="cursor-pointer hover:text-gray-400 text-white" style={{ textDecoration: 'none' }}>
                             FAQ's
                         </Link>
                     </li>
                     <li>
-                        <Link
-                            to="/login"
-                            className="bg-white px-8 py-2 rounded-full cursor-pointer text-gray-950 hover:bg-gray-200 transition-colors"
-                            style={{ textDecoration: 'none' }}
-                        >
+                        <Link to="/login" className="bg-white px-8 py-2 rounded-full cursor-pointer text-gray-950 hover:bg-gray-200 transition-colors" style={{ textDecoration: 'none' }}>
                             Login
                         </Link>
                     </li>
                     <li>
-                        <Link
-                            to="/signup"
-                            className="bg-white px-8 py-2 rounded-full cursor-pointer text-gray-950 hover:bg-gray-200 transition-colors"
-                            style={{ textDecoration: 'none' }}
-                        >
+                        <Link to="/signup" className="bg-white px-8 py-2 rounded-full cursor-pointer text-gray-950 hover:bg-gray-200 transition-colors" style={{ textDecoration: 'none' }}>
                             Signup
                         </Link>
                     </li>
