@@ -3,16 +3,16 @@ const Complaint = require("../Model/ComplaintFed");
 // Create a new complaint
 const createComplaint = async (req, res) => {
   try {
-    const { name, email, message } = req.body;
+    const { name, email, complain, feedback, ratings } = req.body;
 
-    if (!name || !email || !message) {
+    if (!name || !email || !complain || !feedback || !ratings) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
-    const complaint = new Complaint({ name, email, message });
+      const complaint = new Complaint({ name, email, complain, feedback, ratings });
     await complaint.save();
 
-    res.status(201).json({ message: "Complaint submitted successfully", complaint });
+    res.status(201).json({ message: "Complaint/Feedback submitted successfully", complaint });
   } catch (err) {
     res.status(500).json({ error: "Server error" });
   }
@@ -33,7 +33,7 @@ const getComplaintById = async (req, res) => {
   try {
     const complaint = await Complaint.findById(req.params.id);
     if (!complaint) {
-      return res.status(404).json({ error: "Complaint not found" });
+      return res.status(404).json({ error: "Complaint/Feedback not found" });
     }
     res.status(200).json(complaint);
   } catch (err) {
@@ -44,18 +44,18 @@ const getComplaintById = async (req, res) => {
 // Update a complaint by ID
 const updateComplaint = async (req, res) => {
   try {
-    const { name, email, message } = req.body;
+    const { name, email, complain, feedback, ratings } = req.body;
     const complaint = await Complaint.findByIdAndUpdate(
       req.params.id,
-      { name, email, message },
+      { name, email, complain, feedback, ratings },
       { new: true, runValidators: true }
     );
 
     if (!complaint) {
-      return res.status(404).json({ error: "Complaint not found" });
+      return res.status(404).json({ error: "Complaint/Feedback not found" });
     }
 
-    res.status(200).json({ message: "Complaint updated", complaint });
+    res.status(200).json({ message: "Complaint/Feedback updated", complaint });
   } catch (err) {
     res.status(500).json({ error: "Server error" });
   }

@@ -10,9 +10,17 @@ const complaintSchema = new mongoose.Schema(
       type: String,
       required: [true, "Email is required"],
     },
-    message: {
+    complain: {
       type: String,
       required: [true, "Message is required"],
+    },
+    feedback: {
+      type: String,
+      required: [true, "Feedback is required"],
+    },
+    ratings: {
+      type: Number,
+      required: [true, "Ratings are required"],
     },
   },
   {
