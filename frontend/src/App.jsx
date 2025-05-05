@@ -28,7 +28,6 @@ import BookingUpdate from './components/admin/BookingUpdate';
 import Bookings from "./components/admin/Bookings";
 import MngBookings from "./components/MngBooking";
 import ForgotPassword from "./components/ForgotPassword";
-import Navbar2 from "./components/Navbar2";
 import FAQ from "./components/FAQ";
 import Complaints from "./components/admin/Complaints";
 import ComplaintForm from "./components/ComplaintForm";
@@ -37,7 +36,7 @@ const App = () => {
   return (
     <Router>
       <div className="w-full overflow-hidden">
-        <Navbar2 />
+
         <ToastContainer position="top-right" autoClose={3000} />
         <Routes>
           <Route path="/" element={<Home />} />

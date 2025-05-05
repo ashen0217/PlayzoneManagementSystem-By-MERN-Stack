@@ -9,8 +9,7 @@ const Navbar = () => {
             <Link to="/addbook" className='cursor-pointer hover:text-gray-400' style={{ textDecoration: 'none' }}>ADD  Booking</Link>
             <Link to="/payments" className='cursor-pointer hover:text-gray-400' style={{ textDecoration: 'none' }}>Payment</Link>
             <Link to="/user-profile" className='cursor-pointer hover:text-gray-400' style={{ textDecoration: 'none' }}>Your Profile</Link>
-            <Link to="/submit-complaints" className='cursor-pointer hover:text-gray-400' style={{ textDecoration: 'none' }}>Complains</Link>
-            <Link to="/contact" className='cursor-pointer hover:text-gray-400' style={{ textDecoration: 'none' }}>Contact Me via</Link>
+            <Link to="/submit-complaint" className='cursor-pointer hover:text-gray-400' style={{ textDecoration: 'none' }}>Complains</Link>
             <Link to="/manage-bookings/:id" className='cursor-pointer hover:text-gray-400' style={{ textDecoration: 'none' }}>Booking Details</Link>
         </ul>
         <br /><br/>
