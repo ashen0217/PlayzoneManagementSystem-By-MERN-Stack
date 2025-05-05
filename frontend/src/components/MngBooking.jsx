@@ -29,8 +29,26 @@ const MngBooking = () => {
           return
         }
 
-        // Fetch bookings for the specific user
-        const response = await axios.get(`http://localhost:8000/api/bookings/user/${userId}`)
+        // Try different possible API endpoints
+        let response;
+        try {
+          // First try the main endpoint
+          response = await axios.get(`http://localhost:8000/api/bookings/user/${userId}`)
+        } catch (err) {
+          // If that fails, try alternative endpoints
+          try {
+            response = await axios.get(`http://localhost:8000/bookings/user/${userId}`)
+          } catch (err) {
+            // If that also fails, try getting all bookings and filter client-side
+            response = await axios.get(`http://localhost:8000/bookings`)
+            if (response.data && Array.isArray(response.data)) {
+              response.data = {
+                bookings: response.data.filter(booking => booking.userId === userId)
+              }
+            }
+          }
+        }
+
         console.log('User Bookings API response:', response.data)
         
         if (response.data && Array.isArray(response.data.bookings)) {
@@ -38,6 +56,9 @@ const MngBooking = () => {
         } else if (response.data && response.data.bookings) {
           // Handle case where bookings is not an array
           setBookings([response.data.bookings])
+        } else if (response.data && Array.isArray(response.data)) {
+          // Handle case where response is directly an array
+          setBookings(response.data)
         } else {
           setError('No bookings found for this user')
         }
