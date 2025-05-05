@@ -1,9 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import Navbar from "./Navbar2"
 
 const Home = () => {
   return (
+    
     <motion.section
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -11,6 +13,7 @@ const Home = () => {
       className="relative h-screen w-full overflow-hidden"
       style={{ backgroundImage: "url('/bg2.png')", backgroundSize: "cover", backgroundPosition: "center" }}
     >
+      <Navbar/>
       <div className="absolute inset-0 bg-black/30" />
 
       <motion.div 

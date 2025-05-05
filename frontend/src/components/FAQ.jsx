@@ -1,4 +1,5 @@
 import React from 'react';
+import Navbar2 from './Navbar2';
 
 const FAQ = () => {
   const faqs = [
@@ -34,6 +35,7 @@ const FAQ = () => {
 
   return (
     <div className="min-h-screen bg-orange-50 py-12 px-4 sm:px-6 lg:px-8">
+      <Navbar2/>
         <br /><br />
 
       <div className="max-w-3xl mx-auto">

@@ -2,14 +2,40 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Navbar from './Navbar';
+
 const ComplaintForm = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     complain: '',
     feedback: '',
-    ratings: 0
+    ratings: ''
   });
+
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.name.trim()) {
+      newErrors.name = 'Full Name is required';
+    }
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email Address is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Email Address is invalid';
+    }
+    if (!formData.complain.trim()) {
+      newErrors.complain = 'Complaint is required';
+    }
+    if (!formData.feedback.trim()) {
+      newErrors.feedback = 'Feedback is required';
+    }
+    if (!formData.ratings) {
+      newErrors.ratings = 'Rating is required';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -17,12 +43,20 @@ const ComplaintForm = () => {
       ...prevState,
       [name]: value
     }));
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      [name]: ''
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validate()) {
+      toast.error('Please fix the errors in the form before submitting.');
+      return;
+    }
     try {
-      const response = await axios.post('http://localhost:5000/api/complaints', formData);
+      const response = await axios.post('http://localhost:5000/Complaints/complaints/create', formData);
       console.log('Complaint submitted successfully:', response.data);
       // Reset form
       setFormData({
@@ -30,7 +64,7 @@ const ComplaintForm = () => {
         email: '',
         complain: '',
         feedback: '',
-        ratings: 0
+        ratings: ''
       });
       toast.success('Your complaint and feedback have been submitted successfully!');
     } catch (error) {
@@ -53,7 +87,7 @@ const ComplaintForm = () => {
               We value your feedback and are committed to improving our services
             </p>
           </div>
-          <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+          <form onSubmit={handleSubmit} className="mt-8 space-y-6" noValidate>
             <div className="rounded-md shadow-sm space-y-4">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700">
@@ -65,10 +99,10 @@ const ComplaintForm = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  required
-                  className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                  className={`mt-1 appearance-none relative block w-full px-3 py-2 border ${errors.name ? 'border-red-500' : 'border-gray-300'} placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
                   placeholder="Enter your full name"
                 />
+                {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
               </div>
 
               <div>
@@ -81,10 +115,10 @@ const ComplaintForm = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  required
-                  className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                  className={`mt-1 appearance-none relative block w-full px-3 py-2 border ${errors.email ? 'border-red-500' : 'border-gray-300'} placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
                   placeholder="Enter your email address"
                 />
+                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
               </div>
 
               <div>
@@ -96,11 +130,11 @@ const ComplaintForm = () => {
                   name="complain"
                   value={formData.complain}
                   onChange={handleChange}
-                  required
                   rows="4"
-                  className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                  className={`mt-1 appearance-none relative block w-full px-3 py-2 border ${errors.complain ? 'border-red-500' : 'border-gray-300'} placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
                   placeholder="Please describe your complaint in detail"
                 />
+                {errors.complain && <p className="text-red-500 text-xs mt-1">{errors.complain}</p>}
               </div>
 
               <div>
@@ -112,11 +146,11 @@ const ComplaintForm = () => {
                   name="feedback"
                   value={formData.feedback}
                   onChange={handleChange}
-                  required
                   rows="4"
-                  className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                  className={`mt-1 appearance-none relative block w-full px-3 py-2 border ${errors.feedback ? 'border-red-500' : 'border-gray-300'} placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
                   placeholder="Please provide your feedback"
                 />
+                {errors.feedback && <p className="text-red-500 text-xs mt-1">{errors.feedback}</p>}
               </div>
 
               <div>
@@ -128,8 +162,7 @@ const ComplaintForm = () => {
                   name="ratings"
                   value={formData.ratings}
                   onChange={handleChange}
-                  required
-                  className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-lg"
+                  className={`mt-1 block w-full pl-3 pr-10 py-2 text-base border ${errors.ratings ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-lg`}
                 >
                   <option value="">Select a rating</option>
                   <option value="1">⭐ Poor</option>
@@ -138,6 +171,7 @@ const ComplaintForm = () => {
                   <option value="4">⭐⭐⭐⭐ Very Good</option>
                   <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
                 </select>
+                {errors.ratings && <p className="text-red-500 text-xs mt-1">{errors.ratings}</p>}
               </div>
             </div>
 
@@ -156,4 +190,4 @@ const ComplaintForm = () => {
   );
 };
 
-export default ComplaintForm; 
+export default ComplaintForm;
