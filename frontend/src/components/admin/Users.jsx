@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-const URL = "http://localhost:8000/Users";
+const API_URL = "http://localhost:8000/Users";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -12,7 +12,7 @@ const Users = () => {
   useEffect(() => {
     const fetchHandler = async () => {
       try {
-        const response = await axios.get(URL);
+        const response = await axios.get(API_URL);
         console.log("API response:", response.data);
         setUsers(response.data.Users);
       } catch (error) {
@@ -27,7 +27,7 @@ const Users = () => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
         console.log('Attempting to delete user with ID:', userId);
-        const response = await axios.delete(`${URL}/${userId}`);
+        const response = await axios.delete(`${API_URL}/${userId}`);
         console.log('Delete response:', response);
         
         if (response.status === 200 || response.status === 204) {
@@ -61,32 +61,51 @@ const Users = () => {
   };
 
   const exportToCSV = () => {
-    // Prepare CSV content
-    const headers = ['Name', 'Email', 'Phone', 'Age', 'Gender', 'Join Date', 'Last Login', 'Status'];
-    const csvContent = [
-      headers.join(','),
-      ...filteredUsers.map(user => [
-        `"${user.name}"`,
-        `"${user.email}"`,
-        `"${user.phone}"`,
-        `"${user.age}"`,
-        `"${user.gender}"`,
-        `"${formatDate(user.joinDate)}"`,
-        `"${formatDate(user.lastLogin)}"`,
-        `"${user.status}"`
-      ].join(','))
-    ].join('\n');
+    try {
+      console.log('Starting CSV export...');
+      console.log('Filtered users:', filteredUsers);
 
-    // Create and download the file
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `users_${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+      // Prepare CSV content with headers
+      const headers = ['Name', 'Email', 'Phone', 'Age', 'Gender', 'Join Date', 'Last Login', 'Status'];
+      
+      // Format the data rows
+      const csvContent = [
+        headers.join(','),
+        ...filteredUsers.map(user => {
+          const row = [
+            `"${user.name || ''}"`,
+            `"${user.email || ''}"`,
+            `"${user.phone || ''}"`,
+            `"${user.age || ''}"`,
+            `"${user.gender || ''}"`,
+            `"${formatDate(user.joinDate)}"`,
+            `"${formatDate(user.lastLogin)}"`,
+            `"${user.status || ''}"`
+          ];
+          console.log('Processing user:', user.name, 'Row:', row);
+          return row.join(',');
+        })
+      ].join('\n');
+
+      console.log('Generated CSV content:', csvContent);
+
+      // Create and download the file
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `users_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      console.log('CSV export completed successfully');
+    } catch (error) {
+      console.error('Error during CSV export:', error);
+      alert('Failed to export CSV: ' + error.message);
+    }
   };
 
   const filteredUsers = users.filter(user => {
@@ -114,9 +133,6 @@ const Users = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
             Export CSV
-          </button>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-            Add New User
           </button>
         </div>
       </div>
