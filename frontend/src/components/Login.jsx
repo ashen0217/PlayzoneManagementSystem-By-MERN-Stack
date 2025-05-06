@@ -9,7 +9,7 @@ export default function LoginForm() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
-    password: ""
+    password: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -37,28 +37,27 @@ export default function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-  
+
     const adminCredentials = {
       email: "admin@example.com",
-      password: "admin123"
+      password: "admin123",
     };
-  
+
     try {
       const response = await axios.get(url); // Get all users
       const users = response.data.Users;
-  
+
       // Find the matching user
       const matchedUser = users.find(
         (user) =>
-          user.email === formData.email &&
-          user.password === formData.password
+          user.email === formData.email && user.password === formData.password
       );
-  
+
       if (!matchedUser) {
         alert("Login Error: Invalid email or password. Please try again.");
         return;
       }
-  
+
       // Admin check
       if (
         formData.email === adminCredentials.email &&
@@ -80,28 +79,30 @@ export default function LoginForm() {
         alert("Login Error: Server error. Status: " + error.response.status);
       } else if (error.request) {
         // The request was made but no response was received
-        alert("Login Error: No response from server. Please check your connection.");
+        alert(
+          "Login Error: No response from server. Please check your connection."
+        );
       } else {
         // Something happened in setting up the request that triggered an Error
         alert("Login Error: " + error.message);
       }
     }
   };
-  
 
   return (
     <div
-      className="flex items-center justify-center min-h-screen bg-gray-100"
-      style={{ backgroundImage: "url('/bg2.png')" }}
+      className="flex items-center justify-center min-h-screen bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: "url('/bg10.png')" }}
     >
-      <Navbar2/>
+      <Navbar2 />
       <div className="bg-white p-8 rounded-2xl shadow-lg w-96">
-
         <h2 className="text-2xl font-semibold text-center mb-6">Login</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           {Object.keys(formData).map((key) => (
             <div key={key}>
-              <label className="block text-gray-700">{key.charAt(0).toUpperCase() + key.slice(1)}</label>
+              <label className="block text-gray-700">
+                {key.charAt(0).toUpperCase() + key.slice(1)}
+              </label>
               <input
                 type={key === "password" ? "password" : "text"}
                 name={key}
@@ -110,19 +111,24 @@ export default function LoginForm() {
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 placeholder={`Enter your ${key}`}
               />
-              {errors[key] && <p className="text-red-500 text-sm">{errors[key]}</p>}
+              {errors[key] && (
+                <p className="text-red-500 text-sm">{errors[key]}</p>
+              )}
             </div>
           ))}
           <div className="text-right">
-            <Link 
-              to="/forgot-password" 
+            <Link
+              to="/forgot-password"
               className="text-blue-500 hover:text-blue-700 text-sm"
-              style={{ textDecoration: 'none' }}
+              style={{ textDecoration: "none" }}
             >
               Forgot Password?
             </Link>
           </div>
-          <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition">
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+          >
             Log in
           </button>
         </form>
