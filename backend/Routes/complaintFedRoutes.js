@@ -6,7 +6,8 @@ const {
   getComplaintById,
   updateComplaint,
   deleteComplaint,
-  downloadComplaints
+  downloadComplaints,
+  getFeedbacks,
 } = require("../Controllers/complaintFedController");
 
 const router = express.Router();
@@ -17,5 +18,6 @@ router.get("/complaints/download", downloadComplaints);
 router.get("/complaints/:id", getComplaintById);
 router.put("/complaints/:id", updateComplaint);
 router.delete("/complaints/:id", deleteComplaint);
+router.get("/testimonials", getFeedbacks);
 
 module.exports = router;
