@@ -182,7 +182,7 @@ const MngBooking = () => {
       <div className="max-w-4xl mx-auto p-6">
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">
-            Your Bookings
+            Your bookings,please Ensure that you can only request to edit the status whether your booking is confirm or not...
           </h2>
 
           {bookings.length === 0 ? (
@@ -275,7 +275,7 @@ const MngBooking = () => {
                       disabled={isSubmitting}
                       className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
                     >
-                      {isSubmitting ? "Sending Request..." : "Request Edit"}
+                      {isSubmitting ? "Sending Request..." : "Request To Edit Status"}
                     </button>
                   </div>
                 </div>

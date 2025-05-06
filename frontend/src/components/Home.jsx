@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import Navbar from "./Navbar2";
 
 const Home = () => {
@@ -12,6 +13,8 @@ const Home = () => {
       style={{ backgroundImage: "url('/bg10.png')" }}
     >
       <Navbar />
+      <br />
+      <br />
 
       {/* Dark overlay */}
       <div className="absolute inset-0 bg-black/30 z-0" />
@@ -26,6 +29,7 @@ const Home = () => {
         <motion.div
           className="absolute inset-0 z-0"
           animate={{
+            rotate: [0, -360], // Rotate anticlockwise
             background: [
               "linear-gradient(45deg, #FFB800 60%, #FF6B6B 30%, #4ECDC4 10%)",
               "linear-gradient(135deg, #FFB800 60%, #FF6B6B 30%, #4ECDC4 10%)",
@@ -72,6 +76,22 @@ const Home = () => {
             Filled With Lot&apos;s of Pleasure
           </span>
         </motion.h1>
+
+        {/* Navigation Links */}
+        <div className="relative z-10 mt-10 flex gap-6 justify-center">
+          <Link
+            to="/contact"
+            className="bg-blue-500 hover:bg-green-600 text-white px-8 py-3 rounded-lg transition-all duration-300 transform hover:scale-105"
+          >
+            Contact Us
+          </Link>
+          <Link
+            to="/about"
+            className="bg-blue-500 hover:bg-green-600 text-white px-8 py-3 rounded-lg transition-all duration-300 transform hover:scale-105"
+          >
+            About Us
+          </Link>
+        </div>
       </motion.div>
     </motion.section>
   );
