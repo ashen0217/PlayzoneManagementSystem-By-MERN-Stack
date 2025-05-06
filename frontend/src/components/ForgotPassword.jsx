@@ -19,7 +19,7 @@ export default function ForgotPassword() {
     e.preventDefault();
     setError("");
     setSuccess("");
-    
+
     try {
       const response = await axios.get(`${url}/email/${email}`);
       if (response.data && response.data.Users) {
@@ -39,7 +39,7 @@ export default function ForgotPassword() {
   const handlePasswordReset = async (e) => {
     e.preventDefault();
     setError("");
-    
+
     if (newPassword !== confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -52,9 +52,9 @@ export default function ForgotPassword() {
 
     try {
       const response = await axios.put(`${url}/${userData._id}`, {
-        password: newPassword
+        password: newPassword,
       });
-      
+
       if (response.status === 200) {
         setSuccess("Password updated successfully!");
         setTimeout(() => {
@@ -65,19 +65,24 @@ export default function ForgotPassword() {
       }
     } catch (error) {
       console.error("Password reset error:", error);
-      setError(error.response?.data?.message || "Error updating password. Please try again.");
+      setError(
+        error.response?.data?.message ||
+          "Error updating password. Please try again."
+      );
     }
   };
 
   return (
     <div
-      className="flex items-center justify-center min-h-screen bg-gray-100"
-      style={{ backgroundImage: "url('/bg2.png')" }}
+      className="flex items-center justify-center min-h-screen bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: "url('/bg10.png')" }}
     >
       <Navbar2 />
       <div className="bg-white p-8 rounded-2xl shadow-lg w-96">
-        <h2 className="text-2xl font-semibold text-center mb-6">Reset Password</h2>
-        
+        <h2 className="text-2xl font-semibold text-center mb-6">
+          Reset Password
+        </h2>
+
         {!showResetForm ? (
           <form onSubmit={handleEmailSubmit} className="space-y-4">
             <div>
@@ -139,4 +144,4 @@ export default function ForgotPassword() {
       </div>
     </div>
   );
-} 
+}
