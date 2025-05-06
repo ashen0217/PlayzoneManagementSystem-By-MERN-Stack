@@ -69,15 +69,18 @@ export default function SignupForm() {
 
   return (
     <div
-      className="flex items-center justify-center min-h-screen bg-gray-100"
-      style={{ backgroundImage: "url('/bg4.jpg')" }}
+      className="flex items-center justify-center min-h-screen bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: "url('/bg10.png')" }}
     >
       <Navbar2 />
 
       <div className="bg-white p-8 rounded-2xl shadow-lg w-96 py-10">
-        <br /><br /><br />
+        <br />
+        <br />
+        <br />
         <h2 className="text-2xl font-semibold text-center mb-6">Sign Up</h2>
-        <br /><br />
+        <br />
+        <br />
         <form onSubmit={handleSubmit} className="space-y-4">
           {Object.keys(formData).map((key) => (
             <div key={key}>
