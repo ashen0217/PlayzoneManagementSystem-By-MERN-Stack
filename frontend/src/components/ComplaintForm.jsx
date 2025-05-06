@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import Navbar from './Navbar';
+import React, { useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import Navbar from "./Navbar";
 
 const ComplaintForm = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    complain: '',
-    feedback: '',
-    ratings: ''
+    name: "",
+    email: "",
+    complain: "",
+    feedback: "",
+    ratings: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -17,21 +17,21 @@ const ComplaintForm = () => {
   const validate = () => {
     const newErrors = {};
     if (!formData.name.trim()) {
-      newErrors.name = 'Full Name is required';
+      newErrors.name = "Full Name is required";
     }
     if (!formData.email.trim()) {
-      newErrors.email = 'Email Address is required';
+      newErrors.email = "Email Address is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Email Address is invalid';
+      newErrors.email = "Email Address is invalid";
     }
     if (!formData.complain.trim()) {
-      newErrors.complain = 'Complaint is required';
+      newErrors.complain = "Complaint is required";
     }
     if (!formData.feedback.trim()) {
-      newErrors.feedback = 'Feedback is required';
+      newErrors.feedback = "Feedback is required";
     }
     if (!formData.ratings) {
-      newErrors.ratings = 'Rating is required';
+      newErrors.ratings = "Rating is required";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -39,44 +39,55 @@ const ComplaintForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
+    setFormData((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
-    setErrors(prevErrors => ({
+    setErrors((prevErrors) => ({
       ...prevErrors,
-      [name]: ''
+      [name]: "",
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) {
-      toast.error('Please fix the errors in the form before submitting.');
+      toast.error("Please fix the errors in the form before submitting.");
       return;
     }
     try {
-      const response = await axios.post('http://localhost:8000/Complaints/complaints/create', formData);
-      console.log('Complaint submitted successfully:', response.data);
+      const response = await axios.post(
+        "http://localhost:8000/Complaints/complaints/create",
+        formData
+      );
+      console.log("Complaint submitted successfully:", response.data);
       // Reset form
       setFormData({
-        name: '',
-        email: '',
-        complain: '',
-        feedback: '',
-        ratings: ''
+        name: "",
+        email: "",
+        complain: "",
+        feedback: "",
+        ratings: "",
       });
-      toast.success('Your complaint and feedback have been submitted successfully!');
+      toast.success(
+        "Your complaint and feedback have been submitted successfully!"
+      );
     } catch (error) {
-      console.error('Error submitting complaint:', error);
-      toast.error('There was an error submitting your complaint. Please try again.');
+      console.error("Error submitting complaint:", error);
+      toast.error(
+        "There was an error submitting your complaint. Please try again."
+      );
     }
   };
 
   return (
-    <div className="min-h-screen bg-cover bg-center bg-fixed" style={{ backgroundImage: `url('/bg8.jpg')` }}>
+    <div
+      className="flex items-center justify-center min-h-screen bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: "url('/bg10.png')" }}
+    >
       <Navbar />
-      <br /><br />
+      <br />
+      <br />
       <div className="min-h-screen bg-black bg-opacity-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl w-full space-y-8 bg-white bg-opacity-90 p-8 rounded-xl shadow-2xl backdrop-blur-sm">
           <div className="text-center">
@@ -90,7 +101,10 @@ const ComplaintForm = () => {
           <form onSubmit={handleSubmit} className="mt-8 space-y-6" noValidate>
             <div className="rounded-md shadow-sm space-y-4">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Full Name
                 </label>
                 <input
@@ -99,14 +113,21 @@ const ComplaintForm = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className={`mt-1 appearance-none relative block w-full px-3 py-2 border ${errors.name ? 'border-red-500' : 'border-gray-300'} placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                  className={`mt-1 appearance-none relative block w-full px-3 py-2 border ${
+                    errors.name ? "border-red-500" : "border-gray-300"
+                  } placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
                   placeholder="Enter your full name"
                 />
-                {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+                {errors.name && (
+                  <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+                )}
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Email Address
                 </label>
                 <input
@@ -115,14 +136,21 @@ const ComplaintForm = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className={`mt-1 appearance-none relative block w-full px-3 py-2 border ${errors.email ? 'border-red-500' : 'border-gray-300'} placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                  className={`mt-1 appearance-none relative block w-full px-3 py-2 border ${
+                    errors.email ? "border-red-500" : "border-gray-300"
+                  } placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
                   placeholder="Enter your email address"
                 />
-                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+                {errors.email && (
+                  <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                )}
               </div>
 
               <div>
-                <label htmlFor="complain" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="complain"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Your Complaint
                 </label>
                 <textarea
@@ -131,14 +159,21 @@ const ComplaintForm = () => {
                   value={formData.complain}
                   onChange={handleChange}
                   rows="4"
-                  className={`mt-1 appearance-none relative block w-full px-3 py-2 border ${errors.complain ? 'border-red-500' : 'border-gray-300'} placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                  className={`mt-1 appearance-none relative block w-full px-3 py-2 border ${
+                    errors.complain ? "border-red-500" : "border-gray-300"
+                  } placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
                   placeholder="Please describe your complaint in detail"
                 />
-                {errors.complain && <p className="text-red-500 text-xs mt-1">{errors.complain}</p>}
+                {errors.complain && (
+                  <p className="text-red-500 text-xs mt-1">{errors.complain}</p>
+                )}
               </div>
 
               <div>
-                <label htmlFor="feedback" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="feedback"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Your Feedback
                 </label>
                 <textarea
@@ -147,14 +182,21 @@ const ComplaintForm = () => {
                   value={formData.feedback}
                   onChange={handleChange}
                   rows="4"
-                  className={`mt-1 appearance-none relative block w-full px-3 py-2 border ${errors.feedback ? 'border-red-500' : 'border-gray-300'} placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                  className={`mt-1 appearance-none relative block w-full px-3 py-2 border ${
+                    errors.feedback ? "border-red-500" : "border-gray-300"
+                  } placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
                   placeholder="Please provide your feedback"
                 />
-                {errors.feedback && <p className="text-red-500 text-xs mt-1">{errors.feedback}</p>}
+                {errors.feedback && (
+                  <p className="text-red-500 text-xs mt-1">{errors.feedback}</p>
+                )}
               </div>
 
               <div>
-                <label htmlFor="ratings" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="ratings"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Overall Rating
                 </label>
                 <select
@@ -162,7 +204,9 @@ const ComplaintForm = () => {
                   name="ratings"
                   value={formData.ratings}
                   onChange={handleChange}
-                  className={`mt-1 block w-full pl-3 pr-10 py-2 text-base border ${errors.ratings ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-lg`}
+                  className={`mt-1 block w-full pl-3 pr-10 py-2 text-base border ${
+                    errors.ratings ? "border-red-500" : "border-gray-300"
+                  } focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-lg`}
                 >
                   <option value="">Select a rating</option>
                   <option value="1">⭐ Poor</option>
@@ -171,7 +215,9 @@ const ComplaintForm = () => {
                   <option value="4">⭐⭐⭐⭐ Very Good</option>
                   <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
                 </select>
-                {errors.ratings && <p className="text-red-500 text-xs mt-1">{errors.ratings}</p>}
+                {errors.ratings && (
+                  <p className="text-red-500 text-xs mt-1">{errors.ratings}</p>
+                )}
               </div>
             </div>
 
