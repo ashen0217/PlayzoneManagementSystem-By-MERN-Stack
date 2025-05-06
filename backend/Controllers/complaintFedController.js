@@ -123,11 +123,28 @@ const deleteComplaint = async (req, res) => {
   }
 };
 
+// Get all feedbacks with ratings (sorted by highest rating)
+const getFeedbacks = async (req, res) => {
+  try {
+    const feedbacks = await Complaint.find({ 
+      ratings: { $exists: true, $ne: null },
+      feedback: { $exists: true, $ne: "" }
+    })
+    .sort({ ratings: -1 }) // Sort by highest rating first
+    .limit(10); // Limit to top 10
+    
+    res.status(200).json(feedbacks);
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 module.exports = {
   createComplaint,
   getAllComplaints,
   getComplaintById,
   updateComplaint,
   deleteComplaint,
-  downloadComplaints
+  downloadComplaints,
+  getFeedbacks
 };
