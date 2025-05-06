@@ -1,22 +1,21 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import Navbar from "./Navbar2"
+import Navbar from "./Navbar2";
 
 const Home = () => {
   return (
-    
     <motion.section
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
-      className="relative h-screen w-full overflow-hidden"
-      style={{ backgroundImage: "url('/bg2.png')", backgroundSize: "cover", backgroundPosition: "center" }}
+      className="flex items-center justify-center min-h-screen bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: "url('/bg10.png')" }}
     >
-      <Navbar/>
+      <Navbar />
       <div className="absolute inset-0 bg-black/30" />
 
-      <motion.div 
+      <motion.div
         className="relative z-10 container mx-auto px-4 md:px-8 lg:px-16 h-full flex flex-col justify-center items-center"
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -45,7 +44,7 @@ const Home = () => {
               ease: "linear",
             }}
           />
-          
+
           {/* Mathematical pattern overlay */}
           <motion.div
             className="absolute inset-0 z-0 opacity-20"
@@ -54,10 +53,10 @@ const Home = () => {
                 radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 2px, transparent 0),
                 radial-gradient(circle at 75% 75%, rgba(255,255,255,0.1) 2px, transparent 0)
               `,
-              backgroundSize: '60px 60px',
+              backgroundSize: "60px 60px",
             }}
             animate={{
-              backgroundPosition: ['0 0', '30px 30px'],
+              backgroundPosition: ["0 0", "30px 30px"],
             }}
             transition={{
               duration: 4,
@@ -66,7 +65,7 @@ const Home = () => {
             }}
           />
 
-          <motion.h1 
+          <motion.h1
             className="relative z-10 text-4xl md:text-6xl lg:text-7xl font-bold text-white text-center mb-8"
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
@@ -76,7 +75,7 @@ const Home = () => {
           </motion.h1>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           className="flex gap-6 mt-8"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -85,20 +84,20 @@ const Home = () => {
           <Link
             to="/contact"
             className="bg-amber-400 hover:bg-amber-500 text-white px-8 py-3 rounded-lg transition-all duration-300 transform hover:scale-105"
-            style={{ textDecoration: 'none' }}
+            style={{ textDecoration: "none" }}
           >
             Contact-us
           </Link>
-          <Link 
-            to="/about" 
+          <Link
+            to="/about"
             className="bg-white hover:bg-gray-100 text-amber-600 px-8 py-3 rounded-lg transition-all duration-300 transform hover:scale-105"
-            style={{ textDecoration: 'none' }}
+            style={{ textDecoration: "none" }}
           >
             About-us
           </Link>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           className="absolute bottom-10 left-0 right-0 flex justify-center gap-4"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -137,10 +136,10 @@ const Home = () => {
                   radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 2px, transparent 0),
                   radial-gradient(circle at 75% 75%, rgba(255,255,255,0.1) 2px, transparent 0)
                 `,
-                backgroundSize: '40px 40px',
+                backgroundSize: "40px 40px",
               }}
               animate={{
-                backgroundPosition: ['0 0', '20px 20px'],
+                backgroundPosition: ["0 0", "20px 20px"],
               }}
               transition={{
                 duration: 4,
@@ -151,62 +150,62 @@ const Home = () => {
 
             <div className="relative z-10 flex gap-6">
               <motion.div
-                animate={{ 
+                animate={{
                   y: [0, -10, 0],
-                  scale: [1, 1.1, 1]
+                  scale: [1, 1.1, 1],
                 }}
-                transition={{ 
-                  duration: 2, 
+                transition={{
+                  duration: 2,
                   repeat: Infinity,
-                  ease: "easeInOut"
+                  ease: "easeInOut",
                 }}
                 className="w-16 h-16 bg-amber-100 rounded-full shadow-lg"
               />
               <motion.div
-                animate={{ 
+                animate={{
                   y: [0, -15, 0],
-                  scale: [1, 1.1, 1]
+                  scale: [1, 1.1, 1],
                 }}
-                transition={{ 
-                  duration: 2.5, 
+                transition={{
+                  duration: 2.5,
                   repeat: Infinity,
-                  ease: "easeInOut"
+                  ease: "easeInOut",
                 }}
                 className="w-16 h-16 bg-amber-100 rounded-full shadow-lg"
               />
               <motion.div
-                animate={{ 
+                animate={{
                   y: [0, -20, 0],
-                  scale: [1, 1.1, 1]
+                  scale: [1, 1.1, 1],
                 }}
-                transition={{ 
-                  duration: 3, 
+                transition={{
+                  duration: 3,
                   repeat: Infinity,
-                  ease: "easeInOut"
+                  ease: "easeInOut",
                 }}
                 className="w-16 h-16 bg-amber-100 rounded-full shadow-lg"
               />
               <motion.div
-                animate={{ 
+                animate={{
                   y: [0, -20, 0],
-                  scale: [1, 1.1, 1]
+                  scale: [1, 1.1, 1],
                 }}
-                transition={{ 
-                  duration: 3, 
+                transition={{
+                  duration: 3,
                   repeat: Infinity,
-                  ease: "easeInOut"
+                  ease: "easeInOut",
                 }}
                 className="w-16 h-16 bg-amber-100 rounded-full shadow-lg"
               />
               <motion.div
-                animate={{ 
+                animate={{
                   y: [0, -20, 0],
-                  scale: [1, 1.1, 1]
+                  scale: [1, 1.1, 1],
                 }}
-                transition={{ 
-                  duration: 3, 
+                transition={{
+                  duration: 3,
                   repeat: Infinity,
-                  ease: "easeInOut"
+                  ease: "easeInOut",
                 }}
                 className="w-16 h-16 bg-amber-100 rounded-full shadow-lg"
               />
