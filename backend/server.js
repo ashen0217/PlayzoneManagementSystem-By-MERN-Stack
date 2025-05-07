@@ -24,7 +24,7 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use("/Users",require("./Routes/userRoute"));
 app.use("/Resources",require("./Routes/resRoute"));
 app.use("/Events",require("./Routes/eventRoute"));
-app.use("/Payments",require("./Routes/payRoute"));
+app.use("/api/Payments",require("./Routes/payRoute"));
 app.use("/Bookings",require("./Routes/booking"));
 app.use("/Complaints",require("./Routes/complaintFedRoutes"));
 
