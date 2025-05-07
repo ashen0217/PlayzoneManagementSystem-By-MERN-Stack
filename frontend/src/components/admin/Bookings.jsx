@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Bookings = () => {
   // State to store bookings data
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [dateFilter, setDateFilter] = useState("");
-  const [packageFilter, setPackageFilter] = useState("");
-  const [searchField, setSearchField] = useState("all");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [dateFilter, setDateFilter] = useState('');
+  const [packageFilter, setPackageFilter] = useState('');
+  const [searchField, setSearchField] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
   const [exporting, setExporting] = useState(false);
   const navigate = useNavigate();
@@ -23,13 +23,13 @@ const Bookings = () => {
     const fetchBookings = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("/api/bookings");
+        const response = await axios.get('/api/bookings');
         setBookings(response.data.bookings);
         setError(null);
       } catch (err) {
-        console.error("Error fetching bookings:", err);
-        setError("Failed to load bookings. Please try again later.");
-        toast.error("Failed to load bookings. Please try again later.");
+        console.error('Error fetching bookings:', err);
+        setError('Failed to load bookings. Please try again later.');
+        toast.error('Failed to load bookings. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -39,59 +39,47 @@ const Bookings = () => {
   }, []);
 
   // Filter bookings based on search term and filters
-  const filteredBookings = bookings.filter((booking) => {
+  const filteredBookings = bookings.filter(booking => {
     // Search term filtering based on selected field
     let matchesSearch = true;
     if (searchTerm) {
       switch (searchField) {
-        case "username":
-          matchesSearch = booking.username
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase());
+        case 'username':
+          matchesSearch = booking.username.toLowerCase().includes(searchTerm.toLowerCase());
           break;
-        case "email":
-          matchesSearch = booking.email
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase());
+        case 'email':
+          matchesSearch = booking.email.toLowerCase().includes(searchTerm.toLowerCase());
           break;
-        case "package":
-          matchesSearch = booking.packageType
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase());
+        case 'package':
+          matchesSearch = booking.packageType.toLowerCase().includes(searchTerm.toLowerCase());
           break;
-        case "timeSlot":
-          matchesSearch = booking.timeSlot
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase());
+        case 'timeSlot':
+          matchesSearch = booking.timeSlot.toLowerCase().includes(searchTerm.toLowerCase());
           break;
-        case "all":
+        case 'all':
         default:
-          matchesSearch =
+          matchesSearch = 
             booking.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
             booking.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            booking.packageType
-              .toLowerCase()
-              .includes(searchTerm.toLowerCase()) ||
+            booking.packageType.toLowerCase().includes(searchTerm.toLowerCase()) ||
             booking.timeSlot.toLowerCase().includes(searchTerm.toLowerCase());
           break;
       }
     }
-
+    
     // Status filter
-    const matchesStatus =
-      statusFilter === "" || booking.message === statusFilter;
-
+    const matchesStatus = statusFilter === '' || booking.message === statusFilter;
+    
     // Package filter
-    const matchesPackage =
-      packageFilter === "" || booking.packageType === packageFilter;
-
+    const matchesPackage = packageFilter === '' || booking.packageType === packageFilter;
+    
     // Date filter
     let matchesDate = true;
     if (dateFilter) {
       const bookingDate = new Date(booking.date).toLocaleDateString();
       matchesDate = bookingDate === new Date(dateFilter).toLocaleDateString();
     }
-
+    
     return matchesSearch && matchesStatus && matchesPackage && matchesDate;
   });
 
@@ -127,50 +115,46 @@ const Bookings = () => {
 
   // Clear all filters
   const clearFilters = () => {
-    setSearchTerm("");
-    setStatusFilter("");
-    setDateFilter("");
-    setPackageFilter("");
-    setSearchField("all");
+    setSearchTerm('');
+    setStatusFilter('');
+    setDateFilter('');
+    setPackageFilter('');
+    setSearchField('all');
   };
 
   // Handle booking deletion
   const handleDeleteBooking = async (id) => {
-    if (window.confirm("Are you sure you want to delete this booking?")) {
+    if (window.confirm('Are you sure you want to delete this booking?')) {
       try {
         await axios.delete(`/api/bookings/${id}`);
         // Remove the deleted booking from the local state
-        setBookings(bookings.filter((booking) => booking._id !== id));
-        toast.success("Booking deleted successfully");
+        setBookings(bookings.filter(booking => booking._id !== id));
+        toast.success('Booking deleted successfully');
       } catch (err) {
-        console.error("Error deleting booking:", err);
-        toast.error("Failed to delete booking. Please try again.");
+        console.error('Error deleting booking:', err);
+        toast.error('Failed to delete booking. Please try again.');
       }
     }
   };
 
-  // Handle booking confirmation
-  const handleConfirmBooking = async (id) => {
-    try {
-      await axios.put(`/api/bookings/${id}`, { status: "Confirmed" });
-      // Update the local state after successful API call
-      setBookings(
-        bookings.map((booking) =>
-          booking._id === id ? { ...booking, message: "Confirmed" } : booking
-        )
-      );
-      toast.success("Booking confirmed successfully");
-    } catch (err) {
-      console.error("Error confirming booking:", err);
-      toast.error("Failed to confirm booking. Please try again.");
-    }
-  };
+    // Handle booking confirmation
+    const handleConfirmBooking = async (id) => {
+      try {
+        await axios.put(`/api/bookings/${id}`, { status: 'Confirmed' });
+        // Update the local state after successful API call
+        setBookings(bookings.map(booking => 
+          booking._id === id ? { ...booking, message: 'Confirmed' } : booking
+        ));
+        toast.success('Booking confirmed successfully');
+      } catch (err) {
+        console.error('Error confirming booking:', err);
+        toast.error('Failed to confirm booking. Please try again.');
+      }
+    };
 
   // Get unique package types for filter dropdown
   const getUniquePackages = () => {
-    const packages = [
-      ...new Set(bookings.map((booking) => booking.packageType)),
-    ];
+    const packages = [...new Set(bookings.map(booking => booking.packageType))];
     return packages;
   };
 
@@ -178,67 +162,66 @@ const Bookings = () => {
   const exportBookingsToCSV = () => {
     try {
       setExporting(true);
-
+      
       // Get the bookings to export (filtered or all)
-      const bookingsToExport =
-        filteredBookings.length > 0 ? filteredBookings : bookings;
-
+      const bookingsToExport = filteredBookings.length > 0 ? filteredBookings : bookings;
+      
       if (bookingsToExport.length === 0) {
-        toast.warning("No bookings to export");
+        toast.warning('No bookings to export');
         setExporting(false);
         return;
       }
-
+      
       // Define CSV headers
       const headers = [
-        "ID",
-        "Username",
-        "Email",
-        "Package Type",
-        "Date",
-        "Time Slot",
-        "Status",
+        'ID',
+        'Username',
+        'Email',
+        'Package Type',
+        'Date',
+        'Time Slot',
+        'Status'
       ];
-
+      
       // Convert bookings to CSV rows
-      const csvRows = bookingsToExport.map((booking) => [
+      const csvRows = bookingsToExport.map(booking => [
         booking._id,
         booking.username,
         booking.email,
         booking.packageType,
         new Date(booking.date).toLocaleDateString(),
         booking.timeSlot,
-        booking.message,
+        booking.message
       ]);
-
+      
       // Combine headers and rows
       const csvContent = [
-        headers.join(","),
-        ...csvRows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
-      ].join("\n");
-
+        headers.join(','),
+        ...csvRows.map(row => row.map(cell => `"${cell}"`).join(','))
+      ].join('\n');
+      
       // Create a Blob with the CSV content
-      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      
       // Create a download link
       const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-
+      const link = document.createElement('a');
+      
       // Set the download attributes
-      const date = new Date().toISOString().split("T")[0];
-      link.setAttribute("href", url);
-      link.setAttribute("download", `bookings_${date}.csv`);
-      link.style.visibility = "hidden";
-
+      const date = new Date().toISOString().split('T')[0];
+      link.setAttribute('href', url);
+      link.setAttribute('download', `bookings_${date}.csv`);
+      link.style.visibility = 'hidden';
+      
       // Append to the document, click it, and remove it
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-
+      
       toast.success(`Exported ${bookingsToExport.length} bookings to CSV`);
     } catch (err) {
-      console.error("Error exporting bookings:", err);
-      toast.error("Failed to export bookings. Please try again.");
+      console.error('Error exporting bookings:', err);
+      toast.error('Failed to export bookings. Please try again.');
     } finally {
       setExporting(false);
     }
@@ -249,50 +232,23 @@ const Bookings = () => {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Booking Management</h2>
         <div className="flex space-x-2">
-          <button
+          <button 
             className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center"
             onClick={exportBookingsToCSV}
             disabled={exporting}
           >
             {exporting ? (
               <>
-                <svg
-                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
                 Exporting...
               </>
             ) : (
               <>
-                <svg
-                  className="w-4 h-4 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  ></path>
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                 </svg>
                 Export CSV
               </>
@@ -316,7 +272,7 @@ const Bookings = () => {
             <div className="flex space-x-4">
               <div className="flex-1">
                 <div className="flex space-x-2">
-                  <select
+                  <select 
                     className="px-3 py-2 border rounded-lg"
                     value={searchField}
                     onChange={handleSearchFieldChange}
@@ -336,21 +292,19 @@ const Bookings = () => {
                   />
                 </div>
               </div>
-              <button
+              <button 
                 className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
                 onClick={toggleFilters}
               >
-                {showFilters ? "Hide Filters" : "Show Filters"}
+                {showFilters ? 'Hide Filters' : 'Show Filters'}
               </button>
             </div>
-
+            
             {showFilters && (
               <div className="flex flex-wrap gap-4 pt-2 border-t">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Status
-                  </label>
-                  <select
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                  <select 
                     className="px-3 py-2 border rounded-lg"
                     value={statusFilter}
                     onChange={handleStatusChange}
@@ -361,29 +315,23 @@ const Bookings = () => {
                     <option value="Cancelled">Cancelled</option>
                   </select>
                 </div>
-
+                
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Package
-                  </label>
-                  <select
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Package</label>
+                  <select 
                     className="px-3 py-2 border rounded-lg"
                     value={packageFilter}
                     onChange={handlePackageChange}
                   >
                     <option value="">All Packages</option>
-                    {getUniquePackages().map((pkg) => (
-                      <option key={pkg} value={pkg}>
-                        {pkg}
-                      </option>
+                    {getUniquePackages().map(pkg => (
+                      <option key={pkg} value={pkg}>{pkg}</option>
                     ))}
                   </select>
                 </div>
-
+                
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Date
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
                   <input
                     type="date"
                     className="px-3 py-2 border rounded-lg"
@@ -391,9 +339,9 @@ const Bookings = () => {
                     onChange={handleDateChange}
                   />
                 </div>
-
+                
                 <div className="flex items-end">
-                  <button
+                  <button 
                     className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
                     onClick={clearFilters}
                   >
@@ -448,19 +396,13 @@ const Bookings = () => {
                   filteredBookings.map((booking) => (
                     <tr key={booking._id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
-                          {booking.username}
-                        </div>
+                        <div className="text-sm font-medium text-gray-900">{booking.username}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {booking.email}
-                        </div>
+                        <div className="text-sm text-gray-900">{booking.email}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {booking.packageType}
-                        </div>
+                        <div className="text-sm text-gray-900">{booking.packageType}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">
@@ -468,47 +410,38 @@ const Bookings = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {booking.timeSlot}
-                        </div>
+                        <div className="text-sm text-gray-900">{booking.timeSlot}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            booking.message === "Confirmed"
-                              ? "bg-green-100 text-green-800"
-                              : booking.message === "Pending"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : "bg-red-100 text-red-800"
-                          }`}
-                        >
+                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                          booking.message === 'Confirmed' ? 'bg-green-100 text-green-800' : 
+                          booking.message === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
+                          'bg-red-100 text-red-800'
+                        }`}>
                           {booking.message}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex space-x-2">
-                          <button
-                            className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 text-sm"
-                            onClick={() => handleConfirmBooking(booking._id)}
-                          >
-                            Confirm
-                          </button>
-                          <button
-                            className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm"
-                            onClick={() => handleDeleteBooking(booking._id)}
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </td>
+                  <div className="flex space-x-2">
+                    <button
+                      className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 text-sm"
+                      onClick={() => handleConfirmBooking(booking._id)}
+                    >
+                      Confirm
+                    </button>
+                    <button 
+                      className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm"
+                      onClick={() => handleDeleteBooking(booking._id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td
-                      colSpan="7"
-                      className="px-6 py-4 text-center text-gray-500"
-                    >
+                    <td colSpan="7" className="px-6 py-4 text-center text-gray-500">
                       No bookings found
                     </td>
                   </tr>

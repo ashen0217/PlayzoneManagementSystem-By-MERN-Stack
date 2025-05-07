@@ -1,320 +1,425 @@
-import React, { useState, useEffect } from "react";
-import Navbar from "./Navbar";
-import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import React, { useState, useEffect } from 'react'
+import Navbar from "./Navbar"
+import axios from 'axios'
+import { useParams, useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const MngBooking = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [bookings, setBookings] = useState([]);
-  const [filteredBookings, setFilteredBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [searchEmail, setSearchEmail] = useState("");
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const [bookings, setBookings] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [currentBooking, setCurrentBooking] = useState(null)
+  const [editData, setEditData] = useState({
+    packageType: '',
+    date: '',
+    timeSlot: '',
+    specialRequests: ''
+  })
 
   useEffect(() => {
     const fetchUserBookings = async () => {
       try {
-        setLoading(true);
-        setError(null);
+        setLoading(true)
+        setError(null)
 
-        // Get user ID from localStorage or params
-        const userId = localStorage.getItem("userId") || id;
-
+        const userId = JSON.parse(localStorage.getItem('userData')) || id
+        console.log('User ID:', userId)
         if (!userId) {
-          setError("User ID not found. Please login again.");
-          setLoading(false);
-          return;
+          setError('User ID not found. Please login again.')
+          setLoading(false)
+          return
         }
 
-        // Fetch bookings for the specific user
-        const response = await axios.get(
-          `http://localhost:8000/api/bookings?userId=${userId}`
-        );
-
-        console.log("User Bookings API response:", response.data);
+        let response;
+        try {
+          response = await axios.get(`http://localhost:8000/api/bookings/${userId.email}`)
+        } catch (err) {
+          console.error('Error fetching bookings:', err)
+        }
 
         if (response.data && Array.isArray(response.data.bookings)) {
-          setBookings(response.data.bookings);
-          setFilteredBookings(response.data.bookings);
+          setBookings(response.data.bookings)
+        } else if (response.data && response.data.bookings) {
+          setBookings([response.data.bookings])
+        } else if (response.data && Array.isArray(response.data)) {
+          setBookings(response.data)
         } else {
-          setError("No bookings found for this user");
+          setError('No bookings found for this user')
         }
       } catch (err) {
-        console.error("Error fetching user bookings:", err);
-        setError(
-          err.response?.data?.message ||
-            err.message ||
-            "Failed to fetch bookings"
-        );
+        console.error('Error fetching user bookings:', err)
+        if (err.response) {
+          setError(`Error: ${err.response.data?.message || 'Failed to fetch bookings'}`)
+        } else if (err.request) {
+          setError('No response from server. Please check if the backend is running.')
+        } else {
+          setError(`Error: ${err.message}`)
+        }
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
-
-    fetchUserBookings();
-  }, [id]);
-
-  // Rest of the component remains the same...
-  // Filter bookings by email
-  useEffect(() => {
-    if (searchEmail.trim() === "") {
-      setFilteredBookings(bookings);
-    } else {
-      const filtered = bookings.filter((booking) =>
-        booking.email.toLowerCase().includes(searchEmail.toLowerCase())
-      );
-      setFilteredBookings(filtered);
     }
-  }, [searchEmail, bookings]);
 
-  const handleRequestEdit = async (bookingId) => {
-    if (!bookingId) return;
+    fetchUserBookings()
+  }, [id])
 
-    setIsSubmitting(true);
+  const handleRequestEdit = (booking) => {
+    setCurrentBooking(booking)
+    setEditData({
+      packageType: booking.packageType,
+      date: booking.date.split('T')[0],
+      timeSlot: booking.timeSlot,
+      specialRequests: booking.specialRequests || ''
+    })
+    setIsModalOpen(true)
+  }
 
+  const handleEditChange = (e) => {
+    const { name, value } = e.target
+    setEditData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  const submitEditRequest = async () => {
+    setIsSubmitting(true)
     try {
-      const formData = new FormData();
-      formData.append("access_key", "ee2a13d2-c198-4c6f-95b6-826790c23996");
-      formData.append("subject", "Booking Edit Request");
-      formData.append("booking_id", bookingId);
-
-      const response = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        toast.success(
-          "Edit request sent successfully! Admin will review your request."
-        );
-      } else {
-        toast.error("Failed to send edit request. Please try again later.");
+      const updatedBooking = {
+        ...currentBooking,
+        ...editData,
+        message: 'Pending',
+        status: 'edit-requested'
       }
-    } catch (error) {
-      toast.error("Failed to send edit request. Please try again later.");
+
+      const response = await axios.put(
+        `http://localhost:8000/api/bookings/${currentBooking._id}`,
+        updatedBooking
+      )
+
+      setBookings(bookings.map(b => 
+        b._id === currentBooking._id ? response.data.booking : b
+      ))
+
+      toast.success('Edit request submitted successfully!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      })
+
+      setIsModalOpen(false)
+    } catch (err) {
+      console.error('Error submitting edit request:', err)
+      toast.error(err.response?.data?.message || 'Failed to submit edit request', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      })
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   if (loading) {
     return (
-      <div
-        className="flex items-center justify-center min-h-screen bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('/bg10.png')" }}
+      <div className="min-h-screen bg-gray-50 pt-20"
+        style={{ 
+          backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/bg7.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundAttachment: "fixed"
+        }}
       >
-        <Navbar />
-        <div className="max-w-2xl mx-auto p-6">
-          <div className="text-center py-8">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading booking details...</p>
+        <div className="relative z-10">
+          <Navbar />
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="text-center py-16">
+              <div className="inline-flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+              </div>
+              <h3 className="mt-4 text-lg font-medium text-white">Loading your bookings</h3>
+              <p className="mt-1 text-sm text-gray-200">Please wait while we fetch your booking details</p>
+            </div>
           </div>
         </div>
       </div>
-    );
+    )
   }
 
   if (error) {
     return (
-      <div
-        className="flex items-center justify-center min-h-screen bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('/bg10.png')" }}
+      <div className="min-h-screen bg-gray-50 pt-20"
+        style={{ 
+          backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/bg7.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundAttachment: "fixed"
+        }}
       >
-        <Navbar />
-        <div className="max-w-2xl mx-auto p-6">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="text-center py-8">
-              <div className="text-red-500 text-xl mb-4">Error</div>
-              <p className="text-gray-600 mb-4">{error}</p>
-              <button
-                onClick={() => navigate("/")}
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-              >
-                Back to Home
-              </button>
+        <div className="relative z-10">
+          <Navbar />
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="bg-white bg-opacity-90 rounded-xl shadow-sm p-6 sm:p-8 backdrop-blur-sm">
+              <div className="text-center py-8">
+                <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                  <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+                <h3 className="mt-3 text-lg font-medium text-gray-900">Error loading bookings</h3>
+                <p className="mt-2 text-sm text-gray-700 max-w-md mx-auto">{error}</p>
+                <div className="mt-6">
+                  <button
+                    onClick={() => navigate('/')}
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
+                    Back to Home
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    );
+    )
   }
 
   return (
-    <div
-      className="min-h-screen bg-gray-100"
-      style={{
-        backgroundImage: "url('/bg8.jpg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
-      <Navbar />
-      <br />
-      <br />
-      <div className="max-w-4xl mx-auto p-6">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">
-            Your bookings,please Ensure that you can only request to edit the
-            status whether your booking is confirm or not...
-          </h2>
-
-          {/* Search by Email Input */}
-          <div className="mb-6">
-            <label
-              htmlFor="email-search"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Search by Email
-            </label>
-            <div className="flex">
-              <input
-                type="text"
-                id="email-search"
-                className="flex-1 p-2 border border-gray-300 rounded-l focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Enter email to search..."
-                value={searchEmail}
-                onChange={(e) => setSearchEmail(e.target.value)}
-              />
-              <button
-                className="bg-blue-500 text-white px-4 py-2 rounded-r hover:bg-blue-600"
-                onClick={() => {
-                  const filtered = bookings.filter((booking) =>
-                    booking.email
-                      .toLowerCase()
-                      .includes(searchEmail.toLowerCase())
-                  );
-                  setFilteredBookings(filtered);
-                }}
-              >
-                Search
-              </button>
-            </div>
-          </div>
-
-          {filteredBookings.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-gray-600 mb-4">
-                {searchEmail.trim() !== ""
-                  ? "No bookings match your search criteria"
-                  : "No bookings found"}
-              </p>
-              {searchEmail.trim() !== "" && (
+    <div className="min-h-screen relative">
+      <div className="absolute inset-0 bg-black bg-opacity-50 z-0"></div>
+      <div 
+        className="absolute inset-0 z-0 bg-cover bg-center"
+        style={{ backgroundImage: "url('/bg8.jpg')" }}
+      ></div>
+      
+      <div className="relative z-10">
+        <Navbar />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="bg-white bg-opacity-90 rounded-xl shadow-sm overflow-hidden backdrop-blur-sm">
+            <div className="px-6 py-5 border-b border-gray-200 sm:flex sm:items-center sm:justify-between">
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900">Your Bookings</h2>
+                <p className="mt-1 text-sm text-gray-600">Manage your photography session bookings</p>
+              </div>
+              <div className="mt-4 sm:mt-0">
                 <button
-                  onClick={() => {
-                    setSearchEmail("");
-                    setFilteredBookings(bookings);
-                  }}
-                  className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 mr-2"
+                  onClick={() => navigate('/addbook')}
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
-                  Clear Search
+                  New Booking
                 </button>
-              )}
-              <button
-                onClick={() => navigate("/addbook")}
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-              >
-                Make a New Booking
-              </button>
+              </div>
             </div>
-          ) : (
-            <div className="space-y-6">
-              {filteredBookings.map((booking) => (
-                <div
-                  key={booking._id}
-                  className="border rounded-lg p-4 hover:shadow-md transition-shadow"
+            
+            {bookings.length === 0 ? (
+              <div className="text-center py-16">
+                <svg
+                  className="mx-auto h-12 w-12 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
                 >
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        Full Name
-                      </label>
-                      <div className="mt-1 p-2 border rounded bg-gray-50">
-                        {booking.username}
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        Email
-                      </label>
-                      <div className="mt-1 p-2 border rounded bg-gray-50">
-                        {booking.email}
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        Package Type
-                      </label>
-                      <div className="mt-1 p-2 border rounded bg-gray-50">
-                        {booking.packageType}
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        Date
-                      </label>
-                      <div className="mt-1 p-2 border rounded bg-gray-50">
-                        {new Date(booking.date).toLocaleDateString()}
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        Time Slot
-                      </label>
-                      <div className="mt-1 p-2 border rounded bg-gray-50">
-                        {booking.timeSlot}
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        Status
-                      </label>
-                      <div className="mt-1">
-                        <span
-                          className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-                          ${
-                            booking.message === "Pending"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : booking.message === "Confirmed"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-red-100 text-red-800"
-                          }`}
-                        >
-                          {booking.message}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 flex justify-end space-x-4">
-                    <button
-                      onClick={() => handleRequestEdit(booking._id)}
-                      disabled={isSubmitting}
-                      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
-                    >
-                      {isSubmitting
-                        ? "Sending Request..."
-                        : "Request To Edit Status"}
-                    </button>
-                  </div>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1}
+                    d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <h3 className="mt-2 text-lg font-medium text-gray-900">No bookings</h3>
+                <p className="mt-1 text-sm text-gray-600">You haven't made any bookings yet.</p>
+                <div className="mt-6">
+                  <button
+                    onClick={() => navigate('/addbook')}
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
+                    Book a Session
+                  </button>
                 </div>
-              ))}
-            </div>
-          )}
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-200">
+                {bookings.map((booking) => (
+                  <div key={booking._id} className="px-6 py-5 hover:bg-gray-50 transition-colors duration-150">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider">Name</label>
+                          <div className="mt-1 text-sm font-medium text-gray-900">
+                            {booking.username}
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider">Email</label>
+                          <div className="mt-1 text-sm text-gray-600">
+                            {booking.email}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider">Package</label>
+                          <div className="mt-1 text-sm font-medium text-gray-900">
+                            {booking.packageType}
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider">Date & Time</label>
+                          <div className="mt-1 text-sm text-gray-600">
+                            {new Date(booking.date).toLocaleDateString('en-US', { 
+                              year: 'numeric', 
+                              month: 'long', 
+                              day: 'numeric' 
+                            })}
+                            <span className="block">{booking.timeSlot}</span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider">Status</label>
+                          <div className="mt-1">
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                              ${booking.message === 'Pending' || booking.status === 'edit-requested' ? 'bg-yellow-100 text-yellow-800' :
+                                booking.message === 'Confirmed' ? 'bg-green-100 text-green-800' :
+                                'bg-red-100 text-red-800'}`}>
+                              {booking.status === 'edit-requested' ? 'Edit Requested' : booking.message}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex justify-end space-x-3 pt-2">
+                          <button
+                            onClick={() => handleRequestEdit(booking)}
+                            disabled={isSubmitting}
+                            className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                          >
+                            Request Edit
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
-  );
-};
 
-export default MngBooking;
+      {/* Edit Booking Modal */}
+      {isModalOpen && (
+        <div className="fixed z-50 inset-0 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+              <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Request Booking Changes</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="packageType" className="block text-sm font-medium text-gray-700">Package Type</label>
+                    <select
+                      id="packageType"
+                      name="packageType"
+                      value={editData.packageType}
+                      onChange={handleEditChange}
+                      className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border"
+                    >
+                      <option value="Basic">Basic</option>
+                      <option value="Standard">Standard</option>
+                      <option value="Premium">Premium</option>
+                      <option value="Custom">Custom</option>
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="date" className="block text-sm font-medium text-gray-700">Date</label>
+                    <input
+                      type="date"
+                      id="date"
+                      name="date"
+                      value={editData.date}
+                      onChange={handleEditChange}
+                      min={new Date().toISOString().split('T')[0]}
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="timeSlot" className="block text-sm font-medium text-gray-700">Time Slot</label>
+                    <select
+                      id="timeSlot"
+                      name="timeSlot"
+                      value={editData.timeSlot}
+                      onChange={handleEditChange}
+                      className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border"
+                    >
+                      <option value="Morning (9AM-12PM)">Morning (9AM-12PM)</option>
+                      <option value="Afternoon (1PM-4PM)">Afternoon (1PM-4PM)</option>
+                      <option value="Evening (5PM-8PM)">Evening (5PM-8PM)</option>
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="specialRequests" className="block text-sm font-medium text-gray-700">Special Requests</label>
+                    <textarea
+                      id="specialRequests"
+                      name="specialRequests"
+                      rows={3}
+                      value={editData.specialRequests}
+                      onChange={handleEditChange}
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button
+                  type="button"
+                  onClick={submitEditRequest}
+                  disabled={isSubmitting}
+                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Submitting...
+                    </>
+                  ) : 'Submit Request'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default MngBooking

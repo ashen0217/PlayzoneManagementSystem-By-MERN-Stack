@@ -1,4 +1,4 @@
-const Booking = require('../Model/BookingModel');
+const Booking = require('../Model/Booking');
 
 // GET all bookings
 const getAllBookings = async (req, res) => {
@@ -131,51 +131,36 @@ const getByID = async (req, res) => {
 
 // PUT update booking by ID
 const updateBooking = async (req, res) => {
-  const id = req.params.id;
-  const { username, email, packageType, date, timeSlot, message } = req.body;
-
   try {
-    // Validate required fields
-    if (!username || !email || !packageType || !date || !timeSlot) {
-      return res.status(400).json({ 
-        success: false,
-        message: "Missing required fields"
-      });
+    const { id } = req.params;
+    const { status } = req.body;
+
+    // Validate input
+    if (!status) {
+      return res.status(400).json({ success: false, error: 'Status is required' });
     }
 
-    // Validate message enum
-    if (message && !['Pending', 'Confirmed', 'Cancelled'].includes(message)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid status value. Must be 'Pending', 'Confirmed', or 'Cancelled'"
-      });
-    }
-
-    // Find and update the booking
     const updatedBooking = await Booking.findByIdAndUpdate(
       id,
-      { username, email, packageType, date, timeSlot, message },
+      { message: status },
       { new: true, runValidators: true }
     );
 
     if (!updatedBooking) {
-      return res.status(404).json({ 
-        success: false,
-        message: "Booking not found" 
-      });
+      return res.status(404).json({ success: false, error: 'Booking not found' });
     }
 
-    return res.status(200).json({ 
-      success: true,
-      message: "Booking updated successfully", 
-      booking: updatedBooking 
+    res.status(200).json({ 
+      success: true, 
+      data: updatedBooking,
+      message: 'Booking updated successfully'
     });
-  } catch (err) {
-    console.error("Error updating booking:", err);
-    return res.status(500).json({ 
-      success: false,
-      message: "Failed to update booking", 
-      error: err.message 
+  } catch (error) {
+    console.error('Error updating booking:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Server error',
+      message: error.message 
     });
   }
 };

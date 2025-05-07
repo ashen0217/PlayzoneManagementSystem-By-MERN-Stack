@@ -8,7 +8,7 @@ const {
   getByID
 } = require('../Controllers/bookingController');
 
-const bookingModel = require("../Model/BookingModel");
+const bookingModel = require("../Model/Booking");
 
 router.post('/', addBooking);
 router.get('/', getAllBookings);

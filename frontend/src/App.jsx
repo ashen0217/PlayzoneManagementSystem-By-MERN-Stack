@@ -23,15 +23,15 @@ import EventUpdate from "./components/admin/EventUpdate";
 import Services from "./components/Services";
 import PayUpdate from "./components/admin/PayUpdate";
 import Packages from "./components/Packages";
-import BookingUpdate from './components/admin/BookingUpdate';
 import Bookings from "./components/admin/Bookings";
+import BookingUpdate from "./components/admin/BookingUpdate";
 import MngBookings from "./components/MngBooking";
 import ForgotPassword from "./components/ForgotPassword";
 import FAQ from "./components/FAQ";
 import Complaints from "./components/admin/Complaints";
 import ComplaintForm from "./components/ComplaintForm";
 import ViewComplaint from "./components/admin/ViewComplaint";
-import Navbar2 from "./components/Navbar2";
+import Navbar2 from "./components/Navbar";
 
 const App = () => {
   return (
@@ -67,6 +67,7 @@ const App = () => {
           <Route path="/admin/complaints" element={<Complaints />} />
           <Route path="/submit-complaint" element={<ComplaintForm />} />
           <Route path="/complaints/:id" element={<ViewComplaint/>}/>
+
 
           <Route path="*" element={<NotFound />} />
         </Routes>
