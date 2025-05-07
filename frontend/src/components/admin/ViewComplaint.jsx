@@ -77,12 +77,6 @@ const ViewComplaint = ({ mode = 'view', onUpdate }) => {
                   {!isEditing && (
                     <div className="flex space-x-3">
                       <button
-                        onClick={handleDelete}
-                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition duration-200"
-                      >
-                        Delete
-                      </button>
-                      <button
                         onClick={() => setIsEditing(true)}
                         className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition duration-200"
                       >
