@@ -16,37 +16,72 @@ const ComplaintForm = () => {
 
   const validate = () => {
     const newErrors = {};
+    
+    // Name validation
     if (!formData.name.trim()) {
       newErrors.name = "Full Name is required";
+    } else if (formData.name.trim().length < 3) {
+      newErrors.name = "Name must be at least 3 characters";
+    } else if (/[^a-zA-Z\s]/.test(formData.name)) {
+      newErrors.name = "Name should only contain letters and spaces";
+    } else if (/\d/.test(formData.name)) {
+      newErrors.name = "Name cannot contain numbers";
     }
+    
+    // Email validation
     if (!formData.email.trim()) {
       newErrors.email = "Email Address is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Email Address is invalid";
+      newErrors.email = "Please enter a valid email address";
+    } else if (!formData.email.includes('@')) {
+      newErrors.email = "Email must contain @ symbol";
+    } else if (!formData.email.split('@')[1].includes('.')) {
+      newErrors.email = "Email must contain a domain after @";
     }
+    
+    // Complaint validation
     if (!formData.complain.trim()) {
       newErrors.complain = "Complaint is required";
+    } else if (formData.complain.trim().length < 10) {
+      newErrors.complain = "Complaint must be at least 10 characters";
     }
+    
+    // Feedback validation
     if (!formData.feedback.trim()) {
       newErrors.feedback = "Feedback is required";
+    } else if (formData.feedback.trim().length < 10) {
+      newErrors.feedback = "Feedback must be at least 10 characters";
     }
+    
+    // Rating validation
     if (!formData.ratings) {
       newErrors.ratings = "Rating is required";
     }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    
+    // Real-time validation for name field
+    if (name === "name") {
+      if (/[^a-zA-Z\s]/.test(value)) return;
+    }
+    
     setFormData((prevState) => ({
       ...prevState,
       [name]: value,
     }));
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      [name]: "",
-    }));
+    
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: "",
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -116,7 +151,8 @@ const ComplaintForm = () => {
                   className={`mt-1 appearance-none relative block w-full px-3 py-2 border ${
                     errors.name ? "border-red-500" : "border-gray-300"
                   } placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
-                  placeholder="Enter your full name"
+                  placeholder="Enter your full name (letters only)"
+                  maxLength={50}
                 />
                 {errors.name && (
                   <p className="text-red-500 text-xs mt-1">{errors.name}</p>
@@ -139,7 +175,7 @@ const ComplaintForm = () => {
                   className={`mt-1 appearance-none relative block w-full px-3 py-2 border ${
                     errors.email ? "border-red-500" : "border-gray-300"
                   } placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
-                  placeholder="Enter your email address"
+                  placeholder="example@domain.com"
                 />
                 {errors.email && (
                   <p className="text-red-500 text-xs mt-1">{errors.email}</p>
@@ -162,7 +198,9 @@ const ComplaintForm = () => {
                   className={`mt-1 appearance-none relative block w-full px-3 py-2 border ${
                     errors.complain ? "border-red-500" : "border-gray-300"
                   } placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
-                  placeholder="Please describe your complaint in detail"
+                  placeholder="Please describe your complaint in detail (minimum 10 characters)"
+                  minLength={10}
+                  maxLength={500}
                 />
                 {errors.complain && (
                   <p className="text-red-500 text-xs mt-1">{errors.complain}</p>
@@ -185,7 +223,9 @@ const ComplaintForm = () => {
                   className={`mt-1 appearance-none relative block w-full px-3 py-2 border ${
                     errors.feedback ? "border-red-500" : "border-gray-300"
                   } placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
-                  placeholder="Please provide your feedback"
+                  placeholder="Please provide your feedback (minimum 10 characters)"
+                  minLength={10}
+                  maxLength={500}
                 />
                 {errors.feedback && (
                   <p className="text-red-500 text-xs mt-1">{errors.feedback}</p>
