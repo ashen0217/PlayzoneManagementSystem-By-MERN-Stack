@@ -40,7 +40,10 @@ const ViewComplaint = ({ mode = 'view', onUpdate }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:8000/Complaints/complaints/${id}`, complaint);
+      await axios.put(`http://localhost:8000/Complaints/complaints/${id}`, {
+        status: complaint.status,
+        priority: complaint.priority
+      });
       toast.success('Complaint updated successfully');
       setIsEditing(false);
       if (onUpdate) onUpdate();
@@ -96,9 +99,7 @@ const ViewComplaint = ({ mode = 'view', onUpdate }) => {
                           name="name"
                           readOnly
                           value={complaint.name}
-                          onChange={handleChange}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                          required
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100"
                         />
                       </div>
                       <div>
@@ -108,9 +109,7 @@ const ViewComplaint = ({ mode = 'view', onUpdate }) => {
                           name="email"
                           value={complaint.email}
                           readOnly
-                          onChange={handleChange}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                          required
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100"
                         />
                       </div>
                     </div>
@@ -121,10 +120,8 @@ const ViewComplaint = ({ mode = 'view', onUpdate }) => {
                         name="complain"
                         value={complaint.complain}
                         readOnly
-                        onChange={handleChange}
                         rows="4"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                        required
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100"
                       />
                     </div>
 
@@ -133,10 +130,9 @@ const ViewComplaint = ({ mode = 'view', onUpdate }) => {
                       <textarea
                         name="feedback"
                         value={complaint.feedback}
-                        onChange={handleChange}
                         readOnly
                         rows="4"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100"
                       />
                     </div>
 
@@ -146,9 +142,8 @@ const ViewComplaint = ({ mode = 'view', onUpdate }) => {
                         <select
                           name="ratings"
                           value={complaint.ratings}
-                          onChange={handleChange}
                           readOnly
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100"
                         >
                           <option value="">Select rating</option>
                           <option value="1">⭐ Poor</option>
