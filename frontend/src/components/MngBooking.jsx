@@ -6,67 +6,68 @@ import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 const MngBooking = () => {
-  const { id } = useParams()
-  const navigate = useNavigate()
-  const [bookings, setBookings] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [currentBooking, setCurrentBooking] = useState(null)
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentBooking, setCurrentBooking] = useState(null);
   const [editData, setEditData] = useState({
     packageType: '',
     date: '',
     timeSlot: '',
     specialRequests: ''
-  })
+  });
 
   useEffect(() => {
     const fetchUserBookings = async () => {
       try {
-        setLoading(true)
-        setError(null)
+        setLoading(true);
+        setError(null);
 
-        const userId = JSON.parse(localStorage.getItem('userData')) || id
-        console.log('User ID:', userId)
-        if (!userId) {
-          setError('User ID not found. Please login again.')
-          setLoading(false)
-          return
+        // Get user email from localStorage or params
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        const userEmail = userData?.email || id;
+        
+        if (!userEmail) {
+          throw new Error('User email not found');
         }
 
-        let response;
-        try {
-          response = await axios.get(`http://localhost:8000/api/bookings/${userId.email}`)
-        } catch (err) {
-          console.error('Error fetching bookings:', err)
-        }
-
-        if (response.data && Array.isArray(response.data.bookings)) {
-          setBookings(response.data.bookings)
-        } else if (response.data && response.data.bookings) {
-          setBookings([response.data.bookings])
-        } else if (response.data && Array.isArray(response.data)) {
-          setBookings(response.data)
+        // Call the correct endpoint
+        const response = await axios.get(`http://localhost:8000/api/bookings/email/${userEmail}`);
+        
+        // Handle response
+        if (response.data && response.data.success) {
+          setBookings(response.data.bookings || []);
         } else {
-          setError('No bookings found for this user')
+          setBookings([]);
         }
       } catch (err) {
-        console.error('Error fetching user bookings:', err)
+        console.error('Error fetching bookings:', err);
+        
+        // Handle specific error cases
         if (err.response) {
-          setError(`Error: ${err.response.data?.message || 'Failed to fetch bookings'}`)
+          if (err.response.status === 404) {
+            setBookings([]);
+            return;
+          }
+          setError(err.response.data?.message || 'Failed to fetch bookings');
         } else if (err.request) {
-          setError('No response from server. Please check if the backend is running.')
+          setError('No response from server');
         } else {
-          setError(`Error: ${err.message}`)
+          setError(err.message || 'Failed to fetch bookings');
         }
+        
+        toast.error(error || 'Failed to load bookings');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchUserBookings()
-  }, [id])
+    fetchUserBookings();
+  }, [id]);
 
   const handleRequestEdit = (booking) => {
     setCurrentBooking(booking)

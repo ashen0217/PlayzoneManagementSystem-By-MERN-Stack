@@ -183,13 +183,34 @@ const deleteBooking = async (req, res) => {
   }
 };
 
+// Add this new method for email-based search
+const getBookingsByEmail = async (req, res) => {
+  try {
+    const email = req.params.email;
+    const bookings = await Booking.find({ email }).sort({ date: -1 });
+    
+    return res.status(200).json({
+      success: true,
+      count: bookings.length,
+      message: bookings.length ? "Bookings found" : "No bookings found for this email",
+      bookings
+    });
+  } catch (err) {
+    console.error("Error fetching bookings by email:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while fetching bookings",
+      error: err.message
+    });
+  }
+};
 
-
+// Update exports at the bottom
 module.exports = {
   getAllBookings,
   addBooking,
   getByID,
+  getBookingsByEmail, // Add this
   updateBooking,
   deleteBooking,
-
 };
