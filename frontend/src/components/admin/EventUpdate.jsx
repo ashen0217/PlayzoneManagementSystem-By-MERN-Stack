@@ -63,6 +63,18 @@ const EventUpdate = () => {
       alert('Participants must be a number');
       return false;
     }
+
+    // Validate Participants
+    const participantsNum = Number(Participants);
+    if (isNaN(participantsNum)) {
+      alert('Participants must be a valid number');
+      return false;
+    }
+    if (participantsNum <= 0) {
+      alert('Participants count must be greater than 0');
+      return false;
+    }
+    
     return true;
   };
 
