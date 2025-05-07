@@ -199,10 +199,10 @@ const BookingForm = () => {
   return (
     <div
       className="flex items-center justify-center min-h-screen bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: "url('/bg10.png')" }}
+      style={{ backgroundImage: "url('/bg6.jpg')" }}
     >
       <Navbar />
-
+      <br /><br /><br />
       <form
         onSubmit={handleSubmit}
         className="bg-white/90 backdrop-blur-sm p-8 rounded-lg shadow-xl w-full max-w-md mx-4"
