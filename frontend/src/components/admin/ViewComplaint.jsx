@@ -94,6 +94,7 @@ const ViewComplaint = ({ mode = 'view', onUpdate }) => {
                         <input
                           type="text"
                           name="name"
+                          readOnly
                           value={complaint.name}
                           onChange={handleChange}
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
@@ -106,6 +107,7 @@ const ViewComplaint = ({ mode = 'view', onUpdate }) => {
                           type="email"
                           name="email"
                           value={complaint.email}
+                          readOnly
                           onChange={handleChange}
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
                           required
@@ -118,6 +120,7 @@ const ViewComplaint = ({ mode = 'view', onUpdate }) => {
                       <textarea
                         name="complain"
                         value={complaint.complain}
+                        readOnly
                         onChange={handleChange}
                         rows="4"
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
@@ -131,6 +134,7 @@ const ViewComplaint = ({ mode = 'view', onUpdate }) => {
                         name="feedback"
                         value={complaint.feedback}
                         onChange={handleChange}
+                        readOnly
                         rows="4"
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
                       />
@@ -143,6 +147,7 @@ const ViewComplaint = ({ mode = 'view', onUpdate }) => {
                           name="ratings"
                           value={complaint.ratings}
                           onChange={handleChange}
+                          readOnly
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
                         >
                           <option value="">Select rating</option>
