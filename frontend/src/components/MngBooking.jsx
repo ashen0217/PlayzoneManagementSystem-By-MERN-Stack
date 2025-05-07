@@ -21,7 +21,7 @@ const MngBooking = () => {
         setLoading(true);
         setError(null);
 
-        // Get user ID from localStorage or state management
+        // Get user ID from localStorage or params
         const userId = localStorage.getItem("userId") || id;
 
         if (!userId) {
@@ -30,61 +30,26 @@ const MngBooking = () => {
           return;
         }
 
-        // Try different possible API endpoints
-        let response;
-        try {
-          // First try the main endpoint
-          response = await axios.get(
-            `http://localhost:8000/api/bookings/user/${userId}`
-          );
-        } catch (err) {
-          // If that fails, try alternative endpoints
-          try {
-            response = await axios.get(
-              `http://localhost:8000/bookings/user/${userId}`
-            );
-          } catch (err) {
-            // If that also fails, try getting all bookings and filter client-side
-            response = await axios.get(`http://localhost:8000/bookings`);
-            if (response.data && Array.isArray(response.data)) {
-              response.data = {
-                bookings: response.data.filter(
-                  (booking) => booking.userId === userId
-                ),
-              };
-            }
-          }
-        }
+        // Fetch bookings for the specific user
+        const response = await axios.get(
+          `http://localhost:8000/api/bookings?userId=${userId}`
+        );
 
         console.log("User Bookings API response:", response.data);
 
         if (response.data && Array.isArray(response.data.bookings)) {
           setBookings(response.data.bookings);
           setFilteredBookings(response.data.bookings);
-        } else if (response.data && response.data.bookings) {
-          // Handle case where bookings is not an array
-          setBookings([response.data.bookings]);
-          setFilteredBookings([response.data.bookings]);
-        } else if (response.data && Array.isArray(response.data)) {
-          // Handle case where response is directly an array
-          setBookings(response.data);
-          setFilteredBookings(response.data);
         } else {
           setError("No bookings found for this user");
         }
       } catch (err) {
         console.error("Error fetching user bookings:", err);
-        if (err.response) {
-          setError(
-            `Error: ${err.response.data?.message || "Failed to fetch bookings"}`
-          );
-        } else if (err.request) {
-          setError(
-            "No response from server. Please check if the backend is running."
-          );
-        } else {
-          setError(`Error: ${err.message}`);
-        }
+        setError(
+          err.response?.data?.message ||
+            err.message ||
+            "Failed to fetch bookings"
+        );
       } finally {
         setLoading(false);
       }
@@ -93,12 +58,13 @@ const MngBooking = () => {
     fetchUserBookings();
   }, [id]);
 
+  // Rest of the component remains the same...
   // Filter bookings by email
   useEffect(() => {
     if (searchEmail.trim() === "") {
       setFilteredBookings(bookings);
     } else {
-      const filtered = bookings.filter(booking =>
+      const filtered = bookings.filter((booking) =>
         booking.email.toLowerCase().includes(searchEmail.toLowerCase())
       );
       setFilteredBookings(filtered);
@@ -194,12 +160,16 @@ const MngBooking = () => {
       <div className="max-w-4xl mx-auto p-6">
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">
-            Your bookings,please Ensure that you can only request to edit the status whether your booking is confirm or not...
+            Your bookings,please Ensure that you can only request to edit the
+            status whether your booking is confirm or not...
           </h2>
 
           {/* Search by Email Input */}
           <div className="mb-6">
-            <label htmlFor="email-search" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="email-search"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Search by Email
             </label>
             <div className="flex">
@@ -214,9 +184,10 @@ const MngBooking = () => {
               <button
                 className="bg-blue-500 text-white px-4 py-2 rounded-r hover:bg-blue-600"
                 onClick={() => {
-                  // Trigger the filtering effect
-                  const filtered = bookings.filter(booking =>
-                    booking.email.toLowerCase().includes(searchEmail.toLowerCase())
+                  const filtered = bookings.filter((booking) =>
+                    booking.email
+                      .toLowerCase()
+                      .includes(searchEmail.toLowerCase())
                   );
                   setFilteredBookings(filtered);
                 }}
@@ -229,8 +200,8 @@ const MngBooking = () => {
           {filteredBookings.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-gray-600 mb-4">
-                {searchEmail.trim() !== "" 
-                  ? "No bookings match your search criteria" 
+                {searchEmail.trim() !== ""
+                  ? "No bookings match your search criteria"
                   : "No bookings found"}
               </p>
               {searchEmail.trim() !== "" && (
@@ -331,7 +302,9 @@ const MngBooking = () => {
                       disabled={isSubmitting}
                       className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
                     >
-                      {isSubmitting ? "Sending Request..." : "Request To Edit Status"}
+                      {isSubmitting
+                        ? "Sending Request..."
+                        : "Request To Edit Status"}
                     </button>
                   </div>
                 </div>

@@ -110,14 +110,21 @@ const addBooking = async (req, res) => {
 
 // GET single booking by ID
 const getByID = async (req, res) => {
-  const id = req.params.id;
+  const email = req.params.id;
+  console.log("Fetching booking by email:", email);
 
   try {
-    const booking = await Booking.findById(id);
-    if (!booking) return res.status(404).json({ message: "Booking not found" });
-    return res.status(200).json({ message: "Booking found", booking });
+    const bookings = await Booking.find({ email: email });
+    if (!bookings || bookings.length === 0) {
+      return res.status(404).json({ message: "No bookings found for this email" });
+    }
+    return res.status(200).json({ 
+      message: "Bookings found", 
+      count: bookings.length,
+      bookings 
+    });
   } catch (err) {
-    console.error("Error fetching booking by ID:", err);
+    console.error("Error fetching bookings by email:", err);
     return res.status(500).json({ message: "Server error" });
   }
 };
