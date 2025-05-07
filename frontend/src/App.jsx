@@ -31,12 +31,13 @@ import FAQ from "./components/FAQ";
 import Complaints from "./components/admin/Complaints";
 import ComplaintForm from "./components/ComplaintForm";
 import ViewComplaint from "./components/admin/ViewComplaint";
+import Navbar2 from "./components/Navbar2";
 
 const App = () => {
   return (
     <Router>
       <div className="w-full overflow-hidden">
-
+        <Navbar2/>
         <ToastContainer position="top-right" autoClose={3000} />
         <Routes>
           <Route path="/" element={<Home />} />

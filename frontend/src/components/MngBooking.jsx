@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Navbar from "./Navbar";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -10,9 +9,11 @@ const MngBooking = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
+  const [filteredBookings, setFilteredBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [searchEmail, setSearchEmail] = useState("");
 
   useEffect(() => {
     const fetchUserBookings = async () => {
@@ -59,30 +60,29 @@ const MngBooking = () => {
 
         if (response.data && Array.isArray(response.data.bookings)) {
           setBookings(response.data.bookings);
+          setFilteredBookings(response.data.bookings);
         } else if (response.data && response.data.bookings) {
           // Handle case where bookings is not an array
           setBookings([response.data.bookings]);
+          setFilteredBookings([response.data.bookings]);
         } else if (response.data && Array.isArray(response.data)) {
           // Handle case where response is directly an array
           setBookings(response.data);
+          setFilteredBookings(response.data);
         } else {
           setError("No bookings found for this user");
         }
       } catch (err) {
         console.error("Error fetching user bookings:", err);
         if (err.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
           setError(
             `Error: ${err.response.data?.message || "Failed to fetch bookings"}`
           );
         } else if (err.request) {
-          // The request was made but no response was received
           setError(
             "No response from server. Please check if the backend is running."
           );
         } else {
-          // Something happened in setting up the request that triggered an Error
           setError(`Error: ${err.message}`);
         }
       } finally {
@@ -92,6 +92,18 @@ const MngBooking = () => {
 
     fetchUserBookings();
   }, [id]);
+
+  // Filter bookings by email
+  useEffect(() => {
+    if (searchEmail.trim() === "") {
+      setFilteredBookings(bookings);
+    } else {
+      const filtered = bookings.filter(booking =>
+        booking.email.toLowerCase().includes(searchEmail.toLowerCase())
+      );
+      setFilteredBookings(filtered);
+    }
+  }, [searchEmail, bookings]);
 
   const handleRequestEdit = async (bookingId) => {
     if (!bookingId) return;
@@ -185,9 +197,53 @@ const MngBooking = () => {
             Your bookings,please Ensure that you can only request to edit the status whether your booking is confirm or not...
           </h2>
 
-          {bookings.length === 0 ? (
+          {/* Search by Email Input */}
+          <div className="mb-6">
+            <label htmlFor="email-search" className="block text-sm font-medium text-gray-700 mb-2">
+              Search by Email
+            </label>
+            <div className="flex">
+              <input
+                type="text"
+                id="email-search"
+                className="flex-1 p-2 border border-gray-300 rounded-l focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter email to search..."
+                value={searchEmail}
+                onChange={(e) => setSearchEmail(e.target.value)}
+              />
+              <button
+                className="bg-blue-500 text-white px-4 py-2 rounded-r hover:bg-blue-600"
+                onClick={() => {
+                  // Trigger the filtering effect
+                  const filtered = bookings.filter(booking =>
+                    booking.email.toLowerCase().includes(searchEmail.toLowerCase())
+                  );
+                  setFilteredBookings(filtered);
+                }}
+              >
+                Search
+              </button>
+            </div>
+          </div>
+
+          {filteredBookings.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-600 mb-4">No bookings found</p>
+              <p className="text-gray-600 mb-4">
+                {searchEmail.trim() !== "" 
+                  ? "No bookings match your search criteria" 
+                  : "No bookings found"}
+              </p>
+              {searchEmail.trim() !== "" && (
+                <button
+                  onClick={() => {
+                    setSearchEmail("");
+                    setFilteredBookings(bookings);
+                  }}
+                  className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 mr-2"
+                >
+                  Clear Search
+                </button>
+              )}
               <button
                 onClick={() => navigate("/addbook")}
                 className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
@@ -197,7 +253,7 @@ const MngBooking = () => {
             </div>
           ) : (
             <div className="space-y-6">
-              {bookings.map((booking) => (
+              {filteredBookings.map((booking) => (
                 <div
                   key={booking._id}
                   className="border rounded-lg p-4 hover:shadow-md transition-shadow"
