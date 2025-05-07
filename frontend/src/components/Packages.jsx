@@ -4,9 +4,11 @@ import Navbar from './Navbar2';
 
 const Packages = () => {
   return (
+    <div>
+    <Navbar/>
     <div style={{ backgroundImage: "url('/bg2.png')", backgroundSize: "cover", backgroundPosition: "center" }}>
     <div className='container mx-auto py-10 lg:px-32 w-full overflow-hidden bg-amber-50' id='Package ' >
-      <Navbar/>
+      
       <br /><br />
           <h1 className='text-2xl sm:text-4xl font-bold mb-2 text-center'>Our Packages <br /> <span className='underline underline-offset-4 decoration-1 under font-light' id='Packages'>Types</span></h1>
           <p className='text-center text-gray-500 mb-12 max-w-80 mx-auto'></p> <br />
@@ -27,6 +29,7 @@ const Packages = () => {
             ))}
           </div>
           <br /><br />
+    </div>
     </div>
     </div>
   )
