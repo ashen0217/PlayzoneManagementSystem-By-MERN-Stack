@@ -3,6 +3,9 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+// Update your imports at the top of the file
+import { jsPDF } from 'jspdf';
+import {autoTable} from 'jspdf-autotable';
 
 const Bookings = () => {
   // State to store bookings data
@@ -37,6 +40,85 @@ const Bookings = () => {
 
     fetchBookings();
   }, []);
+
+  // Add this function to your Bookings component
+  const exportBookingsToPDF = async () => {
+    try {
+      setExporting(true);
+      
+      const bookingsToExport = filteredBookings.length > 0 ? filteredBookings : bookings;
+      
+      if (bookingsToExport.length === 0) {
+        toast.warning('No bookings to export');
+        setExporting(false);
+        return;
+      }
+      
+      // Create new PDF instance
+      const doc = new jsPDF();
+      
+      // Add title
+      doc.setFontSize(20);
+      doc.setTextColor(40);
+      doc.text('Bookings Report', 105, 20, { align: 'center' });
+      
+      // Add date
+      doc.setFontSize(12);
+      doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 105, 30, { align: 'center' });
+      
+      // Prepare table data
+      const headers = [
+        'User', 
+        'Email', 
+        'Package', 
+        'Date', 
+        'Time Slot', 
+        'Status'
+      ];
+      
+      const data = bookingsToExport.map(booking => [
+        booking.username,
+        booking.email,
+        booking.packageType,
+        new Date(booking.date).toLocaleDateString(),
+        booking.timeSlot,
+        booking.message
+      ]);
+      
+      // Add table using autoTable plugin
+      autoTable(doc, {
+        head: [headers],
+        body: data,
+        startY: 40,
+        theme: 'grid',
+        headStyles: {
+          fillColor: [41, 128, 185],
+          textColor: 255,
+          fontStyle: 'bold'
+        },
+        alternateRowStyles: {
+          fillColor: [240, 240, 240]
+        },
+        styles: {
+          fontSize: 9,
+          cellPadding: 3,
+          overflow: 'linebreak'
+        },
+        margin: { top: 40 }
+      });
+      
+      // Save the PDF
+      const dateStr = new Date().toISOString().split('T')[0];
+      doc.save(`bookings_report_${dateStr}.pdf`);
+      
+      toast.success(`Exported ${bookingsToExport.length} bookings to PDF`);
+    } catch (err) {
+      console.error('Error exporting PDF:', err);
+      toast.error('Failed to export PDF. Please try again.');
+    } finally {
+      setExporting(false);
+    }
+  };
 
   // Filter bookings based on search term and filters
   const filteredBookings = bookings.filter(booking => {
@@ -254,9 +336,28 @@ const Bookings = () => {
               </>
             )}
           </button>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-            New Booking
-          </button>
+          <button 
+  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center"
+  onClick={exportBookingsToPDF}
+  disabled={exporting}
+>
+  {exporting ? (
+    <>
+      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      Exporting...
+    </>
+  ) : (
+    <>
+      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+      </svg>
+      Export PDF
+    </>
+  )}
+</button>
         </div>
       </div>
 
