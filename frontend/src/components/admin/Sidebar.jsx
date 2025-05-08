@@ -10,6 +10,7 @@ const Sidebar = ({ activeSection, setActiveSection }) => {
     { id: 'resources', label: 'Resources', icon: '📦' },
     { id: 'resourceRetrieve', label: 'Resource List', icon: '📋' },
     { id: 'events', label: 'Events', icon: '🎉' },
+    {id: 'login'}
   ];
 
   return (
@@ -34,7 +35,9 @@ const Sidebar = ({ activeSection, setActiveSection }) => {
           </button>
         ))}
       </nav>
+      
     </div>
+    
   );
 };
 

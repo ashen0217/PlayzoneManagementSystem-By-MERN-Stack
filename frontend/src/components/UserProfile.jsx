@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { assets } from "../assets/assets";
-import Navbar from "./Navbar";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
 
 const URL = "http://localhost:8000/Users";
 
@@ -16,6 +13,7 @@ const UserProfile = () => {
   const [previewImage, setPreviewImage] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState(null);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const fetchHandler = async () => {
@@ -42,6 +40,74 @@ const UserProfile = () => {
     fetchHandler();
   }, [id, user]);
 
+  const validateForm = () => {
+    const newErrors = {};
+    let isValid = true;
+
+    // Name validation
+    if (!editedUser?.name || editedUser.name.trim() === "") {
+      newErrors.name = "Name is required";
+      isValid = false;
+    } else if (editedUser.name.length < 2) {
+      newErrors.name = "Name must be at least 2 characters";
+      isValid = false;
+    }
+
+    // Email validation
+    if (!editedUser?.email || editedUser.email.trim() === "") {
+      newErrors.email = "Email is required";
+      isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(editedUser.email)) {
+      newErrors.email = "Please enter a valid email address";
+      isValid = false;
+    }
+
+    // Age validation
+    if (!editedUser?.age || editedUser.age === "") {
+      newErrors.age = "Age is required";
+      isValid = false;
+    } else if (isNaN(editedUser.age)) {
+      newErrors.age = "Age must be a number";
+      isValid = false;
+    } else if (editedUser.age < 1) {
+      newErrors.age = "Age must be positive";
+      isValid = false;
+    } else if (editedUser.age > 120) {
+      newErrors.age = "Please enter a valid age";
+      isValid = false;
+    }
+
+    // Gender validation
+    if (!editedUser?.gender || editedUser.gender.trim() === "") {
+      newErrors.gender = "Gender is required";
+      isValid = false;
+    } else if (!["male", "female", "other"].includes(editedUser.gender.toLowerCase())) {
+      newErrors.gender = "Please enter a valid gender (male, female, other)";
+      isValid = false;
+    }
+
+    // Phone validation
+    if (!editedUser?.phone || editedUser.phone.trim() === "") {
+      newErrors.phone = "Phone number is required";
+      isValid = false;
+    } else if (!/^\d{10,15}$/.test(editedUser.phone)) {
+      newErrors.phone = "Please enter a valid phone number (10-15 digits)";
+      isValid = false;
+    }
+
+    // Password validation
+    if (!editedUser?.password || editedUser.password.trim() === "") {
+      newErrors.password = "Password is required";
+      isValid = false;
+    } else if (editedUser.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
@@ -56,13 +122,23 @@ const UserProfile = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
+    localStorage.removeItem("admin");
     navigate("/login");
   };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Validate image file
+      if (!file.type.match("image.*")) {
+        alert("Please select an image file");
+        return;
+      }
+      if (file.size > 2 * 1024 * 1024) { // 2MB limit
+        alert("Image size should be less than 2MB");
+        return;
+      }
+      
       setSelectedImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -73,7 +149,10 @@ const UserProfile = () => {
   };
 
   const handleImageUpload = async () => {
-    if (!selectedImage) return;
+    if (!selectedImage) {
+      alert("Please select an image first");
+      return;
+    }
 
     try {
       const formData = new FormData();
@@ -88,6 +167,7 @@ const UserProfile = () => {
       if (response.status === 200) {
         alert("Profile picture updated successfully!");
         setUser({ ...user, image: response.data.image });
+        setSelectedImage(null);
       }
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -97,6 +177,7 @@ const UserProfile = () => {
 
   const handleEdit = () => {
     setIsEditing(true);
+    setErrors({}); // Clear errors when starting to edit
   };
 
   const handleChange = (e) => {
@@ -105,9 +186,16 @@ const UserProfile = () => {
       ...prev,
       [name]: value
     }));
+    
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: "" }));
+    }
   };
 
   const handleUpdate = async () => {
+    if (!validateForm()) return;
+    
     if (window.confirm("Are you sure you want to update your profile?")) {
       try {
         const response = await axios.put(`${URL}/${user._id}`, editedUser);
@@ -126,6 +214,7 @@ const UserProfile = () => {
   const handleCancel = () => {
     setEditedUser(user);
     setIsEditing(false);
+    setErrors({});
   };
 
   if (!user)
@@ -138,9 +227,8 @@ const UserProfile = () => {
       className="min-h-screen bg-cover bg-center bg-fixed relative"
       style={{ backgroundImage: "url('/bg5.jpg')" }}
     >
+     <br /><br />
       <div className="absolute inset-0 bg-black/50"></div>
-      <Navbar />
-      <br /><br /><br />
       <div className="container mx-auto px-4 py-12 relative z-10">
         <div className="flex flex-col md:flex-row gap-8 max-w-7xl mx-auto">
           {/* Left Sidebar */}
@@ -214,92 +302,128 @@ const UserProfile = () => {
               <div className="space-y-6">
                 {/* Name */}
                 <div className="group">
-                  <label className="block text-black font-medium mb-2 group-hover:text-black transition-colors duration-300">
+                  <label className="block text-white font-medium mb-2 group-hover:text-white transition-colors duration-300">
                     Name
                   </label>
                   <input
-                    className="w-full px-6 py-3 bg-white/20 border border-white/30 rounded-xl text-black placeholder-black/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    className={`w-full px-6 py-3 bg-white/20 border ${
+                      errors.name ? "border-red-500" : "border-white/30"
+                    } rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300`}
                     type="text"
                     name="name"
                     value={isEditing ? editedUser?.name : name}
                     onChange={handleChange}
                     disabled={!isEditing}
                   />
+                  {errors.name && (
+                    <p className="mt-1 text-red-400 text-sm">{errors.name}</p>
+                  )}
                 </div>
 
                 {/* Email */}
                 <div className="group">
-                  <label className="block text-black font-medium mb-2 group-hover:text-black transition-colors duration-300">
+                  <label className="block text-white font-medium mb-2 group-hover:text-white transition-colors duration-300">
                     Email
                   </label>
                   <input
-                    className="w-full px-6 py-3 bg-white/20 border border-white/30 rounded-xl text-black placeholder-black/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    className={`w-full px-6 py-3 bg-white/20 border ${
+                      errors.email ? "border-red-500" : "border-white/30"
+                    } rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300`}
                     type="email"
                     name="email"
                     value={isEditing ? editedUser?.email : email}
                     onChange={handleChange}
                     disabled={!isEditing}
                   />
+                  {errors.email && (
+                    <p className="mt-1 text-red-400 text-sm">{errors.email}</p>
+                  )}
                 </div>
 
                 {/* Age */}
                 <div className="group">
-                  <label className="block text-black font-medium mb-2 group-hover:text-black transition-colors duration-300">
+                  <label className="block text-white font-medium mb-2 group-hover:text-white transition-colors duration-300">
                     Age
                   </label>
                   <input
-                    className="w-full px-6 py-3 bg-white/20 border border-white/30 rounded-xl text-black placeholder-black/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    className={`w-full px-6 py-3 bg-white/20 border ${
+                      errors.age ? "border-red-500" : "border-white/30"
+                    } rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300`}
                     type="number"
                     name="age"
+                    min="1"
+                    max="120"
                     value={isEditing ? editedUser?.age : age}
                     onChange={handleChange}
                     disabled={!isEditing}
                   />
+                  {errors.age && (
+                    <p className="mt-1 text-red-400 text-sm">{errors.age}</p>
+                  )}
                 </div>
 
                 {/* Gender */}
                 <div className="group">
-                  <label className="block text-black font-medium mb-2 group-hover:text-black transition-colors duration-300">
+                  <label className="block text-white font-medium mb-2 group-hover:text-white transition-colors duration-300">
                     Gender
                   </label>
-                  <input
-                    className="w-full px-6 py-3 bg-white/20 border border-white/30 rounded-xl text-black placeholder-black/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                    type="text"
+                  <select
+                    className={`w-full px-6 py-3 bg-white/20 border ${
+                      errors.gender ? "border-red-500" : "border-white/30"
+                    } rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300`}
                     name="gender"
                     value={isEditing ? editedUser?.gender : gender}
                     onChange={handleChange}
                     disabled={!isEditing}
-                  />
+                  >
+                    <option value="">Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </select>
+                  {errors.gender && (
+                    <p className="mt-1 text-red-400 text-sm">{errors.gender}</p>
+                  )}
                 </div>
 
                 {/* Phone */}
                 <div className="group">
-                  <label className="block text-black font-medium mb-2 group-hover:text-black transition-colors duration-300">
+                  <label className="block text-white font-medium mb-2 group-hover:text-white transition-colors duration-300">
                     Phone
                   </label>
                   <input
-                    className="w-full px-6 py-3 bg-white/20 border border-white/30 rounded-xl text-black placeholder-black/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                    type="text"
+                    className={`w-full px-6 py-3 bg-white/20 border ${
+                      errors.phone ? "border-red-500" : "border-white/30"
+                    } rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300`}
+                    type="tel"
                     name="phone"
                     value={isEditing ? editedUser?.phone : phone}
                     onChange={handleChange}
                     disabled={!isEditing}
                   />
+                  {errors.phone && (
+                    <p className="mt-1 text-red-400 text-sm">{errors.phone}</p>
+                  )}
                 </div>
 
                 {/* Password */}
                 <div className="group">
-                  <label className="block text-black font-medium mb-2 group-hover:text-black transition-colors duration-300">
+                  <label className="block text-white font-medium mb-2 group-hover:text-white transition-colors duration-300">
                     Password
                   </label>
                   <input
-                    className="w-full px-6 py-3 bg-white/20 border border-white/30 rounded-xl text-black placeholder-black/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    className={`w-full px-6 py-3 bg-white/20 border ${
+                      errors.password ? "border-red-500" : "border-white/30"
+                    } rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300`}
                     type="password"
                     name="password"
                     value={isEditing ? editedUser?.password : password}
                     onChange={handleChange}
                     disabled={!isEditing}
                   />
+                  {errors.password && (
+                    <p className="mt-1 text-red-400 text-sm">{errors.password}</p>
+                  )}
                 </div>
 
                 <div className="flex gap-6 pt-4">

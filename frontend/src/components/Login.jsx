@@ -67,6 +67,7 @@ export default function LoginForm() {
       }
 
       localStorage.setItem('userData', JSON.stringify(matchedUser));
+      localStorage.setItem("token", response.data.token);
 
       if (
         formData.email === adminCredentials.email &&
