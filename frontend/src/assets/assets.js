@@ -163,22 +163,22 @@ export const userData = [
 
 export const packageData = [
   {
-    name:"Supreme package",
-    description:"This package has 10 activities including waterpark and indoor activities valid for 24Hours",
+    name:"Basic Package",
+    description:"This package has 5 activities including waterpark and indoor activities valid for 24Hours",
     price:"$100",
     image:waterpark,
   },
   
   {
-    name:"Package A",
-    description : "This package has 5 activities including  indoor  activities  only  valid  for   24Hours",
+    name:"Standard Package",
+    description : "This package has 10 activities including  indoor  activities  only  valid  for   24Hours",
     price : "$50",
     image : rollarcoaster, 
   },
 
   {
-    name:"Package B",
-    description : "This package has 5 activities including indoor activities under 18 only valid for 24Hours",
+    name:"Premium Package",
+    description : "This package has 20 activities including indoor activities  only valid for 24Hours",
     price : "$50",
     image : snowW,
   },

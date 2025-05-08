@@ -329,7 +329,7 @@ const BookingForm = () => {
                         htmlFor="timeSlot"
                         className="block text-sm font-medium text-gray-700"
                       >
-                        Time Slot <span className="text-red-500">*</span>
+                        Select Date <span className="text-red-500">*</span>
                       </label>
                       <DatePicker
                         selected={formData.date}
