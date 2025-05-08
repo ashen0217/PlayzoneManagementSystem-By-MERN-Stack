@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const Payments = () => {
   const [payments, setPayments] = useState([]);
@@ -34,8 +36,68 @@ const Payments = () => {
   });
 
   const handleExport = () => {
-    // Implement export functionality
-    console.log('Exporting payments...');
+    // Create a new PDF document
+    const doc = new jsPDF();
+    
+    // Add title
+    doc.setFontSize(18);
+    doc.text('Payment Report', 14, 22);
+    
+    // Add date
+    doc.setFontSize(10);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
+    
+    // Prepare data for the table
+    const tableData = filteredPayments.map(payment => [
+      payment.userName,
+      `Bank #${payment.bank}`,
+      payment.branch,
+      payment.package,
+      `$${payment.amount.toFixed(2)}`,
+      payment.cnfStatus,
+    ]);
+    
+    // Add table using autoTable plugin
+    doc.autoTable({
+      head: [['User', 'Bank', 'Branch', 'Package', 'Amount', 'Status']],
+      body: tableData,
+      startY: 35,
+      styles: {
+        fontSize: 8,
+        cellPadding: 2,
+      },
+      headStyles: {
+        fillColor: [41, 128, 185],
+        textColor: 255,
+        fontStyle: 'bold'
+      },
+      alternateRowStyles: {
+        fillColor: [245, 245, 245]
+      },
+      columnStyles: {
+        0: { cellWidth: 25 },
+        1: { cellWidth: 25 },
+        2: { cellWidth: 25 },
+        3: { cellWidth: 25 },
+        4: { cellWidth: 20 },
+        5: { cellWidth: 20 }
+      }
+    });
+    
+    // Add footer
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(10);
+      doc.text(
+        `Page ${i} of ${pageCount}`,
+        doc.internal.pageSize.width - 30,
+        doc.internal.pageSize.height - 10
+      );
+    }
+    
+    // Save the PDF
+    doc.save(`payments-report-${new Date().toISOString().slice(0, 10)}.pdf`);
   };
 
   const handleView = (id) => {
@@ -66,12 +128,7 @@ const Payments = () => {
           >
             Refresh
           </button>
-          <button 
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-            onClick={handleExport}
-          >
-            Export Payments
-          </button>
+          
         </div>
       </div>
 
@@ -194,4 +251,4 @@ const Payments = () => {
   );
 };
 
-export default Payments; 
+export default Payments;
