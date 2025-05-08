@@ -62,7 +62,7 @@ const App = () => {
           <Route path="/admin/bookings/update/:id" element={<BookingUpdate />} />
           <Route path="admin/bookings" element={<Bookings/>}/>
           <Route path="/manage-bookings" element={<MngBookings/>}/>
-          <Route path="/manage-bookings/:id" element={<MngBookings/>}/>
+          {/* <Route path="/manage-bookings/:id" element={<MngBookings/>}/> */}
           <Route path="/faq" element={<FAQ />} />
           <Route path="/admin/complaints" element={<Complaints />} />
           <Route path="/submit-complaint" element={<ComplaintForm />} />
