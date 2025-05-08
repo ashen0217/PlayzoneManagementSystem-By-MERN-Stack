@@ -3,20 +3,26 @@ const router = express.Router();
 const {
   addBooking,
   getAllBookings,
+  getByID,
+  getBookingsByEmail,
   updateBooking,
-  deleteBooking,
-  getBookingsByEmail, // Add this
-  getByID
+  adminupdateBooking,
+  deleteBooking
 } = require('../Controllers/bookingController');
 
-const bookingModel = require("../Model/Booking");
-
+// CREATE
 router.post('/', addBooking);
-router.get('/', getAllBookings);
-router.get('/:id', getByID);
-router.get('/email/:email', getBookingsByEmail); // Add this route
-router.put('/:id', updateBooking);
-router.delete('/:id', deleteBooking);
 
+// READ
+router.get('/', getAllBookings);
+router.get('/email/:email', getBookingsByEmail); // Query by email
+router.get('/:id', getByID); // Query by booking ID
+
+// UPDATE
+router.put('/:id', updateBooking); // User-level update
+router.put('/admin/:id', adminupdateBooking); // Admin-level update
+
+// DELETE
+router.delete('/:id', deleteBooking);
 
 module.exports = router;

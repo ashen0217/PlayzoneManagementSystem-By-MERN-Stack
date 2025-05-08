@@ -7,31 +7,44 @@ const URL = "http://localhost:8000/Users";
 const UserProfile = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [user, setUser] = useState(location.state?.user || null);
   const { id } = useParams();
+  const [user, setUser] = useState(location.state?.user || null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [editedUser, setEditedUser] = useState(null);
+  const [editedUser, setEditedUser] = useState({
+    name: "",
+    email: "",
+    age: "",
+    gender: "",
+    phone: "",
+    password: "",
+  });
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const fetchHandler = async () => {
       try {
+        let userData = null;
         if (id) {
           const response = await axios.get(`${URL}/${id}`);
-          if (response.data && response.data.Users) {
-            setUser(response.data.Users);
-            setEditedUser(response.data.Users);
-            setPreviewImage(response.data.Users.image || "profile_img_1.png");
-          }
+          userData = response.data?.Users;
         } else if (!user) {
           const response = await axios.get(URL);
-          if (response.data && response.data.Users && response.data.Users.length > 0) {
-            setUser(response.data.Users[0]);
-            setEditedUser(response.data.Users[0]);
-            setPreviewImage(response.data.Users[0].image || "profile_img_1.png");
-          }
+          userData = response.data?.Users?.[0];
+        }
+
+        if (userData) {
+          setUser(userData);
+          setEditedUser({
+            name: userData.name || "",
+            email: userData.email || "",
+            age: userData.age || "",
+            gender: userData.gender || "",
+            phone: userData.phone || "",
+            password: userData.password || "",
+          });
+          setPreviewImage(userData.image || "profile_img_1.png");
         }
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -44,8 +57,7 @@ const UserProfile = () => {
     const newErrors = {};
     let isValid = true;
 
-    // Name validation
-    if (!editedUser?.name || editedUser.name.trim() === "") {
+    if (!editedUser.name || editedUser.name.trim() === "") {
       newErrors.name = "Name is required";
       isValid = false;
     } else if (editedUser.name.length < 2) {
@@ -53,8 +65,7 @@ const UserProfile = () => {
       isValid = false;
     }
 
-    // Email validation
-    if (!editedUser?.email || editedUser.email.trim() === "") {
+    if (!editedUser.email || editedUser.email.trim() === "") {
       newErrors.email = "Email is required";
       isValid = false;
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(editedUser.email)) {
@@ -62,8 +73,7 @@ const UserProfile = () => {
       isValid = false;
     }
 
-    // Age validation
-    if (!editedUser?.age || editedUser.age === "") {
+    if (!editedUser.age || editedUser.age === "") {
       newErrors.age = "Age is required";
       isValid = false;
     } else if (isNaN(editedUser.age)) {
@@ -77,8 +87,7 @@ const UserProfile = () => {
       isValid = false;
     }
 
-    // Gender validation
-    if (!editedUser?.gender || editedUser.gender.trim() === "") {
+    if (!editedUser.gender || editedUser.gender.trim() === "") {
       newErrors.gender = "Gender is required";
       isValid = false;
     } else if (!["male", "female", "other"].includes(editedUser.gender.toLowerCase())) {
@@ -86,8 +95,7 @@ const UserProfile = () => {
       isValid = false;
     }
 
-    // Phone validation
-    if (!editedUser?.phone || editedUser.phone.trim() === "") {
+    if (!editedUser.phone || editedUser.phone.trim() === "") {
       newErrors.phone = "Phone number is required";
       isValid = false;
     } else if (!/^\d{10,15}$/.test(editedUser.phone)) {
@@ -95,14 +103,13 @@ const UserProfile = () => {
       isValid = false;
     }
 
-    // Password validation
-    if (!editedUser?.password || editedUser.password.trim() === "") {
+    /*if (!editedUser.password || editedUser.password.trim() === "") {
       newErrors.password = "Password is required";
       isValid = false;
     } else if (editedUser.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters";
       isValid = false;
-    }
+    }*/
 
     setErrors(newErrors);
     return isValid;
@@ -129,16 +136,15 @@ const UserProfile = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate image file
       if (!file.type.match("image.*")) {
         alert("Please select an image file");
         return;
       }
-      if (file.size > 2 * 1024 * 1024) { // 2MB limit
+      if (file.size > 2 * 1024 * 1024) {
         alert("Image size should be less than 2MB");
         return;
       }
-      
+
       setSelectedImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -177,29 +183,28 @@ const UserProfile = () => {
 
   const handleEdit = () => {
     setIsEditing(true);
-    setErrors({}); // Clear errors when starting to edit
+    setErrors({});
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setEditedUser(prev => ({
+    setEditedUser((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-    
-    // Clear error when user starts typing
+
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: "" }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
   const handleUpdate = async () => {
     if (!validateForm()) return;
-    
+
     if (window.confirm("Are you sure you want to update your profile?")) {
       try {
         const response = await axios.put(`${URL}/${user._id}`, editedUser);
-        if (response.data && response.data.Users) {
+        if (response.data?.Users) {
           setUser(response.data.Users);
           setIsEditing(false);
           alert("Profile updated successfully!");
@@ -212,7 +217,14 @@ const UserProfile = () => {
   };
 
   const handleCancel = () => {
-    setEditedUser(user);
+    setEditedUser({
+      name: user?.name || "",
+      email: user?.email || "",
+      age: user?.age || "",
+      gender: user?.gender || "",
+      phone: user?.phone || "",
+      password: user?.password || "",
+    });
     setIsEditing(false);
     setErrors({});
   };
@@ -220,14 +232,13 @@ const UserProfile = () => {
   if (!user)
     return <p className="text-center mt-10 text-gray-500">Loading user...</p>;
 
-  const { _id, name, email, age, gender, phone, password } = user;
-
   return (
-    <div 
+    <div
       className="min-h-screen bg-cover bg-center bg-fixed relative"
       style={{ backgroundImage: "url('/bg5.jpg')" }}
     >
-     <br /><br />
+      <br />
+      <br />
       <div className="absolute inset-0 bg-black/50"></div>
       <div className="container mx-auto px-4 py-12 relative z-10">
         <div className="flex flex-col md:flex-row gap-8 max-w-7xl mx-auto">
@@ -253,7 +264,7 @@ const UserProfile = () => {
                     <label htmlFor="profileImage" className="cursor-pointer">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6 text-white"
+                        className="h-6 w-6 text-black"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -277,14 +288,14 @@ const UserProfile = () => {
                 {selectedImage && (
                   <button
                     onClick={handleImageUpload}
-                    className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 rounded-xl hover:from-blue-600 hover:to-purple-600 transform hover:scale-105 transition-all duration-300 font-semibold shadow-lg"
+                    className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-black py-3 rounded-xl hover:from-blue-600 hover:to-purple-600 transform hover:scale-105 transition-all duration-300 font-semibold shadow-lg"
                   >
                     Update Profile Picture
                   </button>
                 )}
                 <button
                   onClick={handleLogout}
-                  className="w-full bg-gradient-to-r from-red-500 to-pink-500 text-white py-3 rounded-xl hover:from-red-600 hover:to-pink-600 transform hover:scale-105 transition-all duration-300 font-semibold shadow-lg"
+                  className="w-full bg-gradient-to-r from-red-500 to-pink-500 text-black py-3 rounded-xl hover:from-red-600 hover:to-pink-600 transform hover:scale-105 transition-all duration-300 font-semibold shadow-lg"
                 >
                   Logout
                 </button>
@@ -295,23 +306,23 @@ const UserProfile = () => {
           {/* Main Content */}
           <div className="w-full md:w-3/4">
             <div className="bg-white/20 backdrop-blur-lg p-10 rounded-2xl shadow-xl border border-white/30">
-              <h1 className="text-4xl font-bold text-center text-white mb-8 tracking-wide">
+              <h1 className="text-4xl font-bold text-center text-black mb-8 tracking-wide">
                 Customer Profile
               </h1>
 
               <div className="space-y-6">
                 {/* Name */}
                 <div className="group">
-                  <label className="block text-white font-medium mb-2 group-hover:text-white transition-colors duration-300">
+                  <label className="block text-black font-medium mb-2 group-hover:text-black transition-colors duration-300">
                     Name
                   </label>
                   <input
                     className={`w-full px-6 py-3 bg-white/20 border ${
                       errors.name ? "border-red-500" : "border-white/30"
-                    } rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300`}
+                    } rounded-xl text-black placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300`}
                     type="text"
                     name="name"
-                    value={isEditing ? editedUser?.name : name}
+                    value={isEditing ? editedUser.name : user.name || ""}
                     onChange={handleChange}
                     disabled={!isEditing}
                   />
@@ -322,16 +333,16 @@ const UserProfile = () => {
 
                 {/* Email */}
                 <div className="group">
-                  <label className="block text-white font-medium mb-2 group-hover:text-white transition-colors duration-300">
+                  <label className="block text-black font-medium mb-2 group-hover:text-black transition-colors duration-300">
                     Email
                   </label>
                   <input
                     className={`w-full px-6 py-3 bg-white/20 border ${
                       errors.email ? "border-red-500" : "border-white/30"
-                    } rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300`}
+                    } rounded-xl text-black placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300`}
                     type="email"
                     name="email"
-                    value={isEditing ? editedUser?.email : email}
+                    value={isEditing ? editedUser.email : user.email || ""}
                     onChange={handleChange}
                     disabled={!isEditing}
                   />
@@ -342,18 +353,18 @@ const UserProfile = () => {
 
                 {/* Age */}
                 <div className="group">
-                  <label className="block text-white font-medium mb-2 group-hover:text-white transition-colors duration-300">
+                  <label className="block text-black font-medium mb-2 group-hover:text-black transition-colors duration-300">
                     Age
                   </label>
                   <input
                     className={`w-full px-6 py-3 bg-white/20 border ${
                       errors.age ? "border-red-500" : "border-white/30"
-                    } rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300`}
+                    } rounded-xl text-black placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300`}
                     type="number"
                     name="age"
                     min="1"
                     max="120"
-                    value={isEditing ? editedUser?.age : age}
+                    value={isEditing ? editedUser.age : user.age || ""}
                     onChange={handleChange}
                     disabled={!isEditing}
                   />
@@ -364,15 +375,15 @@ const UserProfile = () => {
 
                 {/* Gender */}
                 <div className="group">
-                  <label className="block text-white font-medium mb-2 group-hover:text-white transition-colors duration-300">
+                  <label className="block text-black font-medium mb-2 group-hover:text-black transition-colors duration-300">
                     Gender
                   </label>
                   <select
                     className={`w-full px-6 py-3 bg-white/20 border ${
                       errors.gender ? "border-red-500" : "border-white/30"
-                    } rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300`}
+                    } rounded-xl text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300`}
                     name="gender"
-                    value={isEditing ? editedUser?.gender : gender}
+                    value={isEditing ? editedUser.gender : user.gender || ""}
                     onChange={handleChange}
                     disabled={!isEditing}
                   >
@@ -388,16 +399,16 @@ const UserProfile = () => {
 
                 {/* Phone */}
                 <div className="group">
-                  <label className="block text-white font-medium mb-2 group-hover:text-white transition-colors duration-300">
+                  <label className="block text-black font-medium mb-2 group-hover:text-black transition-colors duration-300">
                     Phone
                   </label>
                   <input
                     className={`w-full px-6 py-3 bg-white/20 border ${
                       errors.phone ? "border-red-500" : "border-white/30"
-                    } rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300`}
+                    } rounded-xl text-black placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300`}
                     type="tel"
                     name="phone"
-                    value={isEditing ? editedUser?.phone : phone}
+                    value={isEditing ? editedUser.phone : user.phone || ""}
                     onChange={handleChange}
                     disabled={!isEditing}
                   />
@@ -408,17 +419,18 @@ const UserProfile = () => {
 
                 {/* Password */}
                 <div className="group">
-                  <label className="block text-white font-medium mb-2 group-hover:text-white transition-colors duration-300">
+                  <label className="block text-black font-medium mb-2 group-hover:text-black transition-colors duration-300">
                     Password
                   </label>
                   <input
-                    className={`w-full px-6 py-3 bg-white/20 border ${
+                    className={`w-full px-6 py-3 bg-white/20 border text-black ${
                       errors.password ? "border-red-500" : "border-white/30"
-                    } rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300`}
+                    } rounded-xl text-black placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300`}
                     type="password"
                     name="password"
-                    value={isEditing ? editedUser?.password : password}
+                    value={isEditing ? editedUser.password : user.password || ""}
                     onChange={handleChange}
+                    readOnly
                     disabled={!isEditing}
                   />
                   {errors.password && (
@@ -430,7 +442,7 @@ const UserProfile = () => {
                   {!isEditing ? (
                     <button
                       onClick={handleEdit}
-                      className="flex-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 rounded-xl hover:from-blue-600 hover:to-purple-600 transform hover:scale-105 transition-all duration-300 font-semibold shadow-lg text-center"
+                      className="flex-1 bg-gradient-to-r from-blue-500 to-purple-500 text-black py-3 rounded-xl hover:from-blue-600 hover:to-purple-600 transform hover:scale-105 transition-all duration-300 font-semibold shadow-lg text-center"
                     >
                       Edit Profile
                     </button>
@@ -438,13 +450,13 @@ const UserProfile = () => {
                     <>
                       <button
                         onClick={handleUpdate}
-                        className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 rounded-xl hover:from-green-600 hover:to-emerald-600 transform hover:scale-105 transition-all duration-300 font-semibold shadow-lg"
+                        className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 text-black py-3 rounded-xl hover:from-green-600 hover:to-emerald-600 transform hover:scale-105 transition-all duration-300 font-semibold shadow-lg"
                       >
                         Save Changes
                       </button>
                       <button
                         onClick={handleCancel}
-                        className="flex-1 bg-gradient-to-r from-red-500 to-pink-500 text-white py-3 rounded-xl hover:from-red-600 hover:to-pink-600 transform hover:scale-105 transition-all duration-300 font-semibold shadow-lg"
+                        className="flex-1 bg-gradient-to-r from-red-500 to-pink-500 text-black py-3 rounded-xl hover:from-red-600 hover:to-pink-600 transform hover:scale-105 transition-all duration-300 font-semibold shadow-lg"
                       >
                         Cancel
                       </button>
@@ -452,7 +464,7 @@ const UserProfile = () => {
                   )}
                   <button
                     onClick={handleDelete}
-                    className="flex-1 bg-gradient-to-r from-red-500 to-pink-500 text-white py-3 rounded-xl hover:from-red-600 hover:to-pink-600 transform hover:scale-105 transition-all duration-300 font-semibold shadow-lg"
+                    className="flex-1 bg-gradient-to-r from-red-500 to-pink-500 text-black py-3 rounded-xl hover:from-red-600 hover:to-pink-600 transform hover:scale-105 transition-all duration-300 font-semibold shadow-lg"
                   >
                     Delete
                   </button>

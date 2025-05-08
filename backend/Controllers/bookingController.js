@@ -131,18 +131,69 @@ const getByID = async (req, res) => {
 
 // PUT update booking by ID
 const updateBooking = async (req, res) => {
+  console.log(req.body);
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const { 
+      packageType,
+      date,
+      timeSlot,
+      specialRequests,
+      message 
+    } = req.body;
+
+    // Validate required fields
+    if (!packageType || !date || !timeSlot) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Package type, date, and time slot are required' 
+      });
+    }
+
+    const updatedBooking = await Booking.findByIdAndUpdate(
+      id,
+      { 
+        packageType,
+        date: new Date(date),
+        timeSlot,
+        specialRequests: specialRequests || '',
+        message: message || 'Pending'
+      },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedBooking) {
+      return res.status(404).json({ success: false, error: 'Booking not found' });
+    }
+
+    res.status(200).json({ 
+      success: true, 
+      data: updatedBooking,
+      message: 'Booking updated successfully'
+    });
+  } catch (error) {
+    console.error('Error updating booking:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Server error',
+      message: error.message 
+    });
+  }
+};
+const adminupdateBooking = async (req, res) => {
+  console.log(req.body);
+  try {
+    const { id } = req.params;
+    const { message } = req.body;
 
     // Validate input
-    if (!status) {
+    if (!message) {
       return res.status(400).json({ success: false, error: 'Status is required' });
     }
 
     const updatedBooking = await Booking.findByIdAndUpdate(
       id,
-      { message: status },
+      { message: message },
       { new: true, runValidators: true }
     );
 
@@ -213,4 +264,5 @@ module.exports = {
   getBookingsByEmail, // Add this
   updateBooking,
   deleteBooking,
+  adminupdateBooking
 };
