@@ -1,4 +1,5 @@
 # PlayzoneManagementSystem
+
 Welcome to PlayZone Pro. We are dedicated to creating a seamless and efficient experience for managing playzones, recreational centers, and indoor playgrounds. Our mission is to empower businesses with innovative tools that simplify operations, enhance customer experiences, and promote safe and fun environments for children and families.
 
 The GitHub repository PlayzoneManagementSystem-By-MERN-Stack by user ashen0217 presents a comprehensive full-stack application designed to manage playzones, recreational centers, and indoor playgrounds. Built using the MERN stack—MongoDB, Express.js, React.js, and Node.js—the project aims to streamline operations, enhance customer experiences, and promote safe environments for children and families.
@@ -29,12 +30,14 @@ A full-stack web application developed using the **MERN Stack (MongoDB, Express,
 ## 🛠️ Tech Stack
 
 **Frontend**
+
 - React.js
 - Redux (if applicable)
 - Axios
 - Bootstrap / CSS
 
 **Backend**
+
 - Node.js
 - Express.js
 - MongoDB
@@ -44,11 +47,14 @@ A full-stack web application developed using the **MERN Stack (MongoDB, Express,
 
 ## 📷 Screenshots
 
+![Home Page Screenshot](ssP.png)
+
 > Add screenshots of:
+>
 > - Login Page
 > - Admin Dashboard
 > - Booking Interface  
-> _(Insert images using Markdown or upload to `assets/screenshots`)_
+>   _(Insert images using Markdown or upload to `assets/screenshots`)_
 
 ---
 
@@ -104,3 +110,4 @@ For more details and to explore the codebase, visit the repository: PlayzoneMana
 
 
 
+```
