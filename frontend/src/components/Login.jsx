@@ -89,6 +89,7 @@ export default function LoginForm() {
     <div className="min-h-screen relative">
       <Navbar2/>
       {/* Background image with dark overlay */}
+      <br /><br /><br />
       <div 
         className="absolute inset-0 bg-cover bg-center z-0"
         style={{ backgroundImage: "url('/bg2.png')" }}
