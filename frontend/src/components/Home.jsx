@@ -6,6 +6,7 @@ import Navbar2 from "./Navbar2";
 const Home = () => {
   return (
     <div className="overflow-hidden">
+      <Navbar2/>
       <motion.section
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
