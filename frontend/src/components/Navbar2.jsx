@@ -3,14 +3,13 @@ import { Link } from "react-router-dom";
 
 const Navbar2 = () => {
   return (
-    <div className="absolute top-0 left-0 w-full z-10">
+    <div className="fixed top-0 left-0 w-full z-50">
       <div>
         <ul className="hidden md:flex gap-7 bg-gray-800 text-white p-4 shadow-md">
           <li>
             <Link
               to="/"
               className="cursor-pointer hover:text-gray-400 text-white"
-              style={{ textDecoration: "none" }}
             >
               Home
             </Link>
@@ -19,7 +18,6 @@ const Navbar2 = () => {
             <Link
               to="/about"
               className="cursor-pointer hover:text-gray-400 text-white"
-              style={{ textDecoration: "none" }}
             >
               About
             </Link>
@@ -28,7 +26,6 @@ const Navbar2 = () => {
             <Link
               to="/testimonials"
               className="cursor-pointer hover:text-gray-400 text-white"
-              style={{ textDecoration: "none" }}
             >
               Customer Feedbacks
             </Link>
@@ -37,7 +34,6 @@ const Navbar2 = () => {
             <Link
               to="/packages"
               className="cursor-pointer hover:text-gray-400 text-white"
-              style={{ textDecoration: "none" }}
             >
               Packages
             </Link>
@@ -46,7 +42,6 @@ const Navbar2 = () => {
             <Link
               to="/activities"
               className="cursor-pointer hover:text-gray-400 text-white"
-              style={{ textDecoration: "none" }}
             >
               Activities
             </Link>
@@ -55,7 +50,6 @@ const Navbar2 = () => {
             <Link
               to="/contact"
               className="cursor-pointer hover:text-gray-400 text-white"
-              style={{ textDecoration: "none" }}
             >
               Contact
             </Link>
@@ -64,7 +58,6 @@ const Navbar2 = () => {
             <Link
               to="/faq"
               className="cursor-pointer hover:text-gray-400 text-white"
-              style={{ textDecoration: "none" }}
             >
               FAQ's
             </Link>
@@ -73,7 +66,6 @@ const Navbar2 = () => {
             <Link
               to="/login"
               className="bg-white px-8 py-2 rounded-full cursor-pointer text-gray-950 hover:bg-gray-200 transition-colors"
-              style={{ textDecoration: "none" }}
             >
               Login
             </Link>
@@ -82,7 +74,6 @@ const Navbar2 = () => {
             <Link
               to="/signup"
               className="bg-white px-8 py-2 rounded-full cursor-pointer text-gray-950 hover:bg-gray-200 transition-colors"
-              style={{ textDecoration: "none" }}
             >
               Signup
             </Link>

@@ -6,7 +6,6 @@ import Navbar2 from "./Navbar2";
 const Home = () => {
   return (
     <div className="overflow-hidden">
-      <Navbar2 />
       <motion.section
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -23,7 +22,9 @@ const Home = () => {
             key={i}
             className="absolute rounded-full"
             style={{
-              background: `rgba(${Math.random() * 255},${Math.random() * 255},${Math.random() * 255},0.7)`,
+              background: `rgba(${Math.random() * 255},${Math.random() * 255},${
+                Math.random() * 255
+              },0.7)`,
               width: `${Math.random() * 10 + 5}px`,
               height: `${Math.random() * 10 + 5}px`,
               left: `${Math.random() * 100}%`,
@@ -42,7 +43,7 @@ const Home = () => {
           />
         ))}
 
-        <motion.div 
+        <motion.div
           className="relative z-10 container mx-auto px-4 md:px-8 lg:px-16 h-full flex flex-col justify-center items-center"
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -76,7 +77,7 @@ const Home = () => {
               }}
             />
 
-            <motion.h1 
+            <motion.h1
               className="relative z-10 text-4xl md:text-6xl lg:text-7xl font-extrabold text-center mb-4 leading-tight"
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
@@ -108,7 +109,7 @@ const Home = () => {
                     "0 0 30px rgba(255, 138, 0, 1)",
                     "0 0 20px rgba(255, 138, 0, 0.9)",
                   ],
-                  
+
                   scale: [1, 1.05, 1],
                 }}
                 transition={{
@@ -117,19 +118,21 @@ const Home = () => {
                   ease: "easeInOut",
                 }}
                 style={{
-                  background: "linear-gradient(90deg, #ff8a00, #ff00cc, #00ffcc)",
+                  background:
+                    "linear-gradient(90deg, #ff8a00, #ff00cc, #00ffcc)",
                   WebkitBackgroundClip: "text",
                   backgroundClip: "text",
                   color: "transparent",
                 }}
               >
-                <span className="text-5xl">
-                PLAY</span><span className="text-white text-5xl">ZONE</span> <span className="text-amber-200 text-5xl">PRO</span>
+                <span className="text-5xl">PLAY</span>
+                <span className="text-white text-5xl">ZONE</span>{" "}
+                <span className="text-amber-200 text-5xl">PRO</span>
               </motion.h2>
             </motion.div>
 
             {/* Animated decorative elements */}
-            <motion.div 
+            <motion.div
               className="flex justify-center gap-4 mb-8"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -141,11 +144,7 @@ const Home = () => {
                   className="w-4 h-4 rounded-full"
                   animate={{
                     scale: [1, 1.5, 1],
-                    background: [
-                      "#ff008c",
-                      "#00ffcc",
-                      "#ff8a00",
-                    ],
+                    background: ["#ff008c", "#00ffcc", "#ff8a00"],
                   }}
                   transition={{
                     duration: 3,
@@ -158,7 +157,7 @@ const Home = () => {
           </motion.div>
 
           {/* Enhanced buttons with floating effect */}
-          <motion.div 
+          <motion.div
             className="flex flex-col sm:flex-row gap-4 sm:gap-8 mt-4"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -218,8 +217,8 @@ const Home = () => {
                   repeat: Infinity,
                 }}
               />
-              <Link 
-                to="/about" 
+              <Link
+                to="/about"
                 className="relative z-10 block px-8 py-4 text-lg font-bold text-white"
               >
                 About Us
@@ -228,22 +227,29 @@ const Home = () => {
           </motion.div>
 
           {/* Floating animated shapes at bottom */}
-          <motion.div 
+          <motion.div
             className="absolute bottom-10 left-0 right-0 flex justify-center gap-8"
             initial={{ y: 50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 2 }}
           >
-            {['triangle', 'circle', 'square'].map((shape, i) => (
+            {["triangle", "circle", "square"].map((shape, i) => (
               <motion.div
                 key={i}
                 className="w-12 h-12"
                 style={{
-                  background: i === 0 ? 'linear-gradient(45deg, #ff008c, #ff8a00)' : 
-                              i === 1 ? 'linear-gradient(45deg, #00ffcc, #0088ff)' : 
-                                       'linear-gradient(45deg, #7700ff, #ff00cc)',
-                  clipPath: i === 0 ? 'polygon(50% 0%, 0% 100%, 100% 100%)' : 
-                             i === 1 ? 'circle(50% at 50% 50%)' : 'none',
+                  background:
+                    i === 0
+                      ? "linear-gradient(45deg, #ff008c, #ff8a00)"
+                      : i === 1
+                      ? "linear-gradient(45deg, #00ffcc, #0088ff)"
+                      : "linear-gradient(45deg, #7700ff, #ff00cc)",
+                  clipPath:
+                    i === 0
+                      ? "polygon(50% 0%, 0% 100%, 100% 100%)"
+                      : i === 1
+                      ? "circle(50% at 50% 50%)"
+                      : "none",
                 }}
                 animate={{
                   y: [0, -20, 0],
