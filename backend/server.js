@@ -1,9 +1,10 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+require('dotenv').config();
 const PORT = process.env.PORT || 8000;
 
-//dbpassword-MLBpzDBcaVFQN3F6
+//dbpassword was previously hardcoded here
 
 const app = express();
 const cors = require('cors');
@@ -36,14 +37,31 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Something went wrong!' });
 });
 
-// const PORT = 8000;
-const DB_URL = "mongodb+srv://UserAshen:MLBpzDBcaVFQN3F6@mernapp.9exup.mongodb.net/?retryWrites=true&w=majority&appName=MernApp";
-mongoose.connect(DB_URL).then(() => {
+// Database connection
+const DB_URL = process.env.MONGODB_URI;
+mongoose.connect(DB_URL)
+  .then(() => {
     console.log('Connected to MongoDB');
-})
-.catch((error) => console.log('DB connect error',error));
+  })
+  .catch((error) => {
+    console.log('DB connect error', error);
+  });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+const startServer = (port) => {
+  // Ensure port is a number
+  port = parseInt(port, 10);
+  
+  const server = app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  }).on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.log(`Port ${port} is busy, trying port ${port + 1}`);
+      startServer(port + 1);
+    } else {
+      console.error('Server error:', err);
+    }
+  });
+};
+
+startServer(PORT);
 
