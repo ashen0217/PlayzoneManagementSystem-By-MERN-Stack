@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const multer = require("multer");
-const upload = multer(); // For memory storage, or configure as needed
+const formidable = require("formidable");
 
 //insert model
 const Payments = require("../Model/payModel");
